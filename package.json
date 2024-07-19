@@ -1,0 +1,19 @@
+{
+  "name": "hackathon",
+  "version": "1.0.0",
+  "description": "Proyecto SSEM para el hackathon Boost Hacks",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js"
+  },
+  "author": "SSEM team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "express-validator": "^7.1.0",
+    "mime-types": "^2.1.35",
+    "multer": "^1.4.5-lts.1",
+    "ws": "^8.18.0"
+  }
+}
