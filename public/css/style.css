@@ -23,6 +23,8 @@
     /*Transparentes*/
 
     /*Definicion de tipografias*/
+    --font-title: "Orbitron";
+    --font-text: "Lexend Deca";
     --font:sans-serif;
 
     /*alto de la cabecera*/
