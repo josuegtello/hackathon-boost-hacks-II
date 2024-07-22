@@ -1,0 +1,93 @@
+/*Division en la que john mircha trabaja*/
+/*despues de custom properties y reseteo empezar con la cabecera*/
+/*******Custom Properties*******/
+:root {
+    /*definicion de colores, usualmente ocupar nombres relacionados*/
+    --bg-color:#0A021B;
+    /*colores de contenedores*/
+    --container-color-1:#7209B7;
+    --container-color-2:#560BAD;
+    --container-color-3:#480CA8;
+    --container-color-4:#3A0CA3;
+    --container-color-5:#3F37C9;
+    --container-color-6:#4361ee;
+    --container-color-7:#4895ef;
+    --container-color-8:#4B227A;
+    /*colores secundarios*/
+    --color-1:#f72585;
+
+    /*color de texto*/
+    --text-color-1:#4cc9f0;
+    --text-color-2:#f72585;
+    --text-color-3:#f4f5ff;
+    /*Transparentes*/
+
+    /*Definicion de tipografias*/
+    --font:sans-serif;
+
+    /*alto de la cabecera*/
+    --header-height:5rem;
+}
+/*********Reseto CSS*********/
+/*reseteado de modelo de caja*/
+html {
+    box-sizing: border-box;
+    font-family:var(--font);
+    font-size:16px;/*definir explicitamente lo que va a equivaler 1rem*/
+    scroll-behavior: smooth;/*efecto de animacion del scroll*/
+}
+*,*::after,*::before{
+    box-sizing: inherit;    
+}
+body {
+    margin:0;
+    color:var(--text-color-3);
+    background-color:var(--bg-color);
+}
+/*enlaces*/
+a {
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.5s ease-out;
+}
+svg {
+    height: auto;
+    transition: all 0.5s ease-out;
+}
+/*tamaños de tipografias en rems, 
+recomendable editar el margin para que despues podamos agregarlo explicitamente*/
+h1  {
+    margin:0;
+    font-size:2rem;
+}
+h2 {
+    margin:0;
+    font-size:1.5rem;
+}
+h3 {
+    margin:0;
+    font-size:1.25rem;
+}
+h4 {
+    margin:0;
+    font-size:1rem;
+}
+h5 {
+    margin:0;
+    font-size:.85rem;
+}
+h6 {
+    margin:0;
+    font-size:.7rem;
+}
+img, video, audio {
+    max-width:100%;
+    height:auto;
+}
+iframe {
+    max-width:100%;
+}
+p { /*altura de la linea sea de 1.6, 
+    tiene que ver un poco con el tamaño de la letra, como un interlineado*/
+    line-height: 1.1;
+}
