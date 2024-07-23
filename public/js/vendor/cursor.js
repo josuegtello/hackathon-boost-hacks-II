@@ -1,7 +1,7 @@
 const d=document;
 const cursor = d.querySelector('.cursor');
 let mouseX = 0,
-    mouseY = 0
+    mouseY = 0;
 export const startCursor=async function(){
     gsap.to({}, 0.016, {
         repeat: -1,
