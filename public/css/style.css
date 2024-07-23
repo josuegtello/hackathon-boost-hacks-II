@@ -41,12 +41,12 @@ html {
 *,*::after,*::before{
     box-sizing: inherit;    
 }
-body {
+body{
     margin:0;
     color:var(--text-color-3);
     background-color:var(--bg-color);
-    cursor: none;
 }
+
 /*enlaces*/
 a {
     text-decoration: none;

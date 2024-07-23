@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SSEM</title> <!--Hay que pensar en un nombre llamativo, tambien el icono que va a tener el sitio-->
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/vendor/navbar.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
@@ -13,17 +15,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Titulo 1</h1>
-    <h2>Titulo 2</h2>
-    <h3>Titulo 3</h3>
-    <h4>Titulo 4</h4>
-    <h5>Titulo 5</h5>
-    <h6>Titulo 6</h6>
-    <p>Texto normal</p>
-    <div class="container">
-        <h2>Titulo</h2>
-        <p>Texto General</p>
-    </div>
+    <!--Genericos-->
+    <div class="cursor"></div>
+    <div data-html="" data-html-action=""></div>
+    <nav data-html="./assets/html/navbar.html" data-html-action="replace"></nav >
+    <main data-html="./assets/html/sign_in.html" data-html-action="replace"></main>
+    <!--Librerias externas-->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.0/gsap.min.js'></script>
+    <!--script principal-->
     <script src="./js/main.js" type="module"></script>
 </body>
 </html>
