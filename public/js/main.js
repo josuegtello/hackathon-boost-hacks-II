@@ -1,9 +1,11 @@
 import {dinamicHTML} from "./vendor/dinamic_html.js";
 import {startCursor,startLinks} from "./vendor/cursor.js";
 import {sleep} from "./vendor/sleep.js";
-const   d=document,
-w=window,
-body=d.body;
+import { initializeLogin } from "./vendor/log_in.js";
+
+const   d = document,
+        w = window,
+        body = d.body;
 
 //Funciones generales
 const getHTMLElements=function(){
@@ -55,4 +57,6 @@ d.addEventListener('DOMContentLoaded',async e=>{
         const $target=e.target;
         
     });
+    await sleep(1000);
+    initializeLogin();
 })
