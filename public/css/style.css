@@ -28,7 +28,7 @@
     --font:sans-serif;
 
     /*alto de la cabecera*/
-    --header-height:5rem;
+    --header-height:5rem; 
 }
 /*********Reseto CSS*********/
 /*reseteado de modelo de caja*/
@@ -45,6 +45,7 @@ body {
     margin:0;
     color:var(--text-color-3);
     background-color:var(--bg-color);
+    cursor: none;
 }
 /*enlaces*/
 a {
