@@ -14,7 +14,6 @@ export const startCursor=async function(){
             })
         }
     });
-    console.log(cursor);
     window.addEventListener("mousemove", function (e) {
         mouseX = e.clientX;
         mouseY = e.clientY

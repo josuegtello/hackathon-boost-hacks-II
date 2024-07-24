@@ -1,3 +1,37 @@
 [
-    
+  {
+    "id": "fd1c9495-be4f-4b9a-a5ef-a9426a9f529e",
+    "name": "Gerardo Guzman",
+    "email": "josuegtello2@gmail.com",
+    "password": "lalopop123456",
+    "devices": []
+  },
+  {
+    "id": "e1d3e9a6-e1fe-4d85-b11f-a515e3e62945",
+    "name": "Gerardo Josue",
+    "email": "guzman.tello.gerardo.josue@gmail.com",
+    "password": "gerardo2004$",
+    "devices": []
+  },
+  {
+    "id": "8c091bd5-9508-46ca-8c72-4bed290328b0",
+    "name": "",
+    "email": "",
+    "password": "",
+    "devices": []
+  },
+  {
+    "id": "4d0fabb0-6ae6-47b9-b5ab-d4161f019c53",
+    "name": "Gerardo Tello",
+    "email": "josuegtello@gmail.com",
+    "password": "pepeTo;o",
+    "devices": []
+  },
+  {
+    "id": "30419183-ca55-4919-8c8d-ee87b1823100",
+    "name": "Hector Ramses",
+    "email": "ramsesGt17@gmail.com",
+    "password": "pepeTo;o",
+    "devices": []
+  }
 ]

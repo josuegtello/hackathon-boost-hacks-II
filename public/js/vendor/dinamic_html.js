@@ -29,6 +29,4 @@ export const dinamicHTML=async function(set){
         console.error('Ocurrio un problema con tu peticion fetch',err);
         error(err);
     }
-    
-
 }

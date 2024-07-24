@@ -9,7 +9,7 @@ const lookup = require("mime-types").lookup;
 const express=require("express");
 const { body, validationResult } = require('express-validator');
 //importamos rutas
-const login=require("./routes/log_in");
+const signUp=require("./routes/sign_up");
 
 
 
@@ -39,7 +39,7 @@ app.use(express.static(path.join(__dirname + '/public')));
 // Middleware para parsear los datos que recibamos
 app.use(express.urlencoded({ extended: true })); // Para datos de formularios URL-encoded
 app.use(express.json()); // Para datos en formato JSON
-app.use("/login",login);
+app.use("/sign-up",signUp);
 
 //cuando la ruta no pertenezca a una definida lanzaremos un estado de respuesta 404
 
@@ -50,6 +50,8 @@ app.use((req,res)=>{
 //todas nuestras peticiones http las haremos en el puerto 80
 app.listen(80,()=>{ 
     console.log("Listen HTTP port")
+    console.log("Routes:");
+    console.log("/sign-up Ruta para registrarte")
 })
 
 
