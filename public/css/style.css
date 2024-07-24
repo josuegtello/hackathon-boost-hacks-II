@@ -13,8 +13,13 @@
     --container-color-6:#4361ee;
     --container-color-7:#4895ef;
     --container-color-8:#4B227A;
+    --container-color-9:#ad7ce6;
     /*colores secundarios*/
     --color-1:#f72585;
+
+    /*colores de sombras */
+    --color-shadow-1: #aeafb8; 
+    --color-shadow-2: #0000001a;
 
     /*color de texto*/
     --text-color-1:#4cc9f0;
@@ -34,9 +39,10 @@
 /*reseteado de modelo de caja*/
 html {
     box-sizing: border-box;
-    font-family:var(--font);
+    font-family:var(--font-text);
     font-size:16px;/*definir explicitamente lo que va a equivaler 1rem*/
     scroll-behavior: smooth;/*efecto de animacion del scroll*/
+    cursor: none;
 }
 *,*::after,*::before{
     box-sizing: inherit;    
