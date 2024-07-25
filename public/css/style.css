@@ -17,9 +17,21 @@
     /*colores secundarios*/
     --color-1:#f72585;
 
+    /*colores de notificaciones*/
+    --success:#560BAD;
+    --error:#f72585;
+    --warning:#ad7ce6;
+    --info: #4361ee;
+
+    /*colores de sombras de contenedores*/
+    --box-shadow-1:#f4f5ff1a;
+    --box-shadow-2:#f4f5ff14;
+    --box-shadow-3:#f1f1f1;
+    --box-shadow-4:#d1bcea;
+
     /*colores de sombras */
-    --color-shadow-1: #aeafb8; 
-    --color-shadow-2: #0000001a;
+    --color-shadow-1:#aeafb8; 
+    --color-shadow-2:#0000001a;
 
     /*color de texto*/
     --text-color-1:#4cc9f0;
@@ -99,4 +111,10 @@ iframe {
 p { /*altura de la linea sea de 1.6, 
     tiene que ver un poco con el tamaño de la letra, como un interlineado*/
     line-height: 1.1;
+}
+input[type="password"]::-ms-reveal, /* Para navegadores de Microsoft */
+input[type="password"]::-ms-clear,   /* Para navegadores de Microsoft */
+input[type="password"]::-webkit-credentials-auto-fill-button, /* Para navegadores basados en WebKit */
+input[type="password"]::-webkit-textfield-decoration-container { /* Para navegadores basados en WebKit */
+cursor: none;
 }

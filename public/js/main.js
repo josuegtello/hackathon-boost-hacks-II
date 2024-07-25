@@ -3,6 +3,7 @@ import {startCursor,startLinks} from "./vendor/cursor.js";
 import {sleep} from "./vendor/sleep.js";
 import {initializeLogin} from "./vendor/log_in.js";
 import {fetchRequest} from "./vendor/fetch_request.js";
+import {initializeToast} from "./vendor/notification.js";
 
 
 const   d = document,
@@ -88,7 +89,8 @@ const redirects=async function($el,e){
 d.addEventListener('DOMContentLoaded',async e=>{
     startCursor();
     getHTMLElements();
-    
+    initializeToast();
+
     body.addEventListener('click',(e)=>{
         const $target=e.target;
         
