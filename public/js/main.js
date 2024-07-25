@@ -58,17 +58,48 @@ const redirects=async function($el,e){
         credentials:'include',
         async success(response){
             if(response.ok){    //200-299
-                const $main=d.querySelector('main'),
+                const redirect=$el.getAttribute('data-redirect')
+                if(redirect=='replace-main'){   //cuando el atributo tenga esta valor remplazara la etiqueta main
+                    console.log('Remplazando etiqueta main')
+                    const $main=d.querySelector('main'),
                     $html=await response.text();
-                $main.outerHTML=$html;
-                //es estos if inicializamos los datos
-                if(url.includes('log_in')){
-                    console.log('log in obtenido')
-                    initializeLogin();
+                    $main.outerHTML=$html;
+                    //es estos if inicializamos los datos
+                    if(url.includes('log_in')){
+                        console.log('log in obtenido')
+                        initializeLogin();
+                    }
+                    else if(url.includes('home_page')){
+                        console.log('home page obtenido')
+                        //funcion para inicializar los eventos del home page
+                    }
                 }
-                else if(url.includes('home_page')){
-                    console.log('home page obtenido')
-                    //funcion para inicializar los eventos del home page
+                else if(redirect=='submenu'){   //cuando tenga este valor nos traera un submenu de ese enlace
+                    console.log('Insertando submenu');
+                    const   submenu=await response.text(),
+                            rect = $el.getBoundingClientRect(),
+                            $aux=d.createElement('div');
+                    $aux.innerHTML=submenu;
+                    
+                    if(url.includes('profile_drop')){   
+                        const $submenu=$aux.querySelector('.container-profile'); 
+                        $submenu.style.setProperty('left',`${rect.right}px`);
+                        $el.setAttribute('data-state','showing');
+                        body.appendChild($submenu);
+                    }
+                    else if(url.includes('notification_menu')){
+                        const $submenu=$aux.querySelector('.notify-menu');
+                        $submenu.style.setProperty('left',`${rect.right + rect.width}px`);
+                        $el.setAttribute('data-state','showing');
+                        body.appendChild($submenu);
+                    }
+                    console.log(rect);
+                    console.log('Top:', rect.top);
+                    console.log('Left:', rect.left);
+                    console.log('Right',rect.right);
+                    console.log('Buttom',rect.buttom);
+                    console.log('Width:', rect.width);
+                    console.log('Height:', rect.height);
                 }
             }
             else{//300-499
@@ -84,7 +115,10 @@ const redirects=async function($el,e){
 
 }
 
-
+function removeElement(e){
+    const $target=e.target;
+    $target.remove();
+}
 
 d.addEventListener('DOMContentLoaded',async e=>{
     startCursor();
@@ -93,10 +127,41 @@ d.addEventListener('DOMContentLoaded',async e=>{
 
     body.addEventListener('click',(e)=>{
         const $target=e.target;
-        
         if($target.matches('[data-redirect]')||($target.matches('[data-redirect] *'))){//para los enlaces del nav
             console.log("redireccionando...");
+            e.preventDefault();
+            //para los que muestren submenus
+            console.log($target.closest('a').getAttribute('data-state'))
+            if($target.closest('[data-redirect]').getAttribute('data-state')=='showing'){  //queremos ocultar el menu
+                const $submenu=d.querySelector('.submenu'),
+                    $link=$target.closest('[data-redirect]');
+                $submenu.classList.add('submenu-out');
+                $submenu.addEventListener('animationend',removeElement);
+                $link.setAttribute('data-state','hidden');
+                return;
+            }
+            else{   //es otro menu igual removemos el submenu
+                const $submenu=d.querySelector('.submenu'),
+                        $link=d.querySelector('[data-state="showing"]');
+                if($link){
+                    $link.setAttribute('data-state','hidden');
+                    console.log($link)
+                    if($submenu) {
+                        $submenu.classList.add('submenu-out');
+                        $submenu.addEventListener('animationend',removeElement);
+                    }
+                }
+                
+            }
             redirects($target.closest("[data-redirect]"),e);
-        } 
+        }
+        //verificacion de los submenus, si existe y le di click a alguna otra cosa lo remuevo
+        if(d.querySelector('.submenu')&&($target!=d.querySelector("[data-state='showing']"))){
+            const $submenu=d.querySelector('.submenu'),
+            $link=d.querySelector("[data-state='showing']");
+            if($link)$link.setAttribute('data-state','hidden');
+            $submenu.classList.add('submenu-out');
+            $submenu.addEventListener('animationend',removeElement);
+        }
     });
 })
