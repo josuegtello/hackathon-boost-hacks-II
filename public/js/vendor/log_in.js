@@ -54,10 +54,6 @@ function submitFom(e){
           const data=await response.json();
           console.log('Informacion recibida');
           console.log(data);
-          
-
-
-
         }
         else{
           console.log(response);
