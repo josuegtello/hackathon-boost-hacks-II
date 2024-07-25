@@ -21,7 +21,7 @@ const toastDetails = {
 
 
 export async function initializeToast() {
-        buttons = d.querySelectorAll(".buttons .btn");
+    const buttons = d.querySelectorAll(".buttons .btn");
     buttons.forEach(btn => {
         btn.addEventListener("click", () => createToast(btn.id));
     });

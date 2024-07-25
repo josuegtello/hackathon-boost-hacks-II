@@ -8,11 +8,7 @@ export function initializeLogin() {
   const main = d.querySelector("main");
   const bullets = d.querySelectorAll(".bullets span");
   const $submitBtn=d.querySelectorAll('.sign-btn');
-
-
   //Acciones para quitar los inputs de LOG IN y SIGN UP y poner un boton de BACK
-
-  
   inputs.forEach((inp) => {
     inp.addEventListener("focus", () => {
       inp.classList.add("active");
@@ -36,11 +32,15 @@ export function initializeLogin() {
   });
 }
 function submitFom(e){
-  e.preventDefault();
   const $form=e.target.closest('form'),
         host=location.hostname,
         route=$form.getAttribute('action'),
         fd=new FormData($form);
+  const $inputsRequired=$form.querySelector('[required]');
+  $inputsRequired.forEach($input => {
+    if($input.value=='') return;
+  });
+  e.preventDefault();
   console.log(`Enviando formulario a http://${host}:80${route}`);
   fetchRequest({
       method:'POST',
@@ -54,6 +54,10 @@ function submitFom(e){
           const data=await response.json();
           console.log('Informacion recibida');
           console.log(data);
+          
+
+
+
         }
         else{
           console.log(response);
