@@ -13,16 +13,16 @@ router
         const   errors=validationResult(req),
                 answer={};
         let validation=false;
-        if (!errors.isEmpty()) {
+        if (!errors.isEmpty()) {  //validamos si lo que recibimos no esta vacio, si no lanzamos un 400
             // Si hay errores, devuélvelos al cliente
-            return res.status(400).json({ errors: errors.array() });
+            return res.status(400).json({response:'Invalid data format',errors: errors.array() });
         }
         //leemos el archivo de nuestra base de datos
         fs.readFile('./data_base/users.json','utf-8',(err,jsonString)=>{  //funcion no bloqueante para leer
             if(err){//lanzar estado de error
               console.log(err);
               answer.response='Error creating user, try again';
-              res.status(400);
+              res.status(500);
               res.send(JSON.stringify(answer));
             }
             else{ //aqui ponemos todo lo que queramos
@@ -32,6 +32,16 @@ router
                 //console.log(req.body)
                 const {name,password,email}=req.body;  //obtenemos los datos de usuario por destructuracion
                 console.log('data recibida',name,password,email);
+                if(!name || !password || !email){ //si algunos de los datos no existe
+                  res.status(400);
+                  res.send(JSON.stringify({response:"Invalida data format"}));
+                  return;
+                }
+                if(name=="" || password=="" || email==""){ //si alguno de los datos esta vacio
+                  res.status(400);
+                  res.send(JSON.stringify({response:"Invalida data format"}));
+                  return;
+                }
                 data.forEach(user => {  //verificamos si el nombre de usuario o correo ya existen
                   if(user.name==name){  //tenemos un nombre de usuario igual
                     validation=true;
@@ -46,7 +56,7 @@ router
                   console.log('Data repetida, respuesta a enviar');
                   answer.response='Repeated data';
                   console.log(answer);
-                  res.status(200);
+                  res.status(422);
                   res.send(JSON.stringify(answer));
                 }
                 else{ //escribimos en nuestro archivo JSON
@@ -68,7 +78,7 @@ router
                       console.log(err);
                       answer.response='Error creating user, try again';
                       answer.credentials=null;  //anulamos las credenciales hubo un error
-                      res.status(400);
+                      res.status(500);
                       res.send(JSON.stringify(answer));
                     }
                     else{
@@ -84,7 +94,7 @@ router
               catch (err) {
                 console.log('Error parsing JSON',err) ;
                 answer.response='Error creating user, try again';
-                res.status(400);
+                res.status(500);
                 res.send(JSON.stringify(answer));
               }
               
@@ -92,7 +102,6 @@ router
         })
 
     })
-
 function uuidv4() { //genero un ID unico para cada cliente wenSocket que tenga para poder identificarlos
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
       let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);

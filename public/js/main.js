@@ -137,7 +137,6 @@ const redirects=async function($el,e){
             console.log(err);
         }
     })
-
 }
 
 function removeElement(e){

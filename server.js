@@ -10,8 +10,7 @@ const express=require("express");
 const { body, validationResult } = require('express-validator');
 //importamos rutas
 const signUp=require("./routes/sign_up");
-
-
+const signIn=require("./routes/sign_in");
 
 //obtenemos la direccion IP de nuestro servidor para acceder a el desde cualquier dispositivo
 function getLocalIpAddress() {
@@ -25,11 +24,14 @@ function getLocalIpAddress() {
       }
     }
     return null;
-}
-  
+}  
 const localIpAddress = getLocalIpAddress();
 console.log('Dirección IP local:', localIpAddress);
 console.log("http port:80");
+
+//Configuracion de la sesion
+
+
 
 //para el servicio de html estatico
 const app=express();
@@ -40,6 +42,7 @@ app.use(express.static(path.join(__dirname + '/public')));
 app.use(express.urlencoded({ extended: true })); // Para datos de formularios URL-encoded
 app.use(express.json()); // Para datos en formato JSON
 app.use("/sign-up",signUp);
+app.use("/sign-in",signIn);
 
 //cuando la ruta no pertenezca a una definida lanzaremos un estado de respuesta 404
 
@@ -52,11 +55,8 @@ app.listen(80,()=>{
     console.log("Listen HTTP port")
     console.log("Routes:");
     console.log("/sign-up Ruta para registrarte")
+    console.log("/sign-in Ruta para iniciar sesion");
 })
-
-
-
-
 
 
 //WebSocket
@@ -70,57 +70,54 @@ function uuidv4() { //genero un ID unico para cada cliente wenSocket que tenga p
       var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
+}
+serverWS.on("connection",(ws,req)=>{
+  const id=uuidv4(),  //genero el ID
+        color=Math.floor(Math.random()* 360),   //genero un color aleatorio
+        metadata={id,color};    //creo un objeto con este metadata
+  clients.set(ws,metadata);   //en la variable clients almaceno al nuevo cliente y aparte su metadata de identificacion
+  //debug(clients)
+  const callback={    //siempre que enviemos informacion se la mandaremos en forma de texto, este es un objeto
+      issue:'CONNECTION_SUCCESFULL',  //le informamos que su conexion a sido exitosa y le mandamos el ID que se le asigno
+      id:id,
   }
-  serverWS.on("connection",(ws,req)=>{
-    const id=uuidv4(),  //genero el ID
-            color=Math.floor(Math.random()* 360),   //genero un color aleatorio
-            metadata={id,color};    //creo un objeto con este metadata
-    clients.set(ws,metadata);   //en la variable clients almaceno al nuevo cliente y aparte su metadata de identificacion
-    //debug(clients)
-    const callback={    //siempre que enviemos informacion se la mandaremos en forma de texto, este es un objeto
-        issue:'CONNECTION_SUCCESFULL',  //le informamos que su conexion a sido exitosa y le mandamos el ID que se le asigno
-        id:id,
-    }
-    ws.send(JSON.stringify(callback)); //su primer conexion, le mandamos el id que le asigno node
+  ws.send(JSON.stringify(callback)); //su primer conexion, le mandamos el id que le asigno node
 
-    ws.on('error',()=>{ //si tenemos un error en conexion con alguno de los clientes el servidor nos informara el error
-        console.error();
-    })
-    ws.on('close',()=>{ //si el cliente webSocket se ha desconectado
-        debug('disconnected');
-        //debug(master.get(ws));
-        //const metadataM=master.get(ws);
-        //const metadata=clients.get(ws);
-        //debug(metadataM);
-        //debug(master);
+  ws.on('error',()=>{ //si tenemos un error en conexion con alguno de los clientes el servidor nos informara el error
+    console.error();
+  })
+  ws.on('close',()=>{ //si el cliente webSocket se ha desconectado
+      debug('disconnected');
+      //debug(master.get(ws));
+      //const metadataM=master.get(ws);
+      //const metadata=clients.get(ws);
+      //debug(metadataM);
+      //debug(master);
 
-        clients.delete(ws); //eliminamos al cliente de la lista
+      clients.delete(ws); //eliminamos al cliente de la lista
+  });
+  ws.on('message',(message)=>{    //cuando el cliente manga algun mensaje al servidor
+    const data=JSON.parse(message);
+    const metadata=clients.get(ws);
+    debug("Mensaje recibido")
+    debug(data);
+    debug("metadata del cliente")
+    debug(metadata);
+    //message.sender = metadata.id;
+    //message.color = metadata.color;
+    //debug(data);
+    /*
+      Estructura basica de los mensaje
+      data{
+        issue:'Motivo del mensaje'
+        message:'mensaje'
+      }
+    */
+    //const outbound = JSON.stringify(data);
+    /* POR SI SE LO NECESITO MANDAR A todos los clientes
+    [...clients.keys()].forEach((client) => {
+      client.send(outbound);
     });
-    ws.on('message',(message)=>{    //cuando el cliente manga algun mensaje al servidor
-        const data=JSON.parse(message);
-        const metadata=clients.get(ws);
-        debug("Mensaje recibido")
-        debug(data);
-        debug("metadata del cliente")
-        debug(metadata);
-        //message.sender = metadata.id;
-        //message.color = metadata.color;
-        //debug(data);
-        /*
-            Estructura basica de los mensaje
-            data{
-                issue:'Motivo del mensaje'
-                message:'mensaje'
-            }
-        */
-
-
-
-        //const outbound = JSON.stringify(data);
-        /* POR SI SE LO NECESITO MANDAR A todos los clientes
-        [...clients.keys()].forEach((client) => {
-        client.send(outbound);
-        });
-        */
-    });
+      */
+  });
 });

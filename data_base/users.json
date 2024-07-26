@@ -40,5 +40,12 @@
     "email": "guzman.teyo.gerardo.josue@gmail.com",
     "password": "gerardo2004$",
     "devices": []
+  },
+  {
+    "id": "f0c9d961-12e9-4f7a-a788-0f3416422a53",
+    "name": "Josue Guzman",
+    "email": "lalopop@gmail.com",
+    "password": "pepito",
+    "devices": []
   }
 ]

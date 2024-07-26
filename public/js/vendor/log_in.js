@@ -36,11 +36,16 @@ function submitFom(e){
         host=location.hostname,
         route=$form.getAttribute('action'),
         fd=new FormData($form);
-  const $inputsRequired=$form.querySelector('[required]');
+  const $inputsRequired=$form.querySelectorAll('[required]');
+  let validation=false;
   $inputsRequired.forEach($input => {
-    if($input.value=='') return;
+    console.log($input.value);
+    if($input.value=='') {
+      validation=true;
+    }
   });
-  e.preventDefault();
+  if(validation==true) return;
+  else e.preventDefault();
   console.log(`Enviando formulario a http://${host}:80${route}`);
   fetchRequest({
       method:'POST',
@@ -49,26 +54,22 @@ function submitFom(e){
       contentType:'application/x-www-form-urlencoded',
       data:new URLSearchParams(fd).toString(),
       async success(response){
+        const data=await response.json();
         console.log(`Estado de respuesta ${response.status}`);
-        if(response.ok){
-          const data=await response.json();
-          console.log('Informacion recibida');
-          console.log(data);
+        console.log('Informacion recibida');
+        console.log(data);
+        if(response.ok){  //para respuestas 200
           
-
-
-
         }
-        else{
-          console.log(response);
+        else{ //para respuesta diferentes de la 200-299
+          
         }
       },
       async error(err){
         console.log('ha ocurrido un error');
-        console.log(err)
+        console.log(err);
       }
   });
-
 }
 function moveSlider() {
   const bullets = d.querySelectorAll(".bullets span"),
@@ -77,10 +78,8 @@ function moveSlider() {
   let currentImage = d.querySelector(`.img-${index}`);
   images.forEach((img) => img.classList.remove("show"));
   currentImage.classList.add("show");
-
   const textSlider = d.querySelector(".text-group");
   textSlider.style.transform = `translateY(${-(index - 1) * 2.2}rem)`;
-
   bullets.forEach((bull) => bull.classList.remove("active"));
   this.classList.add("active");
 }
