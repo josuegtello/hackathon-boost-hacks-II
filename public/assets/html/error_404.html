@@ -1,12 +1,5 @@
 <main class="main-error">
   <section class="containers">
-    <article class="container-image">
-        
-      <div class="image">
-        <img src="./assets/img/404Error.png" alt="Error 404">
-      </div>
-    </article>
-
     <article class="container-info">
       <div class="container-text">
         <h1 class="title-text">404!</h1>
@@ -18,9 +11,15 @@
       </div>
 
       <div class="btn">
-        <a href="./public/assets/html/home_page.html" class="link-btn"
-          >Go Home</a
-        >
+        <a href="./assets/html/home_page.html" data-redirect="replace-main" class="link-btn cursor-scale small">
+          Go Home
+        </a>
+      </div>
+    </article>
+    <article class="container-image">
+        
+      <div class="error-image">
+        <img src="./assets/img/404Error.png" alt="Error 404" class="cursor-scale">
       </div>
     </article>
   </section>

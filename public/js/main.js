@@ -32,6 +32,12 @@ const getHTMLElements=function(){
                     else if(action=='insert'){
                         el.appendChild($html)
                     }
+                    else if(action=='save'){
+                        const name=el.getAttribute('data-name');
+                        const item=sessionStorage.getItem(name);
+                        if(!item) sessionStorage.setItem(name,$html);
+                        el.remove();
+                    }
                     startLinks();
                 }
                 else{ //300-499
@@ -93,6 +99,7 @@ const redirects=async function($el,e){
                         $el.setAttribute('data-state','showing');
                         body.appendChild($submenu);
                     }
+                    /*
                     console.log(rect);
                     console.log('Top:', rect.top);
                     console.log('Left:', rect.left);
@@ -100,12 +107,30 @@ const redirects=async function($el,e){
                     console.log('Buttom',rect.buttom);
                     console.log('Width:', rect.width);
                     console.log('Height:', rect.height);
+                    */
                 }
             }
             else{//300-499
                 console.log(`Estado de error ${response.status}`);
-                console.log(response)
+                console.log(response);
+                const $main=d.querySelector('main');
+                if($main){
+                    const error404=sessionStorage.getItem('Error 404'),
+                          $aux=d.createElement('div');
+                    $aux.innerHTML=error404;
+                    const $newMain=$aux.querySelector('main');
+                    $main.replaceWith($newMain)
+                }
+                else{
+                    const error404=sessionStorage.getItem('Error 404'),
+                          $aux=d.createElement('div');
+                    //PD: Intente hacerlo con fragmentos y no pude jajaja
+                    $aux.innerHTML=error404;
+                    const $newMain=$aux.querySelector('main');
+                    body.appendChild($newMain)
+                }
             }
+            startLinks();
         },
         async error(err){   //500
             console.log('Error en la obtencion de datos');
