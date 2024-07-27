@@ -88,17 +88,24 @@ const redirects=async function($el,e){
                     $aux.innerHTML=submenu;
                     
                     if(url.includes('profile_drop')){   
-                        const $submenu=$aux.querySelector('.container-profile'); 
+                        const $submenu=$aux.querySelector('.submenu'); 
                         $submenu.style.setProperty('left',`${rect.right}px`);
                         $el.setAttribute('data-state','showing');
                         body.appendChild($submenu);
                     }
                     else if(url.includes('notification_menu')){
-                        const $submenu=$aux.querySelector('.notify-menu');
+                        const $submenu=$aux.querySelector('.submenu');
                         $submenu.style.setProperty('left',`${rect.right + rect.width}px`);
                         $el.setAttribute('data-state','showing');
                         body.appendChild($submenu);
                     }
+                    else if(url.includes('another_menu')){
+                        const $submenu=$aux.querySelector('.submenu');
+                        $submenu.style.setProperty('left',`${rect.right + rect.width}px`);
+                        $el.setAttribute('data-state','showing');
+                        body.appendChild($submenu);
+                    }
+
                     /*
                     console.log(rect);
                     console.log('Top:', rect.top);
