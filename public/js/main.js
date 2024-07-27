@@ -1,9 +1,9 @@
 import {dinamicHTML} from "./vendor/dinamic_html.js";
 import {startCursor,startLinks} from "./vendor/cursor.js";
 import {sleep} from "./vendor/sleep.js";
-import {initializeLogin} from "./vendor/log_in.js";
+import {initializeLogin, loadUserNavbar} from "./vendor/log_in.js";
 import {fetchRequest} from "./vendor/fetch_request.js";
-import {initializeToast} from "./vendor/notification.js";
+import {initializeToast, createToast} from "./vendor/notification.js";
 
 
 const   d = document,
@@ -150,11 +150,35 @@ function removeElement(e){
     const $target=e.target;
     $target.remove();
 }
+//Petición fetch de notificación
+/*
+const fetchNotification = async function() {
+        fetchRequest({
+            async success(response) {
+                if (response.ok) {
+                    const data = await response.json();
+                    createToast(data.type, data.title, data.text, data.imageUrl);
+                } else {
+                    console.log(`Estado de error ${response.status}`);
+                    console.log(response);
+                }
+            },
+            async error(err) {
+                console.log('Error en la obtención de datos');
+                console.error(err);
+            }
+        });   
+};
+*/
 
 d.addEventListener('DOMContentLoaded',async e=>{
     startCursor();
     getHTMLElements();
+    //Funcion de los Botones
     initializeToast();
+
+    // Fetch a notification ejemplo
+    fetchNotification();
 
     body.addEventListener('click',(e)=>{
         const $target=e.target;
@@ -185,14 +209,6 @@ d.addEventListener('DOMContentLoaded',async e=>{
                 
             }
             redirects($target.closest("[data-redirect]"),e);
-        }
-        //verificacion de los submenus, si existe y le di click a alguna otra cosa lo remuevo
-        if(d.querySelector('.submenu')&&($target!=d.querySelector("[data-state='showing']"))){
-            const $submenu=d.querySelector('.submenu'),
-            $link=d.querySelector("[data-state='showing']");
-            if($link)$link.setAttribute('data-state','hidden');
-            $submenu.classList.add('submenu-out');
-            $submenu.addEventListener('animationend',removeElement);
-        }
+        } 
     });
 })
