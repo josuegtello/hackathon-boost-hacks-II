@@ -1,9 +1,9 @@
 import {dinamicHTML} from "./vendor/dinamic_html.js";
 import {startCursor,startLinks} from "./vendor/cursor.js";
 import {sleep} from "./vendor/sleep.js";
-import {initializeLogin} from "./vendor/log_in.js";
+import {initializeLogin, loadUserNavbar} from "./vendor/log_in.js";
 import {fetchRequest} from "./vendor/fetch_request.js";
-import {initializeToast} from "./vendor/notification.js";
+import {initializeToast, createToast} from "./vendor/notification.js";
 
 
 const   d = document,
@@ -84,19 +84,50 @@ const redirects=async function($el,e){
 
 }
 
-
+//Petición fetch de notificación
+/*
+const fetchNotification = async function() {
+        fetchRequest({
+            async success(response) {
+                if (response.ok) {
+                    const data = await response.json();
+                    createToast(data.type, data.title, data.text, data.imageUrl);
+                } else {
+                    console.log(`Estado de error ${response.status}`);
+                    console.log(response);
+                }
+            },
+            async error(err) {
+                console.log('Error en la obtención de datos');
+                console.error(err);
+            }
+        });   
+};
+*/
 
 d.addEventListener('DOMContentLoaded',async e=>{
     startCursor();
     getHTMLElements();
+    //Funcion de los Botones
     initializeToast();
+
+    // Fetch a notification ejemplo
+    fetchNotification();
 
     body.addEventListener('click',(e)=>{
         const $target=e.target;
         
-        if($target.matches('[data-redirect]')||($target.matches('[data-redirect] *'))){//para los enlaces del nav
+        if($target.matches('[data-redirect]')||($target.matches('[data-redirect] *'))){
             console.log("redireccionando...");
             redirects($target.closest("[data-redirect]"),e);
         } 
     });
+
+    /* Home page*/
+    d.addEventListener('loadHomePage', () => {
+        const url = './assets/html/home_page.html';
+        redirects({ getAttribute: () => url }, { preventDefault: () => {} });
+    });
+
+    await loadUserNavbar();
 })
