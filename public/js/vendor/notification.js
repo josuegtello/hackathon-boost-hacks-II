@@ -1,6 +1,5 @@
 const d = document;
 const $notifications = d.querySelector(".notifications");
-const $notifyMenu = d.querySelector(".notify-items"); // Contenedor del menu de notificaciones
 const toastDetails = {
     timer: 5000,
    success : {
@@ -34,6 +33,7 @@ export const removeToast = (toast) => {
 }
 
 export const createToast = (id, title = '', text = '') => {
+    
     const { icon } = toastDetails[id];
     const toast = d.createElement("li");
     toast.className = `toast ${id}`;
@@ -50,13 +50,18 @@ export const createToast = (id, title = '', text = '') => {
     $notifications.appendChild(toast);
     toast.timeoutId = setTimeout(() => removeToast(toast), toastDetails.timer);
 
-    // Añadir la notificacion al menu
-    addNotificationToMenu(id, title, text);
+    //si ya esta registrado lo guardamos en su muro
+    const data=sessionStorage.getItem('credentials');
+    if(data){
+        // Añadir la notificacion al menu
+        addNotificationToMenu(id, title, text);
+    }
 }
 
 // Notificasiones del menu
 const addNotificationToMenu = (title, text, imageUrl) => {
-    const notifyItem = d.createElement("div");
+    const notifyItem = d.createElement("div"),
+          $notifyMenu = d.querySelector(".notify-items"); // Contenedor del menu de notificaciones
     notifyItem.className = "notify-item";
     notifyItem.innerHTML = `
         <figure class="notify-img">

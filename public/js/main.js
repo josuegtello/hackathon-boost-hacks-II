@@ -76,7 +76,8 @@ const redirects=async function($el,e){
                         initializeLogin();
                     }
                     else if(url.includes('home_page')){
-                        console.log('home page obtenido')
+                        console.log('home page obtenido');
+
                         //funcion para inicializar los eventos del home page
                     }
                 }
@@ -105,7 +106,6 @@ const redirects=async function($el,e){
                         $el.setAttribute('data-state','showing');
                         body.appendChild($submenu);
                     }
-
                     /*
                     console.log(rect);
                     console.log('Top:', rect.top);
@@ -178,13 +178,13 @@ d.addEventListener('DOMContentLoaded',async e=>{
     initializeToast();
 
     // Fetch a notification ejemplo
-    fetchNotification();
+    //fetchNotification();
 
     body.addEventListener('click',(e)=>{
         const $target=e.target;
+        console.log($target);
         if($target.matches('[data-redirect]')||($target.matches('[data-redirect] *'))){//para los enlaces del nav
             console.log("redireccionando...");
-            e.preventDefault();
             //para los que muestren submenus
             console.log($target.closest('a').getAttribute('data-state'))
             if($target.closest('[data-redirect]').getAttribute('data-state')=='showing'){  //queremos ocultar el menu
@@ -193,6 +193,7 @@ d.addEventListener('DOMContentLoaded',async e=>{
                 $submenu.classList.add('submenu-out');
                 $submenu.addEventListener('animationend',removeElement);
                 $link.setAttribute('data-state','hidden');
+                e.preventDefault();
                 return;
             }
             else{   //es otro menu igual removemos el submenu
@@ -210,5 +211,16 @@ d.addEventListener('DOMContentLoaded',async e=>{
             }
             redirects($target.closest("[data-redirect]"),e);
         } 
+
+        if(d.querySelector('.submenu')){
+            const $submenu=d.querySelector('.submenu'),
+                  $link=d.querySelector('[data-state="showing"]');
+            if($link){
+                $link.setAttribute('data-state','hidden');
+                console.log($link)
+            }
+            $submenu.classList.add('submenu-out');
+            $submenu.addEventListener('animationend',removeElement);
+        }
     });
 })

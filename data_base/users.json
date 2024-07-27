@@ -61,5 +61,12 @@
     "email": "lalopop@gmail.com",
     "password": "pepito",
     "devices": []
+  },
+  {
+    "id": "bb37c5dc-3122-4468-8ea7-98b6dfdb825d",
+    "name": "Panchito Feliz",
+    "email": "panchito@gmail.com",
+    "password": "perruelOrnitorrinco",
+    "devices": []
   }
 ]
