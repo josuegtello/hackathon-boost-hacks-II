@@ -8,9 +8,11 @@ const path=require('path');
 const lookup = require("mime-types").lookup;
 const express=require("express");
 const { body, validationResult } = require('express-validator');
+const session=require('express-session');
 //importamos rutas
 const signUp=require("./routes/sign_up");
 const signIn=require("./routes/sign_in");
+const signOut=require("./routes/sign_out");
 
 //obtenemos la direccion IP de nuestro servidor para acceder a el desde cualquier dispositivo
 function getLocalIpAddress() {
@@ -29,20 +31,25 @@ const localIpAddress = getLocalIpAddress();
 console.log('Dirección IP local:', localIpAddress);
 console.log("http port:80");
 
-//Configuracion de la sesion
-
-
 
 //para el servicio de html estatico
 const app=express();
-
+//Configuracion del middleware la sesion
+app.use(session({
+  secret:uuidv4(),  //clave secreta para firmar la cooki de la sesion (debe ser segura y unica)
+  resave:false,   //No vuelve a cargar la sesion si no ha sido modificada
+  saveUninitialized:true, //Guarda la sesion nueva aunque no tenga datos
+  cookie:{secure:false} //secure:true requiere HTTPS; 'false' permite HTTP
+}));
 //Ruta donde servira todo el html estatico
 app.use(express.static(path.join(__dirname + '/public')));
 // Middleware para parsear los datos que recibamos
 app.use(express.urlencoded({ extended: true })); // Para datos de formularios URL-encoded
 app.use(express.json()); // Para datos en formato JSON
+//Rutas
 app.use("/sign-up",signUp);
 app.use("/sign-in",signIn);
+app.use("/sign-out",signOut);
 
 //cuando la ruta no pertenezca a una definida lanzaremos un estado de respuesta 404
 
@@ -56,6 +63,7 @@ app.listen(80,()=>{
     console.log("Routes:");
     console.log("/sign-up Ruta para registrarte")
     console.log("/sign-in Ruta para iniciar sesion");
+    console.log("/sign-out Ruta para cerrar sesion")
 })
 
 

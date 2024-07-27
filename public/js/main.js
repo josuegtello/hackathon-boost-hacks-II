@@ -1,10 +1,10 @@
 import {dinamicHTML} from "./vendor/dinamic_html.js";
 import {startCursor,startLinks} from "./vendor/cursor.js";
 import {sleep} from "./vendor/sleep.js";
-import {initializeLogin, loadUserNavbar} from "./vendor/log_in.js";
+import {initializeLogin} from "./vendor/log_in.js";
 import {fetchRequest} from "./vendor/fetch_request.js";
 import {initializeToast, createToast} from "./vendor/notification.js";
-
+import {error404} from "./vendor/error_404.js";
 
 const   d = document,
         w = window,
@@ -118,24 +118,7 @@ const redirects=async function($el,e){
                 }
             }
             else{//300-499
-                console.log(`Estado de error ${response.status}`);
-                console.log(response);
-                const $main=d.querySelector('main');
-                if($main){
-                    const error404=sessionStorage.getItem('Error 404'),
-                          $aux=d.createElement('div');
-                    $aux.innerHTML=error404;
-                    const $newMain=$aux.querySelector('main');
-                    $main.replaceWith($newMain)
-                }
-                else{
-                    const error404=sessionStorage.getItem('Error 404'),
-                          $aux=d.createElement('div');
-                    //PD: Intente hacerlo con fragmentos y no pude jajaja
-                    $aux.innerHTML=error404;
-                    const $newMain=$aux.querySelector('main');
-                    body.appendChild($newMain)
-                }
+                error404();
             }
             startLinks();
         },
@@ -145,41 +128,74 @@ const redirects=async function($el,e){
         }
     })
 }
-
 function removeElement(e){
     const $target=e.target;
     $target.remove();
 }
-//Petición fetch de notificación
-/*
-const fetchNotification = async function() {
-        fetchRequest({
-            async success(response) {
-                if (response.ok) {
-                    const data = await response.json();
-                    createToast(data.type, data.title, data.text, data.imageUrl);
-                } else {
-                    console.log(`Estado de error ${response.status}`);
-                    console.log(response);
-                }
-            },
-            async error(err) {
-                console.log('Error en la obtención de datos');
-                console.error(err);
-            }
-        });   
+//funcion para la notificacion
+const notification = async function(data) {
+        createToast(data.type, data.title, data.text, data.imageUrl);  
 };
-*/
+//funcion para inicio, traera la navbar respectivo y a lo mejor otras licencias que necesitemos
+const startClient=function(){
+    const credentials=sessionStorage.getItem('credentials');
+    let url="";
+    if(credentials){    //si existen hacemos llamado de las cosas del usuario
+        //haremos el llamado al navbar de users
+        url="./assets/html/navbar_users.html";
+        //aqui tambien haremos el llamado de el buzon de notificacion y demas datos que necesite de primera instancia
+    }
+    else{
+        //haremos llamado al navba normal
+        url="./assets/html/navbar.html";
+    }
+    //hacemos la peticion normal
+    fetchRequest({
+        method:'GET',
+        url:url,
+        credentials:'include',
+        contentType:'text/html',
+        data:null,
+        async success(response){
+            if(response.ok){
+                const nav=await response.text(),
+                      $aux=d.createElement('div');
+                $aux.innerHTML=nav;
+                const $nav=$aux.querySelector('nav');
+                if(credentials){
+                    const data=JSON.parse(credentials)
+                    const $user=$nav.querySelector('[data-type="user"] > span');
+                    $user.textContent=data.name;
+                }
+                body.insertAdjacentElement('afterbegin', $nav);
+                initializeToast();
+            }
+            else{
+                createToast('error',`Error ${response.status}`,'Nav not found, please recharge the page');
+            }
+        },
+        async error(err){
+            console.log("Ocurrio un error en la peticion");
+            console.error(err);
+        }
+
+    });
+    
+}
+
+//funcion auxiliar que eliminara la credencial y demas datos de la session en caso de que lo necesitos
+const deleteSessionStorage=function(){
+    sessionStorage.removeItem('credentials');
+    sessionStorage.removeItem('Error 404');
+    sessionStorage.removeItem('Home page');
+}
 
 d.addEventListener('DOMContentLoaded',async e=>{
     startCursor();
+    startClient();
     getHTMLElements();
     //Funcion de los Botones
     initializeToast();
-
-    // Fetch a notification ejemplo
-    //fetchNotification();
-
     body.addEventListener('click',(e)=>{
         const $target=e.target;
         console.log($target);
@@ -211,7 +227,6 @@ d.addEventListener('DOMContentLoaded',async e=>{
             }
             redirects($target.closest("[data-redirect]"),e);
         } 
-
         if(d.querySelector('.submenu')){
             const $submenu=d.querySelector('.submenu'),
                   $link=d.querySelector('[data-state="showing"]');

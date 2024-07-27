@@ -2,7 +2,7 @@ const express=require('express');
 const fs=require("fs");
 const { validationResult } = require('express-validator');
 //const { body, validationResult } = require('express-validator');
-let router=express.Router();
+const router=express.Router();
 //Middleware para parsear los datos que recibamos
 router.use(express.urlencoded({ extended: true })); // Para datos de formularios URL-encoded
 router.use(express.json());
@@ -69,6 +69,12 @@ router
                     devices:[]
                   });
                   //FALTA crear una sesion
+                  req.session.user={
+                    id:id,
+                    name:name,
+                    email:email,
+                    devices:[]
+                  }
                   answer.credentials={
                     name:name,
                   }

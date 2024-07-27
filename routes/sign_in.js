@@ -2,7 +2,7 @@ const express=require('express');
 const fs=require("fs");
 const { validationResult } = require('express-validator');
 //const { body, validationResult } = require('express-validator');
-let router=express.Router();
+const router=express.Router();
 //Middleware para parsear los datos que recibamos
 router.use(express.urlencoded({ extended: true })); // Para datos de formularios URL-encoded
 router.use(express.json());
@@ -46,8 +46,14 @@ router
                   if((user.name==name)&&(user.password==password)){ 
                     validation=true;
                     answer.credentials={name:name};
-                    //falta crear la sesion aqui
-
+                    const {id,email,devices}=user;
+                    //Creamos la sesion
+                    req.session.user={
+                      id:id,
+                      name:name,
+                      email:email,
+                      devices:devices
+                    }
                   }
                 });  
                 if(validation==true){ //procedemos a crear una sesion y enviarle al usuario su "credencial"
