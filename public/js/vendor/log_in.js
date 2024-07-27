@@ -54,10 +54,9 @@ function submitFom(e){
           const data=await response.json();
           console.log('Informacion recibida');
           console.log(data);
-          
-
-
-
+          /*  navbar_users | loadHomepage | clearFormFields */
+          showUserNavbar();
+          loadHomePage();
         }
         else{
           console.log(response);
@@ -70,6 +69,7 @@ function submitFom(e){
   });
 
 }
+/*  Función para la Carousel del LogIn  */
 function moveSlider() {
   const bullets = d.querySelectorAll(".bullets span"),
         images = d.querySelectorAll(".image");
@@ -83,4 +83,48 @@ function moveSlider() {
 
   bullets.forEach((bull) => bull.classList.remove("active"));
   this.classList.add("active");
+}
+
+
+
+/* Función para cargar la home_page */
+function loadHomePage() {
+  const event = new CustomEvent('loadHomePage');
+  document.dispatchEvent(event);
+}
+
+/* Función para mostrar la navbar de usuarios y ocultar la navbar principal */
+function showUserNavbar(username) {
+  const navbarMain = d.getElementById('navbarMainContainer');
+  const navbarUsers = d.getElementById('navbarUsersContainer');
+  const userNameSpan = navbarUsers.querySelector('.user-name');
+  if (navbarMain) navbarMain.style.display = 'none';
+  if (navbarUsers) {
+      navbarUsers.style.display = 'flex';
+      if (userNameSpan) userNameSpan.textContent = username;
+  }
+}
+/* Función para verificar el estado del usuario y cargar la navbar de usuarios si es necesario */
+export async function loadUserNavbar() {
+  const host = location.hostname;
+  fetchRequest({
+      method: 'GET',
+      url: `http://${host}:80${route}`,
+      credentials: 'include',
+      async success(response) {
+          if (response.ok) {
+              const data = await response.json();
+              if (data.isAuthenticated) {
+                  showUserNavbar(data.username);  
+              }
+          } else {
+              console.log(`Estado de error ${response.status}`);
+              console.log(response);
+          }
+      },
+      async error(err) {
+          console.log('Error en la obtención de datos');
+          console.error(err);
+      }
+  });
 }
