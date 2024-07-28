@@ -70,6 +70,13 @@
     "devices": []
   },
   {
+    "id": "7bece5bc-3bfd-4ae1-a232-895a18572528",
+    "name": "Papu",
+    "email": "papu@gmail.com",
+    "password": "papau123",
+    "devices": []
+  },
+  {
     "id": "557d8533-f923-4581-ac9b-38b3e82774d0",
     "name": "Eduardo",
     "email": "eduardo@gmail.com",
