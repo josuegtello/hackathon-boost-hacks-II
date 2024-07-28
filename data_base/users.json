@@ -68,5 +68,12 @@
     "email": "panchito@gmail.com",
     "password": "perruelOrnitorrinco",
     "devices": []
+  },
+  {
+    "id": "7bece5bc-3bfd-4ae1-a232-895a18572528",
+    "name": "Papu",
+    "email": "papu@gmail.com",
+    "password": "papau123",
+    "devices": []
   }
 ]
