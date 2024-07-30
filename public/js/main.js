@@ -5,6 +5,7 @@ import {initializeLogin} from "./vendor/log_in.js";
 import {fetchRequest} from "./vendor/fetch_request.js";
 import {initializeToast, createToast} from "./vendor/notification.js";
 import {error404} from "./vendor/error_404.js";
+import {fqa} from "./vendor/faq.js";
 
 const   d = document,
         w = window,
@@ -88,7 +89,7 @@ const redirects=async function($el,e){
                             $aux=d.createElement('div');
                     $aux.innerHTML=submenu;
                     
-                    if(url.includes('profile_drop')){   
+                    if(url.includes('profile_menu')){   
                         const $submenu=$aux.querySelector('.submenu'); 
                         $submenu.style.setProperty('left',`${rect.right}px`);
                         $el.setAttribute('data-state','showing');
@@ -190,6 +191,31 @@ const deleteSessionStorage=function(){
     sessionStorage.removeItem('Home page');
 }
 
+const deleteCredentials=function(){
+    sessionStorage.removeItem('credentials');
+}
+//funcion de sign out
+function signOut() {
+    fetchRequest({
+        method: 'GET',
+        url: '/sign-out',
+        contentType: 'application/json',
+        credentials: 'include',
+        async success(response) {
+            if (response.ok) {
+                const data = await response.json();
+                if (data.response === 'Sign out successful') {
+                    deleteCredentials();
+                    window.location.reload();
+                } 
+            } 
+        },
+        async error(err) {
+            console.error('Error during sign out:', err);
+        }
+    });
+}
+
 d.addEventListener('DOMContentLoaded',async e=>{
     startCursor();
     startClient();
@@ -237,5 +263,11 @@ d.addEventListener('DOMContentLoaded',async e=>{
             $submenu.classList.add('submenu-out');
             $submenu.addEventListener('animationend',removeElement);
         }
+        if (e.target.matches('#sign-out-btn')) {
+            e.preventDefault();
+            signOut();
+        }
     });
+    await sleep(1000);
+    fqa();
 })

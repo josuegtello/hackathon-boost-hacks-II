@@ -1,10 +1,10 @@
-.banner{
+.banner {
 	width: 100%;
 	margin: auto;
 	padding: 5rem 1rem;
 }
 
-.container-banner{
+.container-banner {
 	position: relative;
 	padding-top: 4rem;
 	display: grid;
@@ -13,13 +13,13 @@
 	gap: 2rem;
 }
 
-.bg-blur{
+.bg-blur {
 	position: absolute;
 	box-shadow: 0 0 3000px 60px var(--color-1);
 	z-index: -1;
 }
 
-.bg-blur-right{
+.bg-blur-right {
 	bottom: 5rem;
 	right: 0;
 }
@@ -82,7 +82,7 @@
 .banner-content h1 span {
 	font-size: 5rem;
 	-webkit-text-fill-color: transparent;
-  	-webkit-text-stroke: 0.1rem var(--text-color-3);
+	-webkit-text-stroke: 0.1rem var(--text-color-3);
 }
 
 .banner-content p {
@@ -103,90 +103,94 @@
 }
 
 .a-start:hover {
-	background-color: var(--container-color-9);
+	background-color: var(--box-shadow-4);
+	color: var(--bg-color);
 }
 
 /*		About Us		*/
 
-.about-us{
+.about-us {
 	width: 100%;
 	height: auto;
-	margin-top: 4.5rem;
 }
 
-.container-about-us{
+.container-about-us {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 }
 
-.about-us-img{
+.about-us-img {
 	padding: 2rem;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
-.about-us-img img{
-	width:100%;
+.about-us-img img {
+	width: 100%;
 	height: 100%;
 }
 
-.about-us-info{
+.about-us-info {
 	padding: 2rem;
 }
 
-.about-us-info h2{
+.about-us-info h2 {
 	font-family: var(--font-title);
-	font-size: 3rem;
+	font-size: 3.5rem;
 	text-transform: capitalize;
 	color: var(--text-color-3);
 }
 
-.about-us-info h3{
+.about-us-info h3 {
 	font-size: 1rem;
 	color: var(--color-1);
 }
 
-.about-us-info p{
+.about-us-info p {
 	text-align: left;
 	line-height: 1.7rem;
 }
 
-.about-us-social-icons{
+.about-us-social-icons {
 	display: flex;
-	justify-content: space-between;
+	justify-content: space-around;
 	padding: 1rem;
 }
 
-.about-us-social-icons .social-icon:hover{
-  transform: translateY(-0.4rem);
-  box-shadow: 0 0.5rem 0.8rem var(--color-shadow-2);
-  color: var(--color-1);
-}
-
-.about-us-social-icons a{
+.about-us-social-icons .about-us-icon {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 3rem;
-	height: 3rem;
+	width: 2.8rem;
+	height: 2.8rem;
 	border-radius: 50%;
 	background-color: var(--text-color-3);
+	box-shadow: 0 0.2rem 0.25rem var(--container-color-4);
+	transition: transform 0.2s, box-shadow 0.2s;
+	text-decoration: none;
+	color: var(--bg-color);
 }
 
-.social-icon{
-	color: var(--container-color-8);
+.about-us-social-icons .about-us-icon:hover {
+	transform: translateY(-0.4rem);
+	color: var(--container-color-9);
+	box-shadow: 0 0.4rem 0.5rem var(--container-color-4);
+}
+
+.about-us-social-icons .about-us-icon i {
 	font-size: 1.5rem;
 }
 
-.bg-blur-about-us{
+
+.bg-blur-about-us {
 	position: absolute;
 	top: 75rem;
 	box-shadow: 0 0 3000px 60px var(--color-1);
 	z-index: -1;
 }
 
-.bg-blur-right-about-us{
+.bg-blur-right-about-us {
 	position: absolute;
 	top: 50rem;
 	bottom: 10rem;
@@ -222,3 +226,61 @@
     }
 }
 */
+
+/*		Projects		*/
+
+.projects {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	margin-top: 5rem
+}
+
+.projects h2 {
+	font-family: var(--font-title);
+	font-size: 3.5rem;
+	width: 90%;
+	padding: 0 1rem;
+	line-height: 5.5rem;
+}
+
+.projects h2:nth-child(2) {
+	text-align: end;
+}
+
+.container-projects {
+	width: 90%;
+	height: auto;
+	padding: 2rem 1rem;
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	grid-template-rows: repeat(2, 1fr);
+	gap: 0.55rem;
+}
+
+.project {
+	/*background-image: url('/public/assets/img/piloto3.jpg');*/
+	background-size: cover;
+	background-position: center;
+	width: 100%;
+	height: 26rem;
+}
+
+.project h3 {
+	width: 50%;
+	font-size: 1.2rem;
+	font-weight: 300;
+	text-transform: uppercase;
+	padding: 1rem;
+	margin-bottom: 12rem;
+}
+
+.project p {
+	writing-mode: vertical-rl;
+	transform: rotate(180deg);
+	font-weight: 200;
+	letter-spacing: 0.5rem;
+	padding: 1rem;
+}

@@ -82,5 +82,12 @@
     "email": "eduardo@gmail.com",
     "password": "Pepetonio",
     "devices": []
+  },
+  {
+    "id": "4f0cd227-d983-4823-93a8-a61d21e7611d",
+    "name": "Papu2",
+    "email": "papu2@gmail.com",
+    "password": "papau123",
+    "devices": []
   }
 ]
