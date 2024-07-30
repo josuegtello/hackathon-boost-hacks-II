@@ -10,16 +10,10 @@ const handleOnMessage=function(event) {
     if(data.issue=="new notification"){
         
     }
-
-
-
-
-
 }
 const handleOnOpen=function(event) {
     sendWebSocketMessage({issue:'Hola mundo'});
     createToast('success','WebSocket:','connected, you are Online');
-    connectionWSOnline();
 }
 const handleOnClose=async function(event) {
     console.log("disconnected");
