@@ -1,11 +1,20 @@
 import {createToast} from "./notification.js";
 import {sleep} from "./sleep.js";
+
 let connection = {
     readyState: WebSocket.CLOSED
 }
 const handleOnMessage=function(event) {
     const data=JSON.parse(event.data);
     console.log(data);
+    if(data.issue=="new notification"){
+        
+    }
+
+
+
+
+
 }
 const handleOnOpen=function(event) {
     sendWebSocketMessage({issue:'Hola mundo'});
@@ -13,7 +22,6 @@ const handleOnOpen=function(event) {
     connectionWSOnline();
 }
 const handleOnClose=async function(event) {
-    
     console.log("disconnected");
     createToast('success','WebSocket:','disconnected, you are Offline');
     // Tratamos de conectar nuevamente el websocket

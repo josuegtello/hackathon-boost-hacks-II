@@ -187,6 +187,7 @@ const startClient=function(){
 //funcion auxiliar que eliminara la credencial y demas datos de la session en caso de que lo necesitos
 const deleteSessionStorage=function(){
     sessionStorage.removeItem('credentials');
+    
     sessionStorage.removeItem('Error 404');
     sessionStorage.removeItem('Home page');
 }
