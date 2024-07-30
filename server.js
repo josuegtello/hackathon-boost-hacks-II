@@ -70,7 +70,7 @@ app.listen(80,()=>{
 //WebSocket
 
 console.log("ws port:81");
-const serverWS= new WebSocket.Server({port:81});    //especifico en que puerto va a estar escuchando 
+const webSocket= new WebSocket.Server({port:81});    //especifico en que puerto va a estar escuchando 
 const clients=new Map();    //almacenare todos los cliente web socket que tenga en esta variable
 const master=new Map();
 function uuidv4() { //genero un ID unico para cada cliente wenSocket que tenga para poder identificarlos
@@ -79,12 +79,12 @@ function uuidv4() { //genero un ID unico para cada cliente wenSocket que tenga p
       return v.toString(16);
     });
 }
-serverWS.on("connection",(ws,req)=>{
+webSocket.on("connection",(ws,req)=>{
   const id=uuidv4(),  //genero el ID
         color=Math.floor(Math.random()* 360),   //genero un color aleatorio
         metadata={id,color};    //creo un objeto con este metadata
   clients.set(ws,metadata);   //en la variable clients almaceno al nuevo cliente y aparte su metadata de identificacion
-  //debug(clients)
+  //console.log(clients)
   const callback={    //siempre que enviemos informacion se la mandaremos en forma de texto, este es un objeto
       issue:'CONNECTION_SUCCESFULL',  //le informamos que su conexion a sido exitosa y le mandamos el ID que se le asigno
       id:id,
@@ -95,25 +95,25 @@ serverWS.on("connection",(ws,req)=>{
     console.error();
   })
   ws.on('close',()=>{ //si el cliente webSocket se ha desconectado
-      debug('disconnected');
-      //debug(master.get(ws));
+      console.log('disconnected');
+      //console.log(master.get(ws));
       //const metadataM=master.get(ws);
       //const metadata=clients.get(ws);
-      //debug(metadataM);
-      //debug(master);
+      //console.log(metadataM);
+      //console.log(master);
 
       clients.delete(ws); //eliminamos al cliente de la lista
   });
   ws.on('message',(message)=>{    //cuando el cliente manga algun mensaje al servidor
     const data=JSON.parse(message);
     const metadata=clients.get(ws);
-    debug("Mensaje recibido")
-    debug(data);
-    debug("metadata del cliente")
-    debug(metadata);
+    console.log("Mensaje recibido")
+    console.log(data);
+    console.log("metadata del cliente")
+    console.log(metadata);
     //message.sender = metadata.id;
     //message.color = metadata.color;
-    //debug(data);
+    //console.log(data);
     /*
       Estructura basica de los mensaje
       data{

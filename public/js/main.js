@@ -1,10 +1,10 @@
 import {dinamicHTML} from "./vendor/dinamic_html.js";
 import {startCursor,startLinks} from "./vendor/cursor.js";
-import {sleep} from "./vendor/sleep.js";
 import {initializeLogin} from "./vendor/log_in.js";
 import {fetchRequest} from "./vendor/fetch_request.js";
 import {initializeToast, createToast} from "./vendor/notification.js";
 import {error404} from "./vendor/error_404.js";
+import {connectWebSocket} from "./vendor/web_socket.js";
 
 const   d = document,
         w = window,
@@ -144,6 +144,7 @@ const startClient=function(){
         //haremos el llamado al navbar de users
         url="./assets/html/navbar_users.html";
         //aqui tambien haremos el llamado de el buzon de notificacion y demas datos que necesite de primera instancia
+        connectWebSocket(); //iniciamos la comunicacion web Socket, solo los usuario tiene acceso a este tipo de notificaciones
     }
     else{
         //haremos llamado al navba normal
