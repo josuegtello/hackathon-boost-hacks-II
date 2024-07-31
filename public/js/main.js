@@ -7,8 +7,8 @@ import {initializeToast, createToast} from "./vendor/notification.js";
 import {error404} from "./vendor/error_404.js";
 import {fqa} from "./vendor/faq.js";
 import {connectWebSocket} from "./vendor/web_socket.js";
-import {sleep} from "./vendor/sleep.js";
-import { contentType } from "mime-types";
+
+
 
 const   d = document,
         w = window,
