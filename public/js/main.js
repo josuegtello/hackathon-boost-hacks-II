@@ -1,3 +1,4 @@
+import {sleep} from "./vendor/sleep.js";
 import {dinamicHTML} from "./vendor/dinamic_html.js";
 import {startCursor,startLinks} from "./vendor/cursor.js";
 import {initializeLogin} from "./vendor/log_in.js";
