@@ -54,7 +54,7 @@ export const createToast = (id, title = '', text = '') => {
     const data=sessionStorage.getItem('credentials');
     if(data){
         // Añadir la notificacion al menu
-        addNotificationToMenu(id, title, text);
+        //addNotificationToMenu(id, title, text);
     }
 }
 

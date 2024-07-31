@@ -7,6 +7,8 @@ import {initializeToast, createToast} from "./vendor/notification.js";
 import {error404} from "./vendor/error_404.js";
 import {fqa} from "./vendor/faq.js";
 import {connectWebSocket} from "./vendor/web_socket.js";
+import {sleep} from "./vendor/sleep.js";
+import { contentType } from "mime-types";
 
 const   d = document,
         w = window,
@@ -147,6 +149,27 @@ const startClient=function(){
         url="./assets/html/navbar_users.html";
         //aqui tambien haremos el llamado de el buzon de notificacion y demas datos que necesite de primera instancia
         connectWebSocket(); //iniciamos la comunicacion web Socket, solo los usuario tiene acceso a este tipo de notificaciones
+        /*
+        fetchRequest({
+            method:'GET',
+            url:`http://${location.hostname}:80/devices`,
+            credentials:'include',
+            contentType:'application/json',
+            data:null,
+            async success(response){
+                if(response.ok){
+
+                }
+                else{
+
+                }
+            },
+            async error(err){
+                console.log("Ocurrio un error");
+                console.error(err);
+            }
+        });
+        */
     }
     else{
         //haremos llamado al navba normal

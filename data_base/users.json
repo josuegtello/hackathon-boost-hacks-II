@@ -4,7 +4,11 @@
     "name": "Gerardo Guzman",
     "email": "josuegtello2@gmail.com",
     "password": "lalopop123456",
-    "devices": []
+    "devices": [{
+                  "id":"1234",
+                  "type":"SSEM",
+                  "name":"Puerta principal"
+              }]
   },
   {
     "id": "e1d3e9a6-e1fe-4d85-b11f-a515e3e62945",
