@@ -1,6 +1,8 @@
+
 import {createToast} from "./notification.js";
 import {sleep} from "./sleep.js";
 
+const d=document;
 let connection = {
     readyState: WebSocket.CLOSED
 }
@@ -19,7 +21,7 @@ const handleOnClose=async function(event) {
     console.log("disconnected");
     createToast('success','WebSocket:','disconnected, you are Offline');
     // Tratamos de conectar nuevamente el websocket
-    await sleep(10000);
+    await sleep(5000);
     connectWebSocket();
     
 }
@@ -32,7 +34,7 @@ const handleOnError=function(event) {
 export const connectWebSocket=async function(){
     // no se hace nada si se esta conectado o ya esta conectado
     if(connection.readyState === WebSocket.CONNECTING || connection.readyState === WebSocket.OPEN) return;
-    connection=new WebSocket(`ws://${location.hostname}:81/`);
+    connection=new WebSocket(`ws://${location.hostname}:80`);
     connection.debug = true;
     connection.addEventListener("message", handleOnMessage);
     connection.addEventListener("open", handleOnOpen);
