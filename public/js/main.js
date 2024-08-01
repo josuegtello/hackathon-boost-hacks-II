@@ -91,6 +91,13 @@ const redirects = async function ($el, e) {
                         console.log('devices obtenido');
                         initializeDevices();
                     }
+                    else if(url.includes("edit_profile")){
+                        
+                        initializeTabs();
+                        initializeChangePassword();
+                        initializeEditProfile();
+
+                    }
                 }
                 else if (redirect == 'submenu') {   //cuando tenga este valor nos traera un submenu de ese enlace
                     console.log('Insertando submenu');
@@ -337,10 +344,12 @@ d.addEventListener('DOMContentLoaded', async e => {
             e.preventDefault();
             signOut();
         }
+        /*
         if (e.target.matches('#edit-profile-btn') || e.target.closest('#edit-profile-btn')) {
             e.preventDefault();
             loadEditProfile();
         }
+            */
     });
     await sleep(1000);
 

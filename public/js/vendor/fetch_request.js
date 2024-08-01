@@ -27,8 +27,8 @@ export const fetchRequest=async function(set){
     }
     */
     const {method,url,data,credentials,contentType,success,error}=set;
-    console.log("informacion a enviar en la peticion Fetch");
-    console.log(method,url,data,credentials,contentType);
+    //console.log("informacion a enviar en la peticion Fetch");
+    //console.log(method,url,data,credentials,contentType);
     const options={
         method:method,
         headers:{

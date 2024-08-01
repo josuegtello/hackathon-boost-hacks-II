@@ -33,10 +33,11 @@
     transition: background-color 0.5s ease, transform 0.2s ease;
 }
 
-.profile-menu button{
+.profile-menu a{
     width: 100%;
     text-align: start;
     background-color: transparent;
+    font-size: 0.8rem;
     color: var(--bg-color);
     border: none;
     cursor: none;

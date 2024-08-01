@@ -10,7 +10,8 @@
         "id": "1234",
         "type": "SSEM"
       }
-    ]
+    ],
+    "phone": "5565098090"
   },
   {
     "id": "e1d3e9a6-e1fe-4d85-b11f-a515e3e62945",
@@ -80,6 +81,16 @@
     "name": "Papu2",
     "email": "papu2@gmail.com",
     "password": "papau123",
+    "devices": []
+  },
+  {
+    "id": "b5dc8835-2b3b-46d9-84f9-6a0bcda1b31e",
+    "user": 11,
+    "name": "Ramses Guzman",
+    "email": "ramses.hrgt17@gmail.com",
+    "password": "X$3\\1xXMEXKehRd&",
+    "phone": "5561444435",
+    "profile_img": null,
     "devices": []
   }
 ]
