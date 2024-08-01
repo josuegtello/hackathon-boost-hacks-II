@@ -1,10 +1,11 @@
+/*      Nav de Devices      */
 .devices {
     width: 100%;
     height: auto;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 0 0 0;
+    margin: 4rem 0 0 0;
 }
 
 .container-devices {
@@ -23,9 +24,6 @@
 .devices-nav ul {
     height: 100%;
     list-style-type: none;
-    /* display: flex;
-    flex-direction: column;
-    justify-content: space-evenly; */
     padding: 0;
     margin: 4rem 0 0 0;
 }
@@ -52,18 +50,12 @@
     margin-right: 0.6rem;
 }
 
-
-/*      Contenido       */
 .devices-content {
     background-color: var(--text-color-3);
     width: 100%;
     padding: 2rem;
     border-left: 0.2rem solid var(--text-color-3);
 }
-
-/* .edit-profile-content form{
-    width: 100%;
-} */
 
 .devices-tab {
     display: none;
@@ -76,26 +68,29 @@
     opacity: 1;
 }
 
-/*      Contenido Devices       */
+/*   Sección  de Devices-Content       */
+
+/*      Tab de Devices      */
 
 .tab-container-devices {
     width: 100%;
-    /* background-color: aqua; */
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
 }
 
 .device-n {
     display: flex;
-    background-color: var(--box-shadow-4);
+    background-color: var(--box-shadow-5);
+    border: solid 0.25rem var(--box-shadow-4);
     margin-bottom: 2rem;
     padding: 1rem;
     border-radius: 1rem;
 }
 
 .tab-device-img {
-    width: 7rem;
-    height: 7rem;
+    width: 20%;
+    height: 100%;
     display: flex;
     align-items: center;
     border-radius: 1rem;
@@ -109,42 +104,475 @@
 }
 
 .tab-device-content {
-    color: black;
+    color: var(--bg-color);
     width: 60%;
-    margin: 0 5rem 0 0;
+    margin: 0 0 0 0.5rem;
+}
+
+.tab-device-content input {
+    width: 95%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--bg-color);
+    font-family: var(--font-text);
+    font-size: 1.5rem;
+    font-weight: 700;
+    padding: 0;
+}
+
+.tab-device-content h4 {
+    font-weight: 300;
 }
 
 .active-icon {
-    color: var(--color-1);
-    width: 5%;
+    color: var(--online);
+    width: 100%;
     display: flex;
-    justify-content: center;
+    align-items: center;
     margin: 0.5rem 0 0 0;
 }
 
 .active-icon i {
-    font-size: 0.8rem;
+    font-size: 0.5rem;
+    margin-right: 0.5rem;
 }
 
 .tab-device-icons {
-    color: blueviolet;
-    width: 10%;
+    width: 16%;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
+    color: var(--container-color-1);
 }
 
 .tab-device-icons i {
     font-size: 1rem;
 }
 
+.tab-device-icons i:hover {
+    color: var(--color-1);
+}
 
-/*      Dashboard       */
+.fa-pencil-alt.editing {
+    color: var(--color-1);
+}
 
 
+/*      Tab de Dashboard       */
+
+.tab-container-dashboard {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+}
+
+.btn-dashboard {
+    height: 10rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 1rem;
+    border: solid 0.25rem var(--box-shadow-4);
+    padding: 1rem;
+}
+
+.btn-dashboard:hover {
+    background-color: var(--box-shadow-4);
+}
+
+.btn-dashboard h4{
+    width: 100%;
+    text-align: start;
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+    color: var(--bg-color);
+}
+
+.btn-dashboard {
+    background-color: var(--box-shadow-5);
+}
+
+.btn-dashboard i{
+    color: var(--container-color-1);
+    font-size: 3rem;
+}
+
+.see-password-dashboard {
+    width: 100%;
+    color: var(--color-1);
+    margin-top: 0.5rem;
+}
+
+.btn-dashboard.active {
+    background-color: var(--box-shadow-4);
+}
+
+.see-password-dashboard {
+    display: none;
+}
+
+.link-cards {
+    width: 100%;
+    background-color: var(--box-shadow-5);
+    padding: 1rem;
+    border: 0.25rem solid var(--box-shadow-4);
+    border-radius: 1rem;
+    text-align: center;
+    color: var(--bg-color);
+}
+
+.link-cards:hover {
+    background-color: var(--box-shadow-4);
+}
+
+/*      Tab Dashboard - Modal Cards     */
+
+.modal-cards {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-cards-content {
+    background-color: var(--text-color-3);
+    margin: 5% auto;
+    padding: 1.25rem;
+    max-width: 36%;
+    max-height: 80vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    border-radius: 1rem;
+}
+
+.modal-cards-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.close-modal-cards {
+    color: var(--container-color-1);
+    float: right;
+    font-size: 1.75rem;
+    font-weight: 600;
+    text-align: end;
+}
+
+.close-modal-cards:hover,
+.close-modal-cards:focus {
+    color: var(--color-1);
+}
+
+#change-cards-form {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 0.625rem;
+}
+
+.modal-cards-content h2 {
+    color: var(--bg-color);
+}
+
+.modal-cards-content form {
+    width: 100%;
+    max-width: 50rem;
+}
+
+.card-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+}
+
+.card-info label, .card-info input {
+    color: var(--bg-color);
+}
+
+.card-info input {
+    border: none;
+    outline: none;
+    font-family: var(--font-text);
+    font-size: 1rem;
+    padding: 0;
+}
+
+.modal-cards i {
+    color: var(--container-color-1);
+}
+
+.modal-cards i:hover {
+    color: var(--color-1);
+}
+
+.card-info button {
+    border: none;
+    background-color: transparent;
+    padding: 0;
+}
+
+.card-info button i {
+    font-size: 2rem;
+}
+
+.btn-save-changes-cards {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 1.25rem;
+}
+
+.btn-save-changes-cards button {
+    border: none;
+    background-color: var(--bg-color);
+    color:  var(--text-color-3);
+    text-transform: uppercase;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+}
+
+.btn-save-changes-cards button:hover {
+    background-color: var(--box-shadow-4);
+}
+
+/*      Modal Change Password       */
+
+.modal-change-password-device {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4); 
+    overflow: auto;
+}
+
+.modal-change-password-content {
+    color: var(--bg-color);
+    background-color: var(--text-color-3);
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 0.5rem;
+    width: 300px;
+    position: relative;
+}
+
+.modal-change-password-content h2 {
+    margin-bottom: 1rem;
+}
+
+.close-modal-password-device {
+    color: var(--container-color-1);
+    float: right;
+    font-size: 1.75rem;
+    font-weight: 600;
+}
+
+.close-modal-password-device:hover,
+.close-modal-password-device:focus {
+    color: var(--color-1);
+}
+
+.modal-change-password-device form {
+    display: flex;
+    flex-direction: column;
+}
+
+.close-modal-password-device {
+    color: var(--container-color-1);
+    font-size: 1.75rem;
+    font-weight: 600;
+    text-align: end;
+    margin: 0;
+}
+
+.close-modal-password-device:hover {
+    color: var(--color-1);
+}
+
+.modal-change-password-device form label,.modal-change-password-device form input {
+    margin-bottom: 1rem;
+}
+
+.btn-save-password-device {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.btn-save-password-device button {
+    width: 60%;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 0.25rem;
+    text-transform: uppercase;
+    background-color: var(--bg-color);
+    color: var(--text-color-3);
+}
+
+.btn-save-password-device button:hover {
+    background-color: var(--box-shadow-4);
+}
 
 
-.prueba3 {
-    width: 5rem;
-    height: 5rem;
-    background-color: rgb(255, 214, 127);
+/*      Tab Add Device      */
+
+.add-device {
+    width: 50%;
+    background-color: var(--box-shadow-5);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+}
+
+.add-device h2 {
+    color: var(--bg-color);
+    margin-bottom: 1rem;
+    font-size: 2.5rem;
+    text-align: center;
+}
+
+.add-device-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.add-device-content {
+    display: grid;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 1rem;
+    color: var(--bg-color);
+    margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 0.06rem solid var(--box-shadow-4);
+    border-radius: 0.5rem;
+    color: var(--bg-color);
+    font-family: var(--font-text);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.device-list {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.device-name {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.device-name i {
+    font-size: 2.5rem;
+    color: var(--bg-color);
+}
+
+.device-name i:hover {
+    color: var(--box-shadow-4);
+}
+
+.device-name h3 {
+    color: var(--bg-color);
+    font-size: 1.5rem;
+}
+
+.add-card-device {
+    margin-bottom: 1rem;
+}
+
+.add-card-device a {
+    color: var(--bg-color);
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-add-card-device {
+    display: none;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.form-add-card-device button {
+    background-color: transparent;
+    border: none;
+}
+
+.form-add-card-device {
+    color: var(--bg-color);
+}
+
+.form-add-card-device button i {
+    font-size: 2rem;
+    color: var(--container-color-1);
+}
+
+.form-add-card-device button i:hover {
+    color: var(--color-1);
+}
+
+.form-add-card-device input {
+    flex-grow: 1;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 0.06rem solid var(--box-shadow-4);
+    border-radius: 0.5rem;
+    color: var(--bg-color);
+    font-family: var(--font-text);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.form-add-card-device .fa-trash-alt {
+    font-size: 1.5rem;
+    color: var(--container-color-1);
+}
+
+.form-add-card-device .fa-trash-alt:hover {
+    color: var(--color-1);
+}
+
+.add-device-button {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1.25rem;
+    background-color: var(--bg-color);
+    color: var(--text-color-3);
+    border: none;
+    border-radius: 0.5rem;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.add-device-button:hover {
+    background-color: var(--box-shadow-4);
 }
