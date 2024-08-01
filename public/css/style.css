@@ -26,7 +26,7 @@
     --box-shadow-1:#f4f5ff1a;
     --box-shadow-2:#f4f5ff14;
     --box-shadow-3:#f1f1f1;
-    --box-shadow-4:#d1bcea;
+    --box-shadow-4:#d4bdff;
 
     /*colores de sombras */
     --color-shadow-1:#aeafb8; 
@@ -80,6 +80,7 @@ body{
     margin:0;
     color:var(--text-color-3);
     background-color:var(--bg-color);
+    overflow-x: hidden;
 }
 
 /*enlaces*/

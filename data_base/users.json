@@ -4,11 +4,13 @@
     "name": "Gerardo Guzman",
     "email": "josuegtello2@gmail.com",
     "password": "lalopop123456",
-    "devices": [{
-                  "id":"1234",
-                  "type":"SSEM",
-                  "name":"Puerta principal"
-              }]
+    "devices": [
+      {
+        "device": 1,
+        "id": "1234",
+        "type": "SSEM"
+      }
+    ]
   },
   {
     "id": "e1d3e9a6-e1fe-4d85-b11f-a515e3e62945",
@@ -32,13 +34,6 @@
     "devices": []
   },
   {
-    "id": "30419183-ca55-4919-8c8d-ee87b1823100",
-    "name": "Hector Ramses",
-    "email": "ramsesGt17@gmail.com",
-    "password": "pepeTo;o",
-    "devices": []
-  },
-  {
     "id": "58a3899a-1568-47c3-ba87-86888d7fe817",
     "name": "Abigail Valeria Reyes Martínez",
     "email": "avreyesmtz@gmail.com",
@@ -57,13 +52,6 @@
     "name": "Eder Urban",
     "email": "guzman.teyo.gerardo.josue@gmail.com",
     "password": "gerardo2004$",
-    "devices": []
-  },
-  {
-    "id": "f0c9d961-12e9-4f7a-a788-0f3416422a53",
-    "name": "Josue Guzman",
-    "email": "lalopop@gmail.com",
-    "password": "pepito",
     "devices": []
   },
   {
