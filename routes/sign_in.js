@@ -59,6 +59,7 @@ router.route("/").post((req, res) => {
               id: id,
               type: "web user",
               name: name,
+              password:password,
               email: email,
               devices: devices,
             };

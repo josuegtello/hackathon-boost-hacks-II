@@ -71,17 +71,22 @@ router.route("/").post((req, res) => {
         } else {
           //escribimos en nuestro archivo JSON
           const id = uuidv4(); //creamos un id unico para este usuario
+          const position=data.length;
           data.push({
             id: id,
+            user:position,
             name: name,
             email: email,
             password: password,
+            phone:null,
+            profile_img:null,
             devices: [],
           });
           //FALTA crear una sesion
           req.session.user = {
             id: id,
             name: name,
+            password:password,
             email: email,
             devices: [],
           };
