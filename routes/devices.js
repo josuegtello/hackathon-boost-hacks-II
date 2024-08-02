@@ -2,9 +2,42 @@ const express = require("express");
 const router = express.Router();
 const websocketManager = require("./web_socket_manager");
 const { getDevices } = websocketManager;
+//RUTA para solo obtener los usuarios normales
 router.route("/")
 .get((req, res) => {
   console.log("GET /devices");
+  res.setHeader("Content-Type", "application/json");
+  const answer = {
+    response:"",
+    devices:[]
+  };
+  //Verificamos si esta creada la sesion, si lo esta tiene acceso a esta informacion, si no no
+  if (req.session.user) {
+    const devices = req.session.user.devices;
+    //vemos cual es el id
+    devices.forEach((dvc) => {
+      const {device,type,name}=dvc
+      answer.devices.push({
+        device:device,
+        type:type,
+        name:name
+      })
+    });
+    answer.response = "Account devices";
+    console.log(answer);
+    res.status(200);
+    res.send(JSON.stringify(answer));
+  } else {
+    answer.response = "Unauthorized information";
+    res.status(401);
+    res.send(JSON.stringify(answer));
+  }
+});
+
+//ruta para obtener los dispositivos asociados a tu cuenta conectados
+router.route("/connected")
+.get((req, res) => {
+  console.log("GET /devices/connected");
   res.setHeader("Content-Type", "application/json");
   const answer = {
     response:"",

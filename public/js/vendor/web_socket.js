@@ -1,7 +1,7 @@
 
 import {createToast} from "./notification.js";
 import {sleep} from "./sleep.js";
-
+import {getUser,setUser,isAuthenticated} from "../main.js";
 const d=document;
 let connection = {
     readyState: WebSocket.CLOSED
@@ -10,7 +10,15 @@ const handleOnMessage=function(event) {
     const data=JSON.parse(event.data);
     console.log(data);
     if(data.issue=="new notification"){
-        
+    
+    }
+    else if(data.issue=="Web Socket connected"){    //es el primer mensaje que te envia el servidor por medio de web socket, nos manda el id web socket que nos asigno
+        console.log("configurando el puerto web socket");
+        const {ws_id}=data;
+        const user=getUser();
+        user.setIdWebSocket(ws_id);
+        setUser(user);
+        console.log(user);
     }
 }
 const handleOnOpen=function(event) {

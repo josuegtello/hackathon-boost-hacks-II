@@ -8,31 +8,12 @@
       {
         "device": 1,
         "id": "1234",
-        "type": "SSEM"
+        "type": "SSEM",
+        "name": "Puerta de mi casa"
       }
     ],
-    "phone": "5565098090"
-  },
-  {
-    "id": "e1d3e9a6-e1fe-4d85-b11f-a515e3e62945",
-    "name": "Gerardo Josue",
-    "email": "guzman.tello.gerardo.josue@gmail.com",
-    "password": "gerardo2004$",
-    "devices": []
-  },
-  {
-    "id": "8c091bd5-9508-46ca-8c72-4bed290328b0",
-    "name": "",
-    "email": "",
-    "password": "",
-    "devices": []
-  },
-  {
-    "id": "4d0fabb0-6ae6-47b9-b5ab-d4161f019c53",
-    "name": "Gerardo Tello",
-    "email": "josuegtello@gmail.com",
-    "password": "pepeTo;o",
-    "devices": []
+    "phone": "5565092151",
+    "profile_img": "user0.jpeg"
   },
   {
     "id": "58a3899a-1568-47c3-ba87-86888d7fe817",
@@ -53,13 +34,6 @@
     "name": "Eder Urban",
     "email": "guzman.teyo.gerardo.josue@gmail.com",
     "password": "gerardo2004$",
-    "devices": []
-  },
-  {
-    "id": "bb37c5dc-3122-4468-8ea7-98b6dfdb825d",
-    "name": "Panchito Feliz",
-    "email": "panchito@gmail.com",
-    "password": "perruelOrnitorrinco",
     "devices": []
   },
   {

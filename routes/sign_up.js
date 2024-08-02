@@ -82,7 +82,7 @@ router.route("/").post((req, res) => {
             profile_img:null,
             devices: [],
           });
-          //FALTA crear una sesion
+          //crear una sesion
           req.session.user = {
             id: id,
             name: name,
@@ -92,6 +92,7 @@ router.route("/").post((req, res) => {
           };
           answer.credentials = {
             name: name,
+            profile_img:null
           };
           //vamos a escribir en nuestro archivo JSON para conservar los datos
           fs.writeFile(
