@@ -8,6 +8,7 @@ router.use(express.json());
 router
     .route('/')
     .post((req,res)=>{
+      console.log("POST /sign-in-device");
         res.setHeader('Content-Type','application/json');
         const   errors=validationResult(req),
                 answer={};
@@ -50,8 +51,12 @@ router
                             req.session.device={
                                 id:id,
                                 user_id:user.id,
-                                type:device.type
+                                type:device.type,
+                                device:device.device
                             }
+                            //vemos si realmente se creo la sesion
+                            console.log('Sesión creada:', req.session);
+                            // Aseguramos de que la cookie se está configurando
                         }
                     });
                 });  
@@ -59,6 +64,8 @@ router
                     console.log('Dispositivo encontrado encontrado');
                     answer.response='Device found';
                     console.log(answer);
+                    console.log("Cabecera que vamos a envair")
+                    console.log('Response headers:', res._headers);
                     res.status(200);
                     res.send(JSON.stringify(answer));
                 }
