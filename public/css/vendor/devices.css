@@ -1,0 +1,123 @@
+.devices {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 0 0 0;
+}
+
+.container-devices {
+    border-radius: 1rem;
+    display: flex;
+    min-height: 91vh;
+    min-width: 100%;
+    overflow: hidden;
+}
+
+.devices-nav {
+    width: 6%;
+    background-color: var(--bg-color);
+}
+
+.devices-nav ul {
+    height: 100%;
+    list-style-type: none;
+    /* display: flex;
+    flex-direction: column;
+    justify-content: space-evenly; */
+    padding: 0;
+    margin: 4rem 0 0 0;
+}
+
+.devices-nav li {
+    padding: 1.5rem;
+    color: var(--text-color-3);
+    transition: all 0.2s ease-out;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    font-weight: bold;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+}
+
+.devices-nav li:hover,
+.devices-nav li.devices-active {
+    background-color: var(--text-color-3);
+    color: var(--color-1);
+}
+
+.devices-nav li i {
+    margin-right: 0.6rem;
+}
+
+
+/*      Contenido       */
+.devices-content {
+    background-color: var(--text-color-3);
+    width: 100%;
+    padding: 2rem;
+    border-left: 0.2rem solid var(--text-color-3);
+}
+
+/* .edit-profile-content form{
+    width: 100%;
+} */
+
+.devices-tab {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.devices-tab.devices-active {
+    display: block;
+    opacity: 1;
+}
+
+/*      Contenido Devices*/
+
+.tab-container-devices {
+    width: 100%;
+    background-color: aqua;
+}
+
+.device-n {
+    display: flex;
+    background-color: bisque;
+    margin-bottom: 2rem;
+}
+
+.tab-device-img{
+    width: 7rem;
+    height: 7rem;
+    padding: 1rem;
+    background-color: var(--color-shadow-1);
+}
+
+.tab-device-img img {
+    width: 6rem;
+    height: 6rem;
+}
+
+.tab-device-content {
+    color: black;
+}
+
+.tab-device-icons {
+    color: blueviolet;
+}
+
+.prueba2{
+    width: 5rem;
+    height: 5rem;
+    background-color: rgb(255, 127, 234);
+}
+
+.prueba3{
+    width: 5rem;
+    height: 5rem;
+    background-color: rgb(255, 214, 127);
+}
+

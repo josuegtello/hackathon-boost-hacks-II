@@ -1,6 +1,8 @@
 /*		Home page		*/
 .home-page {
 	padding: 1rem 2rem;
+	width: 100%;
+	height: auto;
 }
 
 .containers-home-page {
@@ -120,7 +122,7 @@
 	top: 50rem;
 	bottom: 10rem;
 	right: 0;
-	box-shadow: 0 0 3000px 60px var(--container-color-1);
+	box-shadow: 0 0 3000px 60px var(--container-color-2);
 	z-index: -1;
 }
 
@@ -140,7 +142,7 @@
 	padding: 1rem;
 	/*border-right: 0.25rem solid var(--container-color-1);
 	border-bottom: 0.25rem solid var(--container-color-1);*/
-	box-shadow: 0.25rem 0.25rem 0.5rem var(--container-color-1);
+	box-shadow: 0.20rem 0.20rem 0.3rem var(--container-color-2);
 }
 
 .conatiner-team-text p {

@@ -41,7 +41,7 @@
   transition: 0.8s ease-in-out;
 }
 
-form {
+.forms-wrap form {
   max-width: 260px;
   width: 100%;
   margin: 0 auto;
