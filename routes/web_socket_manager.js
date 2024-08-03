@@ -19,20 +19,23 @@ function getClientIds(filter = () => true) {
     .map(metadata => metadata.id);
 }
 function getDevices(filterCriteria) {   //funcion que nos permitira obtener dispositivos a base de un criterio
-    const filter = {};
+    const filter = [];
     console.log('Metadata de los dispositivos contectados');
     for (const [client, metadata] of clients.entries()) {
         console.log(metadata);
         if (filterCriteria(metadata)) {
             console.log("dispositivo conectado encontrado");
-            filter.ws_id=metadata.id;
-            filter.type=metadata.type
-            console.log(filter)
+            const {ws_id,type,device}=metadata
+            filter.push({
+              ws_id:ws_id,
+              type:type,
+              device:device
+            })
         }
     }     
     //console.log('Del filtro se obtuvo la sig, informacion');
-    //console.log(filter);
-    return (filter.length==1)?filter[1]:filter;
+    console.log(filter);
+    return (filter.length>0)?filter:null;
 }
 //funcion que me permite enviar a clientes especificos
 function sendToSpecificClient(message, filter) {

@@ -220,8 +220,7 @@ const deleteSessionStorage = function () {
     sessionStorage.removeItem('Home page');
 }
 
-//funcion para eliminar las credenciales
-const deleteCredentials = function () {
+const deleteCredentials=function(){
     sessionStorage.removeItem('credentials');
 }
 //funcion de sign out
