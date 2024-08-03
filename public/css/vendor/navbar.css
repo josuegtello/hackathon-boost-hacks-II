@@ -1,5 +1,5 @@
 /*      Cursor      */
-a{
+.navbar a{
     cursor: none;
     color: var(--text-color-3);
 }

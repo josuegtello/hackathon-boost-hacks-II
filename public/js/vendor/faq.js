@@ -1,5 +1,5 @@
 const d = document;
-export function fqa(){
+export function faq(){
   const buttons = d.querySelectorAll(".more-btn");
   
     buttons.forEach((button) => {
