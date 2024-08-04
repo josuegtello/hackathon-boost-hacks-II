@@ -32,6 +32,9 @@ const getHTMLElements = function () {
                     const $html = await response.text();
                     if (action == 'replace') {
                         el.outerHTML = $html;
+                        if(url.includes("home_page")){
+                            faq();
+                        }
                     }
                     else if (action == 'insert') {
                         el.appendChild($html)
@@ -80,6 +83,7 @@ const redirects = async function ($el, e) {
                         initializeLogin();
                     }
                     else if (url.includes('home_page')) {
+                        faq();
                         console.log('home page obtenido');
                         //funcion para inicializar los eventos del home page
                     }
@@ -334,5 +338,5 @@ d.addEventListener('DOMContentLoaded', async e => {
         }
     });
     await sleep(1000);
-    faq();
+
 })
