@@ -20,7 +20,17 @@ Archivos front-end que me faltan modificar
 notifiaciont.js     Funcion addNotificationToMenu();
 
 */
-
+export function setUser(newUser) {
+    user = newUser;
+    console.log(user);
+}
+export function getUser() {
+    return user;
+}
+  
+export function isAuthenticated() {
+    return user !== null;
+}
 
 /*
 Creamos una clase usuario, esta instancia se va a crear a base de las credenciales de usuario que tengamos, tengra el nombre, 
@@ -81,6 +91,7 @@ class User{
                         user.devices.forEach(device => {
                             if(device.device==dvc.device){  //es el mismo dispositivo configuramos su estado de conexion
                                 device.state="connected";
+                                device.wsId=dvc.ws_id;
                             }
                         });
                     });
@@ -132,7 +143,6 @@ const startClient = async function () {
         console.log(user);
         //aqui tambien haremos el llamado de el buzon de notificacion y demas datos que necesite de primera instancia
         await user.getDevices();  //esperamos a obtener los dispositivos conectados
-        await sleep(6000);  //esperamos 6 segundos para tratar la conexion web socket
         connectWebSocket(); //iniciamos la comunicacion web Socket, solo los usuario tiene acceso a este tipo de notificaciones
     }
     else {
@@ -171,16 +181,7 @@ const startClient = async function () {
     });
 
 }
-export function setUser(newUser) {
-    user = newUser;
-  }
-export function getUser() {
-    return user;
-  }
-  
-  export function isAuthenticated() {
-    return user !== null;
-  }
+
 
 //Funciones generales
 const getHTMLElements = function () {
