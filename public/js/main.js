@@ -1,3 +1,4 @@
+let user=null;
 import { sleep } from "./vendor/sleep.js";
 import { dinamicHTML } from "./vendor/dinamic_html.js";
 import { startCursor, startLinks } from "./vendor/cursor.js";
@@ -13,6 +14,175 @@ import { initializeDevices,addNewDevice } from "./vendor/devices.js";
 const d = document,
     w = window,
     body = d.body;
+//me diran si el usuario existe o no, podre cambiarle sus propiedades desde otros archivos, etc;
+
+/*
+Archivos front-end que me faltan modificar
+notifiaciont.js     Funcion addNotificationToMenu();
+
+*/
+export function setUser(newUser) {
+    user = newUser;
+    console.log(user);
+}
+export function getUser() {
+    return user;
+}
+  
+export function isAuthenticated() {
+    return user !== null;
+}
+
+/*
+Creamos una clase usuario, esta instancia se va a crear a base de las credenciales de usuario que tengamos, tengra el nombre, 
+la ruta de tu foto de perfil, tus dispositivos (datos publicos) , los que estan conectados etc.
+
+*/
+
+class User{
+    constructor (name,profile_img) {
+        this.name=name;
+        this._wsId=null;
+        this.profile_img=profile_img;
+        this.devices=[];
+    }
+    async getDevices(){
+        //obtenemos los dispositivos conectados
+        await fetchRequest({
+            method:'GET',
+            url:`http://${location.hostname}:80/devices`,
+            credentials:'include',
+            contentType:'application/json',
+            data:null,
+            async success(response){
+                if(response.ok){
+                    const result=await response.json();
+                    console.log(`peticion http://${location.hostname}:80/devices`)
+                    console.log(result);
+                    const {devices}=result;
+                    devices.forEach(el => {
+                        user.devices.push(el);
+                    });
+                    console.log(user);
+                }
+                else{
+
+                }
+                
+            },
+            async error(err){
+                console.log("Ocurrio un error");
+                console.error(err);
+            }
+        }); //esperamos que se finalice esta peticion
+        //obtenemos los dispositivos conectados 
+        await fetchRequest({
+            method:'GET',
+            url:`http://${location.hostname}:80/devices/connected`,
+            credentials:'include',
+            contentType:'application/json',
+            data:null,
+            async success(response){
+                if(response.ok){
+                    const result=await response.json();
+                    console.log(`peticion http://${location.hostname}:80/devices/connected`)
+                    console.log(result);
+                    const {devices}=result;
+                    devices.forEach(dvc => {
+                        user.devices.forEach(device => {
+                            if(device.device==dvc.device){  //es el mismo dispositivo configuramos su estado de conexion
+                                device.state="connected";
+                                device.wsId=dvc.ws_id;
+                            }
+                        });
+                    });
+                    user.devices.forEach(el => {
+                        if(!el.state){  //si no existe mandamos un mensaje   de que esta desconectado
+                            el.state="disconnected";
+                            createToast("info","Devices:",`Your device '${el.name}' is disconnected`);
+                        }
+                        else{   //esta conectado
+                            createToast("info","Devices:",`Your device '${el.name}' is connected`);
+                        }
+                    });
+                }
+                else{
+                    
+                }
+            },
+            async error(err){
+                console.log("Ocurrio un error");
+                console.error(err);
+            }
+        });
+        return true;    //returnamos true como referencia de que ya acabo la operacion
+    }
+    modifyPersonalData(name){
+        this.name=name;
+    }
+    getIdWebSocket(){
+        return this._wsId;
+    }
+    setIdWebSocket(wsId){
+        this._wsId=wsId;
+    }
+
+}
+
+
+//funcion para inicio, traera la navbar respectivo y a lo mejor otras licencias que necesitemos
+const startClient = async function () {
+    const credentials = sessionStorage.getItem('credentials');
+    let url = "";
+    if (credentials) {    //si existen hacemos llamado de las cosas del usuario
+        //haremos el llamado al navbar de users
+        url = "./assets/html/navbar_users.html";
+        //instanciamos el objeto
+        const {name,profile_img}=JSON.parse(credentials)
+        user=new User(name,profile_img); //instanciamos la clase
+        console.log("usuario creado");
+        console.log(user);
+        //aqui tambien haremos el llamado de el buzon de notificacion y demas datos que necesite de primera instancia
+        await user.getDevices();  //esperamos a obtener los dispositivos conectados
+        connectWebSocket(); //iniciamos la comunicacion web Socket, solo los usuario tiene acceso a este tipo de notificaciones
+    }
+    else {
+        //haremos llamado al navba normal
+        url = "./assets/html/navbar.html";
+    }
+    //hacemos la peticion normal
+    fetchRequest({
+        method: 'GET',
+        url: url,
+        credentials: 'include',
+        contentType: 'text/html',
+        data: null,
+        async success(response) {
+            if (response.ok) {
+                const nav = await response.text(),
+                    $aux = d.createElement('div');
+                $aux.innerHTML = nav;
+                const $nav = $aux.querySelector('nav');
+                if (user) {
+                    const $user = $nav.querySelector('[data-type="user"] > span');
+                    $user.textContent = user.name;
+                }
+                body.insertAdjacentElement('afterbegin', $nav);
+                initializeToast();
+            }
+            else {
+                createToast('error', `Error ${response.status}`, 'Nav not found, please recharge the page');
+            }
+        },
+        async error(err) {
+            console.log("Ocurrio un error en la peticion");
+            console.error(err);
+        }
+
+    });
+
+}
+
 
 //Funciones generales
 const getHTMLElements = function () {
@@ -154,75 +324,6 @@ function removeElement(e) {
 const notification = async function (data) {
     createToast(data.type, data.title, data.text, data.imageUrl);
 };
-//funcion para inicio, traera la navbar respectivo y a lo mejor otras licencias que necesitemos
-const startClient = function () {
-    const credentials = sessionStorage.getItem('credentials');
-    let url = "";
-    if (credentials) {    //si existen hacemos llamado de las cosas del usuario
-        //haremos el llamado al navbar de users
-        url = "./assets/html/navbar_users.html";
-        //aqui tambien haremos el llamado de el buzon de notificacion y demas datos que necesite de primera instancia
-        connectWebSocket(); //iniciamos la comunicacion web Socket, solo los usuario tiene acceso a este tipo de notificaciones
-        /*
-        fetchRequest({
-            method:'GET',
-            url:`http://${location.hostname}:80/devices`,
-            credentials:'include',
-            contentType:'application/json',
-            data:null,
-            async success(response){
-                if(response.ok){
-
-                }
-                else{
-
-                }
-            },
-            async error(err){
-                console.log("Ocurrio un error");
-                console.error(err);
-            }
-        });
-        */
-    }
-    else {
-        //haremos llamado al navba normal
-        url = "./assets/html/navbar.html";
-    }
-    //hacemos la peticion normal
-    fetchRequest({
-        method: 'GET',
-        url: url,
-        credentials: 'include',
-        contentType: 'text/html',
-        data: null,
-        async success(response) {
-            if (response.ok) {
-                const nav = await response.text(),
-                    $aux = d.createElement('div');
-                $aux.innerHTML = nav;
-                const $nav = $aux.querySelector('nav');
-                if (credentials) {
-                    const data = JSON.parse(credentials)
-                    const $user = $nav.querySelector('[data-type="user"] > span');
-                    $user.textContent = data.name;
-                }
-                body.insertAdjacentElement('afterbegin', $nav);
-                initializeToast();
-            }
-            else {
-                createToast('error', `Error ${response.status}`, 'Nav not found, please recharge the page');
-            }
-        },
-        async error(err) {
-            console.log("Ocurrio un error en la peticion");
-            console.error(err);
-        }
-
-    });
-
-}
-
 //funcion auxiliar que eliminara la credencial y demas datos de la session en caso de que lo necesitos
 const deleteSessionStorage = function () {
     sessionStorage.removeItem('credentials');

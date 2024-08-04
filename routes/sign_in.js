@@ -52,8 +52,12 @@ router.route("/").post((req, res) => {
           //verificamos si el nombre y la contraseña coincide con alguno de nuestra "base de datos"
           if (user.name == name && user.password == password) {
             validation = true;
-            answer.credentials = { name: name };
-            const { id, email, devices } = user;
+            
+            const { id, email, devices,profile_img } = user;
+            answer.credentials = { 
+              name: name,
+              profile_img:profile_img 
+            };
             //Creamos la sesion
             req.session.user = {
               id: id,
@@ -61,7 +65,7 @@ router.route("/").post((req, res) => {
               name: name,
               password:password,
               email: email,
-              devices: devices,
+              devices: devices?devices:[],
             };
             //req.session.device="web user";
             console.log("Session after sign in:", req.session);
