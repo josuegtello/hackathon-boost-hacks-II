@@ -12,32 +12,32 @@
             <!-- Cambiar datos del usuario -->
             <section id="account-user" class="settings-tab edit-profile-active">
                 <div class="user-profile">
-                    <img src="./assets/img/user.jpg" alt="Usuario">
-                    <h4>Nombre del usuario</h4>
+                    <img id="userProfileImage" src="./assets/img/user.jpg" alt="Usuario">
+                    <h4 id="userProfileName">Nombre del usuario</h4>
                 </div>
                 <form id="general-form" class="settings-tab-form">
                     <div class="input-wrap-profile">
-                        <label for="username">Name:</label>
-                        <input id="username" type="text" required name="name">
+                        <label for="usernameEdit">Name:</label>
+                        <input id="usernameEdit" type="text" required name="name">
                     </div>
-
+                
                     <div class="input-wrap-profile">
-                        <label for="email">Email:</label>
-                        <input id="email" type="email" required name="email">
+                        <label for="emailEdit">Email:</label>
+                        <input id="emailEdit" type="email" required name="email">
                     </div>
-
+                
                     <div class="input-wrap-profile">
                         <label for="old-password">Password:</label>
-                        <input id="old-password" type="password" required name="old-password">
+                        <input id="old-password" type="text" required name="old-password" readonly>
                     </div>
-
+                
                     <div class="input-wrap-profile">
-                        <label for="phone">Phone number:</label>
-                        <input id="phone" type="tel" name="phone">
+                        <label for="phoneEdit">Phone number:</label>
+                        <input id="phoneEdit" type="tel" name="phone">
                     </div>
                 </form>
                 <div class="btn-edit-profile">
-                    <button type="submit">Save Changes</button>
+                    <button type="button" id="saveChangesBtn">Save Changes</button>
                 </div>
                 <div class="link-change-password">
                     <a>Change password</a>

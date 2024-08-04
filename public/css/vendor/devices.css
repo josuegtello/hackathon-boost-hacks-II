@@ -76,48 +76,75 @@
     opacity: 1;
 }
 
-/*      Contenido Devices*/
+/*      Contenido Devices       */
 
 .tab-container-devices {
     width: 100%;
-    background-color: aqua;
+    /* background-color: aqua; */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
 }
 
 .device-n {
     display: flex;
-    background-color: bisque;
+    background-color: var(--box-shadow-4);
     margin-bottom: 2rem;
+    padding: 1rem;
+    border-radius: 1rem;
 }
 
-.tab-device-img{
+.tab-device-img {
     width: 7rem;
     height: 7rem;
-    padding: 1rem;
-    background-color: var(--color-shadow-1);
+    display: flex;
+    align-items: center;
+    border-radius: 1rem;
+    margin: 0 0 0 0;
 }
 
 .tab-device-img img {
-    width: 6rem;
-    height: 6rem;
+    width: 100%;
+    height: 100%;
+    border-radius: 1rem;
 }
 
 .tab-device-content {
     color: black;
+    width: 60%;
+    margin: 0 5rem 0 0;
+}
+
+.active-icon {
+    color: var(--color-1);
+    width: 5%;
+    display: flex;
+    justify-content: center;
+    margin: 0.5rem 0 0 0;
+}
+
+.active-icon i {
+    font-size: 0.8rem;
 }
 
 .tab-device-icons {
     color: blueviolet;
+    width: 10%;
+    display: flex;
+    justify-content: space-around;
 }
 
-.prueba2{
-    width: 5rem;
-    height: 5rem;
-    background-color: rgb(255, 127, 234);
+.tab-device-icons i {
+    font-size: 1rem;
 }
 
-.prueba3{
+
+/*      Dashboard       */
+
+
+
+
+.prueba3 {
     width: 5rem;
     height: 5rem;
     background-color: rgb(255, 214, 127);
 }
-

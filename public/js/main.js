@@ -7,7 +7,7 @@ import { initializeToast, createToast } from "./vendor/notification.js";
 import { error404 } from "./vendor/error_404.js";
 import { faq } from "./vendor/faq.js";
 import { connectWebSocket } from "./vendor/web_socket.js";
-import { initializeTabs, initializeChangePassword } from "./vendor/edit_profile.js";
+import { initializeTabs, initializeChangePassword,initializeEditProfile } from "./vendor/edit_profile.js";
 import { initializeDevices } from "./vendor/devices.js";
 
 const d = document,
@@ -262,6 +262,7 @@ function loadEditProfile() {
                 setTimeout(() => {
                     initializeTabs();
                     initializeChangePassword();
+                    initializeEditProfile();
                 }, 0);
 
                 // Cierra el menú de perfil si está abierto
@@ -273,6 +274,10 @@ function loadEditProfile() {
                 createToast('error', 'Error', 'Could not load profile edit page');
             }
         },
+        error(err) {
+            console.error('Error loading edit profile:', err);
+            createToast('error', 'Error', 'Could not load profile edit page');
+        }
     });
 }
 
