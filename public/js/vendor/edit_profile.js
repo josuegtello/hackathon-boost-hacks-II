@@ -1,7 +1,6 @@
 import { fetchRequest } from './fetch_request.js';
 import { createToast } from "./notification.js";
 const d = document;
-
 export function initializeTabs() {
   const $tabs = d.querySelectorAll('.edit-profile-nav li');
   const $tabContents = d.querySelectorAll('.settings-tab');
@@ -54,6 +53,10 @@ export function initializeChangePassword() {
   const $closeModalPassword = d.querySelector('.close-modal-password');
 
   function closeModal() {
+    const $newPassword = d.getElementById('new-password');
+    const $confirmPassword = d.getElementById('confirm-password');
+    $newPassword.value="";
+    $confirmPassword.value="";
     $modalPassword.style.display = 'none';
   }
 
@@ -95,14 +98,16 @@ export function initializeChangePassword() {
 
     fetchRequest({
       method: 'PUT',
-      url: '/profile',
+      url: `http://${location.hostname}/profile`,
       contentType: 'application/json',
       credentials: 'include',
-      body: JSON.stringify(updatedData),
+      data: JSON.stringify(updatedData),
       async success(response) {
         if (response.ok) {
           const result = await response.json();
           createToast('success', 'Success', result.response);
+          const $input=d.querySelector("#old-password");
+          $input.value=newPassword;
           closeModal();
         } else {
           const errorData = await response.json();
@@ -124,18 +129,20 @@ export function initializeEditProfile() {
   // Cargar datos del usuario
   fetchRequest({
     method: 'GET',
-    url: '/profile',
+    url: `http://${location.hostname}/profile`,
     contentType: 'application/json',
     credentials: 'include',
     async success(response) {
       if (response.ok) {
         const userData = await response.json();
-        d.getElementById('userProfileImage').src = userData.imageUrl || './assets/img/user.jpg';
-        d.getElementById('userProfileName').textContent = userData.credentials.name;
-        d.getElementById('usernameEdit').value = userData.credentials.name;
-        d.getElementById('emailEdit').value = userData.credentials.email;
-        d.getElementById('old-password').value = userData.credentials.password;
-        d.getElementById('phoneEdit').value = userData.credentials.phone || '';
+        const {name,password,email,phone,imageUrl}=userData.credentials
+        d.getElementById('userProfileImage').src = imageUrl || './assets/img/user.jpg';
+        d.getElementById('userProfileName').textContent = name;
+        d.getElementById('usernameEdit').value = name;
+        d.getElementById('emailEdit').value = email;
+        d.getElementById('old-password').value = password;
+        d.getElementById('phoneEdit').value = phone || '';
+        console.log(credentials);
       }
     },
     async error(err) {
@@ -162,16 +169,19 @@ export function initializeEditProfile() {
 
     fetchRequest({
       method: 'PUT',
-      url: '/profile',
+      url: `http://${location.hostname}/profile`,
       contentType: 'application/json',
       credentials: 'include',
-      body: JSON.stringify(updatedData),
+      data: JSON.stringify(updatedData),
       async success(response) {
         if (response.ok) {
           const result = await response.json();
           createToast('success', 'Success', result.response);
+          const data={name:name},
+               $user = d.querySelector('[data-type="user"] > span');
+          sessionStorage.setItem('credentials',JSON.stringify(data));
+          $user.textContent = data.name;
           d.getElementById('userProfileName').textContent = name;
-          window.location.reload();
         } else {
           const errorData = await response.json();
           createToast('error', 'Error', errorData.response || 'Failed to update profile');
