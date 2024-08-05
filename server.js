@@ -248,6 +248,11 @@ webSocket.on("error", (error) => {
 //HTTP
 //Ruta donde servira todo el html estatico
 app.use(express.static(path.join(__dirname + "/public")));
+// Definir la ruta que captura todas las rutas expecificas y las regreso al index.html
+const routes = ['/home', '/sign-up', '/sign-in','/my-devices',"/my-profile"];
+app.get(routes, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 //Rutas http que tenemos en el sitio
 app.use("/sign-up", signUp);
 app.use("/sign-in", signIn);
@@ -255,6 +260,7 @@ app.use("/sign-out", signOut);
 app.use("/sign-in-device", signInDevice);
 app.use("/devices", devices);
 app.use("/profile", profile);
+
 //cuando la ruta no pertenezca a una definida lanzaremos un estado de respuesta 404
 app.use((req, res) => {
   res.status(404);

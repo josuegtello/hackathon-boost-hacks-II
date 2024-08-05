@@ -141,7 +141,27 @@ input[type="password"]::-webkit-textfield-decoration-container { /* Para navegad
 cursor: none;
 }
 
-
+/*      Animation       */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate(0,-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(0,0);
+    }
+}
+@keyframes fadeOutDown {
+    from {
+        opacity: 1;
+        transform: translate(0,0);
+    }
+    to {
+        opacity: 0;
+        transform: translate(0,10px);
+    }
+}
 
 
 
@@ -151,8 +171,8 @@ cursor: none;
     display: none !important;
 }
 .pointer-events-none{
-    pointer-events: none;
+    pointer-events: none !important;
 }
 .opacity-0{
-    opacity: 0;
+    opacity: 0 !important;
 }

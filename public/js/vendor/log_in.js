@@ -63,6 +63,7 @@ function submitFom(e){
             //si entramos aqui 
             //vemos si el item existe, si no hacemos la peticion
             sessionStorage.setItem('credentials',JSON.stringify(data.credentials)); //guardo las credenciales
+            sessionStorage.removeItem("route");
             location.reload();  //RECARGAMOS LA PAGINA
         }
         else{ //para respuesta diferentes de la 200-299

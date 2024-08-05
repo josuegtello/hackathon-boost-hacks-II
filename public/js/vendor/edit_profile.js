@@ -80,7 +80,7 @@ const closeModal = function () {
   $changePasswordBtn.classList.add("display-none");
   $verifyBtn.classList.remove("display-none");
 };
-const setActiveTab = function (tabId) {
+const setActiveTab =async function (tabId) {
   const $tabs = d.querySelectorAll(".edit-profile-nav li");
   const $tabContents = d.querySelectorAll(".settings-tab");
   // Se ocultan todos los tabs
@@ -102,10 +102,9 @@ const setActiveTab = function (tabId) {
     // Se hace visible el contenido del tab antes de añadir la clase 'active'
     activeContent.classList.remove("display-none");
 
+    await sleep(30);
     // Para asegurar que el cambio de display se ha aplicado
-    setTimeout(() => {
-      activeContent.classList.add("edit-profile-active");
-    }, 10);
+    activeContent.classList.add("edit-profile-active");
   }
 };
 const deleteAccount = function (e) {
@@ -247,17 +246,18 @@ export function initializeChangePassword() {
   });
 }
 
-export function initializeEditProfile() {
+export async function initializeEditProfile() {
   const $saveChangesBtn = d.getElementById("saveChangesBtn");
   const $btnModal = d.getElementById("openModal");
   const $modalPassword = d.getElementById("change-password-modal");
   const $startEditBtn = d.querySelector(".container-edit");
   const $deleteAccoutnBtn = d.querySelector("#deteleBtn");
   const $inputFile = d.querySelector(".profile-input-file");
+  const $tabs = d.querySelectorAll(".edit-profile-nav li");
   //FALTA MANEJAR EL VENTO DEL INPUT PARA PONER LA IMAGEN AHI
   console.log($startEditBtn, $deleteAccoutnBtn);
   // Cargar datos del usuario
-  fetchRequest({
+  await fetchRequest({
     method: "GET",
     url: `http://${location.hostname}/profile`,
     contentType: "application/json",
@@ -293,7 +293,11 @@ export function initializeEditProfile() {
       createToast("error", "Error:", "Could not load user data");
     },
   });
-
+  // Activar el primer tab por defecto
+  if ($tabs.length > 0) {
+    const firstTabId = $tabs[0].getAttribute("data-tab");
+    setActiveTab(firstTabId);
+  }
   // Actualizar el perfil
   $saveChangesBtn.addEventListener("click", function (e) {
     e.preventDefault();
