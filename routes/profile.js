@@ -43,13 +43,12 @@ router
               if (id == user.id) {
                 //es el usuario
                 //Actualizamos la informacion
-                const { name, email, password, devices } = user;
-                console.log(name, email, password, devices);
+                const { name, email, password} = user;
+                console.log(name, email, password);
                 answer.credentials = {
                   name: name,
                   email: email,
-                  password: password,
-                  devices: devices,
+                  password: password
                 };
                 validation = true;
               }
@@ -96,14 +95,13 @@ router
     }
     if (req.session && req.session.user) {  //Esta accion la podran hacer unicamente usuarios web
       //obtenemos la data
-      const { name, password, email, devices } = req.body; //obtenemos los datos de usuario por destructuracion
+      const { name, password, email} = req.body; //obtenemos los datos de usuario por destructuracion
       const id = req.session.user.id;
-      console.log("data recibida", name, password, email, devices);
+      console.log("data recibida", name, password, email);
       if (
         !name ||
         !password ||
         !email ||
-        !devices ||
         name == "" ||
         password == "" ||
         email == ""
@@ -126,7 +124,19 @@ router
           //aqui ponemos todo lo que queramos
           try {
             const data = JSON.parse(jsonString); //convertimos el archivo en formato JSON para manipularlo
-
+            //primero checamos si el username no existe
+            data.forEach((user) => {
+              if(user.name==name && user.id!=id){
+                validation=true;
+              }
+            });
+            if(validation==true){
+              answer.response="user name already registered";
+              console.log(answer);
+              res.status(400); 
+              res.send(JSON.stringify(answer));
+              return;
+            }
             data.forEach((user) => {
               //buscamos el id para actualizar
               if (id == user.id) {
@@ -135,7 +145,6 @@ router
                 user.name = name;
                 user.email = email;
                 user.password = password;
-                user.devices = devices;
                 //actualizamos la informacion de la sesion
                 validation = true;
               }
@@ -160,7 +169,6 @@ router
                     req.session.user.name = name;
                     req.session.user.email = email;
                     req.session.user.password = password;
-                    req.session.user.devices = devices;
                     answer.response = "user successfully updated";
                     console.log(answer);
                     res.status(200);

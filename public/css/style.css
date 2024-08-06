@@ -83,6 +83,7 @@ body{
     margin:0;
     color:var(--text-color-3);
     background-color:var(--bg-color);
+    overflow-x: hidden;
 }
 
 /*enlaces*/
