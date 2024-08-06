@@ -21,12 +21,15 @@
     --success:#560BAD;
     --error:#f72585;
     --info: #4361ee;
+    --online: #23c905;
+    --offline: #de110a;
 
     /*colores de sombras de contenedores*/
     --box-shadow-1:#f4f5ff1a;
     --box-shadow-2:#f4f5ff14;
     --box-shadow-3:#f1f1f1;
     --box-shadow-4:#d4bdff;
+    --box-shadow-5:#efeded;
 
     /*colores de sombras */
     --color-shadow-1:#aeafb8; 

@@ -1,5 +1,6 @@
 <main class="devices">
     <article class="container-devices">
+        <!-- Nav Dashboard -->
         <nav class="devices-nav">
             <ul>
                 <li data-tab="devices" class="devices-active"><i class="fa-solid fa-mobile-screen"></i></li>
@@ -9,7 +10,6 @@
         </nav>
 
         <section class="devices-content">
-
             <!-- Devices -->
             <section id="devices" class="devices-tab devices-active">
                 <div class="tab-container-devices">
@@ -18,11 +18,12 @@
                             <img src="./assets/img/user.jpg" alt="Device image">
                         </figure>
                         <div class="tab-device-content">
-                            <h2>Name Device</h2>
+                            <input type="text" placeholder="Name Device" name="Name device" disabled
+                                data-original-value="">
                             <h4>Name Device</h4>
-                            <span class="active-icon"><i class="fa-solid fa-circle"></i></span>
+                            <span class="active-icon"><i class="fa-solid fa-circle"></i>Online</span>
                         </div>
-                        <div  class="tab-device-icons">
+                        <div class="tab-device-icons">
                             <i class="fas fa-pencil-alt"></i>
                             <i class="fas fa-trash-alt"></i>
                         </div>
@@ -32,12 +33,12 @@
                         <figure class="tab-device-img">
                             <img src="./assets/img/user.jpg" alt="Device image">
                         </figure>
-                        <span class="active-icon"><i class="fa-solid fa-circle"></i></span>
                         <div class="tab-device-content">
-                            <h2>Name Device</h2>
+                            <input type="text" placeholder="Name Device" name="Name device" disabled>
                             <h4>Name Device</h4>
+                            <span class="active-icon"><i class="fa-solid fa-circle"></i>Online</span>
                         </div>
-                        <div  class="tab-device-icons">
+                        <div class="tab-device-icons">
                             <i class="fas fa-pencil-alt"></i>
                             <i class="fas fa-trash-alt"></i>
                         </div>
@@ -47,12 +48,12 @@
                         <figure class="tab-device-img">
                             <img src="./assets/img/user.jpg" alt="Device image">
                         </figure>
-                        <span class="active-icon"><i class="fa-solid fa-circle"></i></span>
                         <div class="tab-device-content">
-                            <h2>Name Device</h2>
+                            <input type="text" placeholder="Name Device" name="Name device" disabled>
                             <h4>Name Device</h4>
+                            <span class="active-icon"><i class="fa-solid fa-circle"></i>Online</span>
                         </div>
-                        <div  class="tab-device-icons">
+                        <div class="tab-device-icons">
                             <i class="fas fa-pencil-alt"></i>
                             <i class="fas fa-trash-alt"></i>
                         </div>
@@ -64,17 +65,131 @@
             <!-- Dashboard -->
             <section id="dashboard" class="devices-tab">
                 <div class="tab-container-dashboard">
-                    
+
+                    <button type="button" class="btn-dashboard">
+                        <h4>Alarm</h4>
+                        <i class="fa-solid fa-tower-broadcast"></i>
+                    </button>
+
+                    <button type="button" class="btn-dashboard">
+                        <h4>Gate lock</h4>
+                        <i class="fa-solid fa-lock"></i>
+                    </button>
+
+                    <button type="button" class="btn-dashboard">
+                        <h4>Password</h4>
+                        <i class="fa-solid fa-user-lock"></i>
+                        <span class="see-password-dashboard">password</span>
+                    </button>
+
+                    <button type="button" class="btn-dashboard" id="open-change-password-modal">
+                        <h4>Change password</h4>
+                        <i class="fa-solid fa-person-chalkboard">
+                        </i>
+                    </button>
+
+                    <button type="button" class="btn-dashboard">
+                        <h4>Restart</h4>
+                        <i class="fa-solid fa-arrow-rotate-left">
+                        </i>
+                    </button>
+
+                    <a id="open-cards-modal" class="link-cards">Cards</a>
                 </div>
+
+                <!-- Ventana change password -->
+                <div id="modal-change-password-device" class="modal-change-password-device">
+                    <div class="modal-change-password-content">
+                        <span class="close-modal-password-device">&times;</span>
+                        <h2>Change Password</h2>
+                        <form>
+                            <label for="new-password-device">New Password:</label>
+                            <input id="new-password-device" type="password">
+                            <label for="confirm-password-device">Confirm New Password:</label>
+                            <input id="confirm-password-device" type="password">
+                            <div class="btn-save-password-device">
+                                <button id="btn-save-password-device" type="button">Change password</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Modal de tarjetas -->
+                <dialog id="cards-modal" class="modal-cards">
+                    <div class="modal-cards-content">
+                        <div class="modal-cards-header">
+                            <h2>Your cards</h2>
+                            <span class="close-modal-cards">&times;</span>
+                        </div>
+                        <form id="change-cards-form">
+
+                        </form>
+                        <div class="btn-save-changes-cards">
+                            <button type="button" id="btn-save-change-cards">Save changes</button>
+                        </div>
+                        <span class="add-card">
+                            <i class="fa-solid fa-plus"></i>
+                        </span>
+                    </div>
+                </dialog>
             </section>
 
             <!-- Add device -->
-            <section id="add" class="devices-tab">
-                <div class="prueba3">
-
-                </div>
-            </section>
+            <section id="add" class="devices-tab add-device">
+                <h2>Add Device</h2>
+                <form class="add-device-form">
+                    <div class="add-device-content">
+                        <div class="form-group">
+                            <label for="deviceList">Select Device:</label>
+                            <select id="deviceList" name="deviceList">
+                                <option value="electromagneticLock">Electromagnetic Lock</option>
+                                <option value="camera">Security Camera</option>
+                                <option value="sensor">Motion Sensor</option>
+                            </select>
+                        </div>
             
+                        <div class="form-group">
+                            <label for="deviceName">Device Name:</label>
+                            <input type="text" id="deviceName" name="deviceName" required>
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="devicePassword">Device Password:</label>
+                            <input type="password" id="devicePassword" name="devicePassword" required>
+                        </div>
+                    </div>
+            
+                    <div class="device-list">
+                        <div class="device-name">
+                            <i class="fa-brands fa-bluetooth"></i>
+                            <h3>SSEM</h3>
+                        </div>
+            
+                        <div class="device-name">
+                            <i class="fa-brands fa-bluetooth"></i>
+                            <h3>SMLA</h3>
+                        </div>
+                    </div>
+            
+                    <div class="add-card-device">
+                        <a id="open-form-add-card"> 
+                            <i class="fa-solid fa-caret-down"></i> Add Card
+                        </a>
+                        <div id="add-card-form" class="form-add-card-device">
+                            <button type="button" aria-label="New card">
+                                <i class="fa-solid fa-address-card"></i>
+                            </button>
+                            <label for="nameCard">Name:</label>
+                            <input id="nameCard" type="text" placeholder="Card Name">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                    </div>
+            
+                    <button type="submit" class="add-device-button">Add</button>
+                </form>
+            </section>
+
+
         </section>
     </article>
 </main>
