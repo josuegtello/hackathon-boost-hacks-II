@@ -1,10 +1,8 @@
 /*    Form    */
 .main-login {
   width: 100%;
-  min-height: 90vh;
   overflow: hidden;
   background-color: var(--bg-color);
-  padding: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,18 +10,18 @@
 
 .box {
   position: relative;
+  padding: 4rem 1rem 0 1rem;
   width: 100%;
-  max-width: 64rem;
-  height: 35rem;
-  background-color: var(--text-color-3);
-  border-radius: 3.3rem;
+  height: 100vh;
   box-shadow: 0 60px 40px -30px rgba(0, 0, 0, 0.27);
 }
 
 .inner-box {
-  position: absolute;
-  width: calc(100% - 4.1rem);
-  height: calc(100% - 4.1rem);
+  position: relative;
+  width: 70%;
+  background-color: var(--text-color-3);
+  border-radius: 3.3rem;
+  height: 80%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -31,9 +29,9 @@
 
 .forms-wrap {
   position: absolute;
-  height: 100%;
+  height: 90%;
   width: 45%;
-  top: 0;
+  top: 5%;
   left: 0;
   display: grid;
   grid-template-columns: 1fr;
@@ -41,7 +39,7 @@
   transition: 0.8s ease-in-out;
 }
 
-form {
+.forms-wrap form {
   max-width: 260px;
   width: 100%;
   margin: 0 auto;
@@ -96,9 +94,10 @@ form.sign-up-form {
 .heading {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between; 
   align-items: center;
   margin-bottom: 1rem;
+  height: 30%;
 }
 
 .heading h2 {
@@ -106,7 +105,6 @@ form.sign-up-form {
   font-size: 1.9rem;
   font-weight: 800;
   color: var(--container-color-2);
-  margin-bottom: 1.2rem;
 }
 
 .heading h6 {
@@ -114,7 +112,6 @@ form.sign-up-form {
   font-weight: 400;
   font-size: 0.75rem;
   display: inline;
-  margin-top:0.5rem ;
 }
 
 .toggle {
@@ -127,11 +124,15 @@ form.sign-up-form {
 .toggle:hover {
   color: var(--container-color-9);
 }
-
+.actual-form{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 50%;
+}
 .input-wrap {
   position: relative;
   height: 2.4rem;
-  margin-bottom: 2rem;
 }
 
 .input-field {
@@ -173,7 +174,6 @@ form.sign-up-form {
   border: none;
   border-radius: 0.8rem;
   font-size: 0.9rem;
-  margin-bottom: 2rem;
   transition: 0.3s;
 }
 
@@ -198,24 +198,24 @@ form.sign-up-form {
 }
 
 .main-login.sign-up-mode .carousel {
-  left: 0%;
+  right: 47.5%;
 }
 
 
 /*    Carousel   */
 .carousel {
   position: absolute;
-  height: 100%;
+  height: 90%;
   width: 50%;
-  left: 50%;
-  top: 0;
+  top: 5%;
+  right: 2.5%;
   background-color: var(--container-color-2);
   border-radius: 2rem;
   display: grid;
   grid-template-rows: auto 1fr;
   padding-bottom: 2rem;
   overflow: hidden;
-  transition: 0.8s ease-in-out;
+  transition:right 0.8s ease-in-out;
 }
 
 .images-wrapper {
@@ -226,10 +226,12 @@ form.sign-up-form {
 
 .image {
   width: 100%;
+  height: 100%;
   grid-column: 1/2;
   grid-row: 1/2;
   opacity: 0;
   transition: opacity 0.3s, transform 0.5s;
+  object-fit: contain;
 }
 
 .img-1 {
@@ -274,6 +276,8 @@ form.sign-up-form {
   line-height: 2.2rem;
   font-weight: 600;
   font-size: 1.6rem;
+  font-family: var(--font-title);
+  letter-spacing: 0.20rem;
 }
 
 /*    Carousel Bullets    */

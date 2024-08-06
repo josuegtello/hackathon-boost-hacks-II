@@ -143,6 +143,13 @@ dist
 
 # End of https://www.toptal.com/developers/gitignore/api/node
 
+
+# Ignorar carpetas .vscode
+.vscode/
+
+# Ignorar carpetas .vscode en todo el proyecto
+.vscode/
+
 # Ignorar carpetas .vscode en todo el proyecto
 .vscode/
 

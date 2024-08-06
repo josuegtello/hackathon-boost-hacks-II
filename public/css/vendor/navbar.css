@@ -1,5 +1,5 @@
 /*      Cursor      */
-a{
+.navbar a{
     cursor: none;
     color: var(--text-color-3);
 }
@@ -31,12 +31,12 @@ a{
 
 /*      Nav Bar     */
 .navbar{
-    position: sticky;
+    position: fixed;
     top: 0;
     left: 0;
     background-color: #f5f6ff00;
     width: 100%;
-    height: 4rem;
+    height: var(--header-height);
     padding: 1rem;
     display: flex;
     align-items: center;
@@ -44,15 +44,20 @@ a{
     font-family: var(--font-text);
     font-size: 1rem;
     text-transform: uppercase;
-     
+     z-index: 10;
     box-shadow: 0 0.2rem 0.15rem var(--box-shadow-1), 0 0.1rem 0.1rem var(--box-shadow-2);
 }
+
 .brand{
-    width: 20%;
+    width: auto;
     height: auto;
     display: flex;
     align-items: center;
     justify-content: space-around;
+}
+
+.brand a{
+    margin-left: 2rem;
 }
 
 .brand img{
@@ -61,11 +66,16 @@ a{
 }
 
 .nav-links{
-    width: 20%;
+    width: auto;
     height: auto;
     display: flex;
     align-items: center;
     justify-content: space-around;
+    margin-right: 2rem;
+}
+
+.nav-links a{
+    margin-left: 1.5rem;
 }
 
 .nav-users{
@@ -88,7 +98,12 @@ a{
     font-size: 0.9rem;
 }
 
+.user{
+    display: none;
+}
+
 /*      Responsive      */
+
 
 @media (max-width:431px) {
     .navbar{
@@ -106,11 +121,14 @@ a{
     }
 
     .brand{
-        width: 40%;
+        width: auto;
         height: auto;
         display: flex;
         align-items: center;
-        justify-content: space-around;
+    }
+
+    .brand a{
+        margin-left: 0.5rem;
     }
 
     .brand img{
@@ -119,19 +137,28 @@ a{
     }
 
     .nav-links{
-        width: 40%;
+        width: auto;
         height: auto;
         display: flex;
         align-items: center;
         justify-content: space-around;
+        margin-right: 0.5rem;
+    }
+    
+    .nav-links a{
+        margin-left: 1rem;
     }
 
     .nav-users{
-        width: 40%;
         height: auto;
         display: flex;
         align-items: center;
-        justify-content: space-around;
+    }
+
+    .nav-users a{
+        display: flex;
+        align-items: center;
+        margin-left: 1rem;
     }
     
     .nav-users i{

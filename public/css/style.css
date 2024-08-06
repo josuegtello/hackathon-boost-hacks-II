@@ -3,12 +3,12 @@
 /*******Custom Properties*******/
 :root {
     /*definicion de colores, usualmente ocupar nombres relacionados*/
-    --bg-color:#0A021B;
+    --bg-color:rgb(10, 2, 27);
     /*colores de contenedores*/
-    --container-color-1:#7209B7;
+    --container-color-1:#7209B7; /* color de sombras*/
     --container-color-2:#560BAD;
     --container-color-3:#480CA8;
-    --container-color-4:#3A0CA3;
+    --container-color-4:#3A0CA3; 
     --container-color-5:#3F37C9;
     --container-color-6:#4361ee;
     --container-color-7:#4895ef;
@@ -20,18 +20,35 @@
     /*colores de notificaciones*/
     --success:#560BAD;
     --error:#f72585;
-    --warning:#ad7ce6;
     --info: #4361ee;
+    --online: #23c905;
+    --offline: #de110a;
 
     /*colores de sombras de contenedores*/
     --box-shadow-1:#f4f5ff1a;
     --box-shadow-2:#f4f5ff14;
     --box-shadow-3:#f1f1f1;
-    --box-shadow-4:#d1bcea;
+    --box-shadow-4:#d4bdff;
+    --box-shadow-5:#efeded;
 
     /*colores de sombras */
     --color-shadow-1:#aeafb8; 
     --color-shadow-2:#0000001a;
+    --color-shadow-3:#0a021b68;
+    --color-shadow-4:rgba(10, 2, 27, 0.79);
+    --color-shadow-5:rgba(10, 2, 27, 0.76);
+    --color-shadow-6:rgba(10, 2, 27, 0.72);
+    --color-shadow-7:rgba(10, 2, 27, 0.66);
+    --color-shadow-8:rgba(10, 2, 27, 0.60);
+    --color-shadow-9:rgba(10, 2, 27, 0.54);
+    --color-shadow-10:rgba(10, 2, 27, 0.46);
+    --color-shadow-11:rgba(10, 2, 27, 0.39);
+    --color-shadow-12:rgba(10, 2, 27, 0.32);
+    --color-shadow-13:rgba(10, 2, 27, 0.24);
+    --color-shadow-14:rgba(10, 2, 27, 0.18);
+    --color-shadow-15:rgba(10, 2, 27, 0.12);
+    --color-shadow-16:rgba(10, 2, 27, 0.07);
+    
 
     /*color de texto*/
     --text-color-1:#4cc9f0;
@@ -45,7 +62,10 @@
     --font:sans-serif;
 
     /*alto de la cabecera*/
-    --header-height:5rem; 
+    --header-height:4rem; 
+    /*Cards Projects*/
+    --s: 700ms;
+    --e: cubic-bezier(0.19, 1, 0.22, 1);
 }
 /*********Reseto CSS*********/
 /*reseteado de modelo de caja*/
@@ -63,6 +83,7 @@ body{
     margin:0;
     color:var(--text-color-3);
     background-color:var(--bg-color);
+    overflow-x: hidden;
 }
 
 /*enlaces*/
@@ -111,10 +132,27 @@ iframe {
 p { /*altura de la linea sea de 1.6, 
     tiene que ver un poco con el tamaño de la letra, como un interlineado*/
     line-height: 1.1;
+    margin: 0;
 }
 input[type="password"]::-ms-reveal, /* Para navegadores de Microsoft */
 input[type="password"]::-ms-clear,   /* Para navegadores de Microsoft */
 input[type="password"]::-webkit-credentials-auto-fill-button, /* Para navegadores basados en WebKit */
 input[type="password"]::-webkit-textfield-decoration-container { /* Para navegadores basados en WebKit */
 cursor: none;
+}
+
+
+
+
+
+/*Genericos*/
+
+.display-none{
+    display: none !important;
+}
+.pointer-events-none{
+    pointer-events: none;
+}
+.opacity-0{
+    opacity: 0;
 }

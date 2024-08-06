@@ -1,0 +1,104 @@
+<main class="edit-profile">
+    <div class="container-edit-profile">
+        <nav class="edit-profile-nav">
+            <ul>
+                <li data-tab="account-user" class="edit-profile-active"><i class="fa-solid fa-user"></i>Account</li>
+                <li data-tab="notifications-user"><i class="fa-solid fa-bell"></i>Notifications</li>
+                <li data-tab="delete-user"><i class="fa-solid fa-trash"></i> Delete account</li>
+            </ul>
+        </nav>
+
+        <div class="edit-profile-content">
+            <!-- Cambiar datos del usuario -->
+            <section id="account-user" class="settings-tab edit-profile-active">
+                <div class="user-profile">
+                    <div class="container-profile-image">
+                        <img id="userProfileImage" src="./assets/img/user.jpg" data-old-value="" alt="Usuario">
+                        <label for="file" class="profile-img-button opacity-0 pointer-events-none"><i class="fa-solid fa-plus fa-beat" ></i></label>
+                        <input id="file" name="input_file" class="profile-input-file" data-file="empty" type="file" accept="image/*"/>
+                    </div>
+                    <h4 id="userProfileName">Nombre del usuario</h4>
+                    <div class="container-edit" data-edit-mode="desactive">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </div>
+                </div>
+                <form id="general-form" class="settings-tab-form">
+                    <div class="input-wrap-profile">
+                        <label for="usernameEdit">Name:</label>
+                        <input id="usernameEdit" type="text" data-old-value="" required name="name" value="prueba" disabled>
+                    </div>
+                
+                    <div class="input-wrap-profile">
+                        <label for="emailEdit">Email:</label>
+                        <input id="emailEdit" type="email" data-old-value="" required name="email" value="prueba" disabled>
+                    </div>    
+                    <div class="input-wrap-profile">
+                        <label for="phoneEdit">Phone number:</label>
+                        <input id="phoneEdit" type="tel" data-old-value="" name="phone" value="1233452" disabled>
+                    </div>
+                    <div class="link-change-password pointer-events-none opacity-0">
+                        <a>Change password</a>
+                    </div>
+                </form>
+                <div class="btn-edit-profile">
+                    <button type="button" id="openModal" disabled>Save Changes</button>
+                </div>
+            </section>
+
+            <!-- Notificaciones -->
+            <section id="notifications-user" class="settings-tab">
+
+            </section>
+
+            <!-- Eliminar usuario -->
+            <section id="delete-user" class="settings-tab">
+                <h2>Delete your account</h2>
+                <h3>Are you sure you want to delete your profile?<br> You will lose all your data.</h3>
+                <form id="delete-form">
+                    <div class="input-wrap-profile">
+                        <label for="delete-password">Password:</label>
+                        <input id="delete-password" type="password" class="input-delete-password" required
+                            name="delete-password">
+                    </div>
+                    <div class="btn-edit-profile">
+                        <button type="submit">Delete</button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+
+    <!-- Modal para cambiar contraseña -->
+    <dialog id="change-password-modal" class="modal-password">
+        <div class="modal-password-content">
+            <span class="close-modal-password">&times;</span>
+            <div class="normal-message">
+                <h2>Password Required</h2>
+                <p>Enter your current password to complete the operation</p>
+            </div>
+            <div class="password-message display-none">
+                <h2>Password Reset</h2>
+                <p>Enter your new password for your account</p>
+            </div>
+            
+            <form id="change-password-form">
+                <div class="input-wrap-profile">
+                    <label for="emailEdit">Password:</label>
+                    <input id="old-password" type="password" required name="password">
+                </div> 
+                <div class="input-wrap-profile change-password display-none">
+                    <label for="new-password">New Password:</label>
+                    <input id="new-password" type="password" required name="new-password">
+                </div>
+                <div class="input-wrap-profile change-password display-none">
+                    <label for="confirm-password">Confirm New Password:</label>
+                    <input id="confirm-password" type="password" required name="confirm-password">
+                </div>
+                <div class="btn-edit-profile">
+                    <button type="submit" class="display-none">Change Password</button>
+                    <button type="button" id="saveChangesBtn">Verify</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+</main>

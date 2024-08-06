@@ -101,10 +101,6 @@
   color: var(--error);
 }
 
-.toast.warning .column i {
-  color: var(--warning);
-}
-
 .toast.info .column i {
   color: var(--info);
 }
@@ -112,14 +108,14 @@
 /*      Content     */
 
 .toast .column .title {
-  font-size: 1rem;
+  font-size: 0.8rem;
   font-weight: 500;
   margin-left: 1rem;
   color: var( --container-color-2);
 }
 
 .toast .column .text {
-    font-size: 1rem;
+    font-size: 0.75rem;
     margin-left: 0.25rem;
     color: var(--container-color-2);
   }

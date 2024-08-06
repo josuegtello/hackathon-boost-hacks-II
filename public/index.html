@@ -10,10 +10,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="./css/vendor/log_in.css">
     <link rel="stylesheet" href="./css/vendor/notification.css">
-    <link rel="stylesheet" href="./css/vendor/profile_drop.css">
+    <link rel="stylesheet" href="./css/vendor/profile_menu.css">
     <link rel="stylesheet" href="./css/vendor/notification_menu.css">
     <link rel="stylesheet" href="./css/vendor/error_404.css">
-
+    <link rel="stylesheet" href="./css/vendor/edit_profile.css">
+    <link rel="stylesheet" href="./css/vendor/devices.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
@@ -23,28 +24,39 @@
 </head>
 <body>
     <!--Genericos-->
-    <div class="cursor"></div>
-    <div data-html="" data-html-action=""></div>
-    <nav data-html="./assets/html/navbar_users.html" data-html-action="replace"></nav>
-    <main data-html="./assets/html/home_page.html" data-html-action="replace"></main>
-    <section data-html="./assets/html/notification.html" data-html-action="replace"></section>
-    <main data-html="./assets/html/error_404.html" data-html-action="replace"></main>
+    
+    <main data-html="./assets/html/home_page.html" data-html-action="replace" ></main>
+    <div data-html="./assets/html/error_404.html" data-html-action="save" data-name="Error 404"></div>
+
     <!--
     <nav data-html="./assets/html/navbar.html" data-html-action="replace"></nav>
     <nav data-html="./assets/html/navbar_users.html" data-html-action="replace"></nav>
     -->
-
-    <!--Notificaciones-->
+    <!--Cursor-->
+    <div class="cursor"></div>
+    <!--Barra De Notificacion-->
     <section class="container-notification">
-        <ul class="notifications"></ul>  
-        <div class="buttons">
-            <!---
-                <button class="btn" id="success">Success</button>
-                <button class="btn" id="error">Error</button>
-                <button class="btn" id="info">Info</button>
-            -->
+        <ul class="notifications"></ul> 
+        <!--
         </div>   
+            <button id="success" class="btn" data-title="CustomSuccess" data-text="This is a custom success message.">Show Success</button>
+            <button id="error" class="btn" data-title="Custom Error" data-text="This is a custom error message.">Show Error</button>
+            <button id="info" class="btn" data-title="Custom Info" data-text="This is a custom info message.">Show Info</button>
+            
+        </div> 
+        -->
     </section>
+
+    <!--Menu De Notificaciones-->
+    <!--
+    <section class="notify-menu">
+        <div class="drop-down">
+            <h2>Notifications</h2>
+            <div class="notify-items">
+            </div>
+        </div>
+    </section>
+    -->
 
     <!--Librerias externas-->
     <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.0/gsap.min.js'></script>

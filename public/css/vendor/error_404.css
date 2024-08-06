@@ -1,104 +1,58 @@
-.main-error {
+.main-error{
   width: 100%;
+  height: auto;
+}
+
+.error-page{
   display: flex;
-  justify-content: center;
   align-items: center;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+  justify-content: space-between;
 }
 
-.containers {
-  padding: 0 20px;
+.error-content{
+  padding: 2rem 0 2rem 2rem;
 }
 
-.container-info {
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 100%;
+.error-title{
+  color: var(--container-color-6);
 }
 
-.container-text {
-  height: 70%;
-  padding: 30px 0;
+.error-title h2{
+  font-size: 5rem;
 }
 
-.btn {
-  display: flex;
-  align-items: right;
-  height: 30%;
-  padding: 15px 0;
-}
-
-.title-text {
-  font-family: var(--font-title);
-  font-size: 6rem;
-}
-
-.subtitle-text {
+.error-title span{
   font-size: 2rem;
 }
 
-.title-text,
-.subtitle-text {
-  color: var(--text-color-2);
+.error-content p{
+  font-size: 1.2rem;
+  line-height: 1.9rem;
 }
 
-.subtitle-text,
-.error-text {
-  font-family: var(--font-text);
-}
-
-.error-text {
-  text-align: left;
-  padding: 3rem 0;
-}
-
-.link-btn {
-  font-family: var(--font-text);
-  position: absolute;
-  font-size: 1rem;
-  text-align: center;
+.go-home-btn{
   width: 11rem;
-  padding: 20px 25px;
-  margin: 40px 0;
-  transition: 0.5s;
-  color: var(--text-color-3);
-  text-transform: uppercase;
-  letter-spacing: 3px;
+  margin-top: 2rem;
   background-color: var(--container-color-6);
-  border-radius: 50px;
-}
-
-.link-btn:hover {
-  width: 10rem;
-  margin: 40px 0;
-  transition: 0.5s;
+  padding: 1rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.20rem;
   color: var(--text-color-3);
-  background-color: var(--container-color-5);
-  box-shadow: 0 0 5px var(--text-color-2), 0 0 25px var(--text-color-2),
-    0 0 50px var(--text-color-2), 0 0 100px var(--text-color-2);
+  border-radius: 0.65rem;
+  transition: 0.3s;
 }
 
-.btn span {
-  position: absolute;
-  display: block;
+.go-home-btn:hover{
+  transition: 0.3s;
+  background-color: var(--text-color-1);
 }
 
-.container-image {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
+.error-img{
+  width: 80rem;
 }
 
-.image img {
+.error-img img{
   width: 100%;
-  height: auto;
-  border-radius: 10px;
+  height: 35rem;
 }

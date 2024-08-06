@@ -8,30 +8,27 @@ export const fetchRequest=async function(set){
         contentType:Para JSON - 'application/json' Para formulario- 'application/x-www-form-urlencoded',
         async success(response){  //en caso de que la peticion se hizo correctamente
             console.log(`Estado de respuesta: ${response.status}`);
-        
             if(response.ok){    //200-299
                 //Para tranformar a JSON
                 const data=response.json();
                 //Para html
                 const $html=response.text();
-
-
+                
 
             }
             else{   //400-499    errores
             
             }
         }.
-        error(err){ //500-599   errores de servidor
+        async error(err){ //500-599   errores de servidor
             console.log(error de servidor);
             console.error(err);
         }
     }
-    
     */
-
-
     const {method,url,data,credentials,contentType,success,error}=set;
+    //console.log("informacion a enviar en la peticion Fetch");
+    //console.log(method,url,data,credentials,contentType);
     const options={
         method:method,
         headers:{

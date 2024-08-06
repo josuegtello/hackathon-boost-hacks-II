@@ -4,7 +4,14 @@
     "name": "Gerardo Guzman",
     "email": "josuegtello2@gmail.com",
     "password": "lalopop123456",
-    "devices": []
+    "devices": [
+      {
+        "device": 1,
+        "id": "1234",
+        "type": "SSEM"
+      }
+    ],
+    "phone": "5565098090"
   },
   {
     "id": "e1d3e9a6-e1fe-4d85-b11f-a515e3e62945",
@@ -28,10 +35,62 @@
     "devices": []
   },
   {
-    "id": "30419183-ca55-4919-8c8d-ee87b1823100",
-    "name": "Hector Ramses",
-    "email": "ramsesGt17@gmail.com",
-    "password": "pepeTo;o",
+    "id": "58a3899a-1568-47c3-ba87-86888d7fe817",
+    "name": "Abigail Valeria Reyes Martínez",
+    "email": "avreyesmtz@gmail.com",
+    "password": "12",
+    "devices": []
+  },
+  {
+    "id": "293b43b6-78cf-4f79-98c0-a8c454ea2584",
+    "name": "Anahi Reyes",
+    "email": "areyesm1906@alumno.ipn.mx",
+    "password": "123",
+    "devices": []
+  },
+  {
+    "id": "17342d2c-91f0-4001-a49c-12f738be6fd2",
+    "name": "Eder Urban",
+    "email": "guzman.teyo.gerardo.josue@gmail.com",
+    "password": "gerardo2004$",
+    "devices": []
+  },
+  {
+    "id": "bb37c5dc-3122-4468-8ea7-98b6dfdb825d",
+    "name": "Panchito Feliz",
+    "email": "panchito@gmail.com",
+    "password": "perruelOrnitorrinco",
+    "devices": []
+  },
+  {
+    "id": "7bece5bc-3bfd-4ae1-a232-895a18572528",
+    "name": "Papu",
+    "email": "papu@gmail.com",
+    "password": "papau123",
+    "devices": []
+  },
+  {
+    "id": "557d8533-f923-4581-ac9b-38b3e82774d0",
+    "name": "Eduardo",
+    "email": "eduardo@gmail.com",
+    "password": "Pepetonio",
+    "devices": []
+  },
+  {
+    "id": "4f0cd227-d983-4823-93a8-a61d21e7611d",
+    "name": "Papu2",
+    "email": "papu2@gmail.com",
+    "password": "papau123",
+    "devices": []
+  },
+  {
+    "id": "b5dc8835-2b3b-46d9-84f9-6a0bcda1b31e",
+    "user": 11,
+    "name": "Ramses Guzman",
+    "email": "ramses.hrgt17@gmail.com",
+    "password": "X$3\\1xXMEXKehRd&",
+    "phone": "5561444435",
+    "profile_img": null,
     "devices": []
   }
 ]
