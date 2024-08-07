@@ -2,6 +2,7 @@ const d=document,
         n=navigator
 import {createToast} from "./notification.js";
 import { sleep } from "./sleep.js";
+/*
 export class Bluetooth {
     constructor(type) {
         this.type = type; //tiene que identificarse con el dispositivo bluetooth desconectado
@@ -220,3 +221,166 @@ export class Bluetooth {
         });
     }
   }
+*/
+export class Bluetooth {
+    constructor() {
+        this.bluetoothDevice = null;
+        this.gattServer = null;
+        this.service = null;
+        this.txCharacteristic = null;
+        this.rxCharacteristic = null;
+        this.messageBuffer = "";
+        this.responseResolver = null;
+        this.isConnected = false;
+        this.isProcessingQueue = false;
+        this.operationQueue = [];
+        this.operationTimeout = 10000; // 10 segundos de tiempo de espera
+    }
+
+    async connect() {
+        return this.queueOperation(async () => {
+            if (this.isConnected && this.gattServer?.connected) {
+                console.log('Device already connected.');
+                return true;
+            }
+            try {
+                console.log('Requesting Bluetooth Device...');
+            this.bluetoothDevice = await navigator.bluetooth.requestDevice({
+                filters: [{ services: ['0000ffe0-0000-1000-8000-00805f9b34fb'] }]
+            });
+
+            console.log('Connecting to GATT Server...');
+            this.gattServer = await this.bluetoothDevice.gatt.connect();
+
+            console.log('Getting Service...');
+            this.service = await this.gattServer.getPrimaryService('0000ffe0-0000-1000-8000-00805f9b34fb');
+
+            console.log('Getting TX Characteristic...');
+            this.txCharacteristic = await this.service.getCharacteristic('0000ffe1-0000-1000-8000-00805f9b34fb');
+
+            console.log('Getting RX Characteristic...');
+            this.rxCharacteristic = await this.service.getCharacteristic('0000ffe1-0000-1000-8000-00805f9b34fb');
+
+            console.log('Starting notifications...');
+            await this.rxCharacteristic.startNotifications();
+            this.rxCharacteristic.addEventListener('characteristicvaluechanged', this.handleNotifications.bind(this));
+
+            this.isConnected = true;
+            console.log('Connected!');
+            return true;
+            } catch (error) {
+                console.error('Connection error:', error);
+                this.isConnected = false;
+                throw error;
+            }
+        });
+    }
+
+    async disconnect() {
+        return this.queueOperation(async () => {
+            if (this.bluetoothDevice && this.gattServer?.connected) {
+                console.log('Disconnecting...');
+                this.bluetoothDevice.gatt.disconnect();
+                console.log('Disconnected!');
+            } else {
+                console.log('No device connected.');
+            }
+            this.isConnected = false;
+        });
+    }
+
+    async sendBluetoothMessage(value) {
+        return this.queueOperation(async () => {
+            if (!this.isConnected || !this.gattServer?.connected) {
+                console.log('Device disconnected. Attempting to reconnect...');
+                await this.connect();
+            }
+    
+            if (!this.isConnected) {
+                throw new Error('Cannot send message. Device is not connected.');
+            }
+    
+            if (this.txCharacteristic) {
+                const data = JSON.stringify(value);
+                const encoder = new TextEncoder();
+                await this.txCharacteristic.writeValue(encoder.encode(data));
+                console.log('Sent:', data);
+            } else {
+                throw new Error('Cannot send message. TX Characteristic not available.');
+            }
+        });
+    }
+
+    handleNotifications(e) {
+        const value = new TextDecoder().decode(e.target.value);
+        this.messageBuffer += value;
+
+        while (this.messageBuffer.includes('|') && this.messageBuffer.includes('#')) {
+            const [lengthStr, rest] = this.messageBuffer.split('|', 2);
+            const length = parseInt(lengthStr, 10);
+
+            if (rest.length >= length + 1) {
+                const jsonStr = rest.substr(0, length);
+                const message = JSON.parse(jsonStr);
+                console.log('Mensaje completo recibido:', message);
+
+                if (this.responseResolver) {
+                    this.responseResolver(message);
+                    this.responseResolver = null;
+                }
+
+                this.messageBuffer = rest.substr(length + 1);
+            } else {
+                break;
+            }
+        }
+    }
+
+    waitForResponse() {
+        return new Promise((resolve) => {
+            this.responseResolver = resolve;
+        });
+    }
+
+    async queueOperation(operation) {
+        return new Promise((resolve, reject) => {
+            const timeoutId = setTimeout(() => {
+                const index = this.operationQueue.findIndex(op => op.operation === wrappedOperation);
+                if (index > -1) {
+                    this.operationQueue.splice(index, 1);
+                }
+                reject(new Error('Operation timed out'));
+            }, this.operationTimeout);
+    
+            const wrappedOperation = async () => {
+                try {
+                    const result = await operation();
+                    clearTimeout(timeoutId);
+                    resolve(result);
+                } catch (error) {
+                    clearTimeout(timeoutId);
+                    reject(error);
+                }
+            };
+    
+            this.operationQueue.push({ operation: wrappedOperation });
+            this.processQueue();
+        });
+    }
+
+    async processQueue() {
+        if (this.isProcessingQueue || this.operationQueue.length === 0) return;
+    
+    this.isProcessingQueue = true;
+    const { operation } = this.operationQueue.shift();
+
+    try {
+        await operation();
+    } catch (error) {
+        console.error('Error in queued operation:', error);
+    } finally {
+        this.isProcessingQueue = false;
+        setTimeout(() => this.processQueue(), 100); // Pequeño retraso entre operaciones
+    }
+    }
+}
