@@ -12,6 +12,9 @@ import {initializeTabs,initializeChangePassword,initializeEditProfile} from "./v
 import { initializeDevices, addNewDevice } from "./vendor/devices.js";
 import { initializateContactUs } from "./vendor/contact_us.js";
 
+//IMPORT DEMASIADO PROVISIONAL
+import {tryBluetoothConnection} from "./vendor/bluetooth.js";
+
 const d = document,
   w = window,
   body = d.body;
@@ -127,7 +130,7 @@ class User {
             user.devices.forEach((device) => {
               if (device.device == dvc.device) {
                 //es el mismo dispositivo configuramos su estado de conexion
-                device.state = "connected";
+                device.state = "online";
                 device.wsId = dvc.ws_id;
               }
             });
@@ -135,7 +138,7 @@ class User {
           user.devices.forEach((el) => {
             if (!el.state) {
               //si no existe mandamos un mensaje   de que esta desconectado
-              el.state = "disconnected";
+              el.state = "offline";
               createToast(
                 "info",
                 "Devices:",
@@ -186,7 +189,6 @@ const startClient = async function () {
     //aqui tambien haremos el llamado de el buzon de notificacion y demas datos que necesite de primera instancia
     user.getHeader(url);
     await user.getDevices(); //esperamos a obtener los dispositivos conectados
-    await sleep(6000);
     connectWebSocket(); //iniciamos la comunicacion web Socket, solo los usuario tiene acceso a este tipo de notificaciones
   } else {
     //haremos llamado al navba normal
@@ -195,6 +197,9 @@ const startClient = async function () {
     user = new User(null, null); //instanciamos la clase
     user.getHeader(url);
   }
+
+
+  return true;
 };
 
 //Funciones generales
@@ -442,6 +447,7 @@ function handleAddDevice() {
     type: "Electromagnetic Lock",
     state: "offline",
     img: "./assets/img/user.jpg",
+    device:1,
   };
   addNewDevice(newDevice);
 }
@@ -449,7 +455,7 @@ function handleAddDevice() {
 
 d.addEventListener("DOMContentLoaded", async (e) => {
   startCursor();
-  startClient();
+  await startClient();
   startContent();
   //Funcion de los Botones
   initializeToast();
@@ -481,5 +487,11 @@ d.addEventListener("DOMContentLoaded", async (e) => {
       handleAddDevice();
     }
     //PRUEBA DE AÑADIR DISPOSITIVO
+    //PRUEB PARA INICIAR CONEXION BLUETOOTH
+    if (e.target.matches("#connectBluetooth")) {
+      tryBluetoothConnection();
+    }
+
+
   });
 });

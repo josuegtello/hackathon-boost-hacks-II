@@ -2,6 +2,7 @@
 import {createToast} from "./notification.js";
 import {sleep} from "./sleep.js";
 import {getUser,setUser,isAuthenticated} from "../main.js";
+import {setDevice} from "./devices.js";
 const d=document;
 let connection = {
     readyState: WebSocket.CLOSED
@@ -19,7 +20,7 @@ const handleOnMessage=function(event) {
         setUser(user);
     }
     if(issue=="IoT device notification"){
-    
+        
     }
     else if(issue=="IoT device connected"){ //se reconecto un dispositivo
         const {ws_id,device}=data;
@@ -29,7 +30,8 @@ const handleOnMessage=function(event) {
         user.devices.forEach(dvc => {
             if(dvc.device==device){ //si coincide es el dispositivo que se conecto
                 dvc.wsId=ws_id;
-                dvc.state="connected";
+                dvc.state="online";
+                setDevice(dvc);
                 createToast("info","Devices:",`Your device '${dvc.name}' is reconnected`);
             }
         });
@@ -43,11 +45,16 @@ const handleOnMessage=function(event) {
         user.devices.forEach(dvc => {
             if((dvc.device==device)&&(dvc.wsId==ws_id)){ //si coincide es el dispositivo que se conecto
                 dvc.wsId="";
-                dvc.state="disconnected";
+                dvc.state="offline";
+                setDevice(dvc);
                 createToast("info","Devices:",`Your device '${dvc.name}' is disconnected`);
             }
         });
         setUser(user);
+        
+        //FALTA poner la funcion que actualice en el html el estado del dispositivo
+
+
     }
 }
 const handleOnOpen=function(event) {
@@ -58,8 +65,7 @@ const handleOnClose=async function(event) {
     console.log("disconnected");
     createToast('success','WebSocket:','disconnected, you are Offline');
     // Tratamos de conectar nuevamente el websocket
-    await sleep(5000);
-    connectWebSocket();
+    await connectWebSocket();
     
 }
 const handleOnError=function(event) {
@@ -100,6 +106,8 @@ const handleOnError=function(event) {
 
 // Función que inicializa el WebSocket
 export const connectWebSocket=async function(){
+    //esperamos 5 segundos para tratar una reconexion
+    await sleep(5000);
     // no se hace nada si se esta conectado o ya esta conectado
     if(connection.readyState === WebSocket.CONNECTING || connection.readyState === WebSocket.OPEN) return;
     connection=new WebSocket(`ws://${location.hostname}:80`);
@@ -108,6 +116,7 @@ export const connectWebSocket=async function(){
     connection.addEventListener("open", handleOnOpen);
     connection.addEventListener('close', handleOnClose);  
     connection.addEventListener("error", handleOnError);
+    return true;
 }
 
 

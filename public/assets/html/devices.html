@@ -13,9 +13,11 @@
             <!-- Devices -->
             <section id="devices" class="devices-tab devices-active">
                 <div class="tab-container-devices">
-                    <button id="addDeviceButton">Add Device</button>
-
-                    <!-- <div class="device-n">
+                    <button id="addDeviceButton" style="display: none;">Add Device</button>
+                    <button id="connectBluetooth" style="display: none;">Connect Bluetooth</button>
+                    <!-- 
+                        <button id="addDeviceButton" style="display: none;">Connect Bluetooth</button>
+                    <div class="device-n">
                         <figure class="tab-device-img">
                             <img src="./assets/img/user.jpg" alt="Device image">
                         </figure>
@@ -124,26 +126,34 @@
                         <div class="form-group">
                             <label for="deviceList">Select Device:</label>
                             <select id="deviceList" name="deviceList">
-                                <option value="electromagneticLock">Electromagnetic Lock</option>
+                                <option value="electromagneticLock">CelestialSec Lock</option>
                                 <option value="camera">Security Camera</option>
                                 <option value="sensor">Motion Sensor</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="deviceName">Device Name:</label>
-                            <input type="text" id="deviceName" name="deviceName" required>
+                            <input type="text" id="deviceName" name="device_name" required>
                         </div>
                         <div class="form-group">
                             <label for="devicePassword">Device Password:</label>
-                            <input type="password" id="devicePassword" name="devicePassword" required>
+                            <input type="password" id="devicePassword" name="device_password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ssidName">SSID name:</label>
+                            <input type="text" id="ssidName" name="ssid_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ssidPassword">SSID password:</label>
+                            <input type="password" id="ssidPassword" name="ssid_name" required>
                         </div>
                     </div>
                     <div class="device-list">
-                        <div class="device-name">
+                        <div class="device-name" data-state="disconnected" data-type-device="SSEM">
                             <i class="fa-brands fa-bluetooth"></i>
                             <h3>SSEM</h3>
                         </div>
-                        <div class="device-name">
+                        <div class="device-name" data-state="disconnected" data-type-device="SSEM_LA">
                             <i class="fa-brands fa-bluetooth"></i>
                             <h3>SMLA</h3>
                         </div>

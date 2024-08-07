@@ -1,3 +1,7 @@
+import {setUser,getUser} from "../main.js";
+import { tryBluetoothConnection } from "./bluetooth.js";
+
+
 const d = document;
 
 export function initializeDevices() {
@@ -7,55 +11,56 @@ export function initializeDevices() {
     initializeCardModal();
     initializePasswordModal();
     initializeAddDeviceForm();
+    //testConnection();
 }
 
 // SECCION DE TABS
 function initializeTabs() {
     const $tabs = d.querySelectorAll('.devices-nav li');
-    const $tabContents = d.querySelectorAll('.devices-tab');
-
     $tabs.forEach(tab => {
         tab.addEventListener('click', function () {
             const target = this.getAttribute('data-tab');
             setActiveTab(target);
         });
     });
-
     // Activar el primer tab por defecto
     if ($tabs.length > 0) {
         const firstTabId = $tabs[0].getAttribute('data-tab');
         setActiveTab(firstTabId);
     }
+}
+function setActiveTab(tabId) {
+    const $tabs = d.querySelectorAll('.devices-nav li');
+    const $tabContents = d.querySelectorAll('.devices-tab');
+    $tabContents.forEach(content => content.classList.remove('devices-active'));
+    $tabs.forEach(tab => tab.classList.remove('devices-active'));
 
-    function setActiveTab(tabId) {
-        $tabContents.forEach(content => content.classList.remove('devices-active'));
-        $tabs.forEach(tab => tab.classList.remove('devices-active'));
+    const activeTab = d.querySelector(`[data-tab="${tabId}"]`);
+    const activeContent = d.getElementById(tabId);
 
-        const activeTab = d.querySelector(`[data-tab="${tabId}"]`);
-        const activeContent = d.getElementById(tabId);
-
-        if (activeTab && activeContent) {
-            activeTab.classList.add('devices-active');
-            activeContent.classList.add('devices-active');
-        }
+    if (activeTab && activeContent) {
+        activeTab.classList.add('devices-active');
+        activeContent.classList.add('devices-active');
     }
 }
-
 // SECCION DE DEVICES
 
 //Función para crear/añadir el contenedor del dispositivo
-function createDeviceElement(device) {
+function createDeviceElement(data) {
     const deviceElement = d.createElement('div');
-    deviceElement.className = 'device-n';
+    deviceElement.classList.add('device-n');
+    deviceElement.setAttribute("data-device",data.device);
+    console.log("Crenado etiqueta device");
+    console.log(data);
     deviceElement.innerHTML = `
         <figure class="tab-device-img">
-            <img src="${device.img}" alt="Device image">
+            <img src="${data.img}" alt="Device image">
         </figure>
         <div class="tab-device-content">
-            <input type="text" placeholder="${device.name}" name="Name device" disabled data-original-value="${device.name}">
-            <h4>${device.type}</h4>
-            <span class="${device.state === 'online' ? 'online-icon' : 'offline-icon'}">
-                <i class="fa-solid fa-circle"></i>${device.state === 'online' ? 'Online' : 'Offline'}
+            <input type="text" placeholder="${data.name}" name="Name device" disabled data-original-value="${data.name}">
+            <h4>${data.type}</h4>
+            <span class="${data.state === 'online' ? 'online-icon' : 'offline-icon'}">
+                <i class="fa-solid fa-circle"></i>${data.state == 'online' ? 'Online' : 'Offline'}
             </span>
         </div>
         <div class="tab-device-icons">
@@ -66,8 +71,51 @@ function createDeviceElement(device) {
 
     return deviceElement;
 }
+//Función para añadir un dipositivo
+export function addNewDevice(device) {
+    const $devicesContainer = d.querySelector('.tab-container-devices');
+    const deviceElement = createDeviceElement(device);
+    $devicesContainer.appendChild(deviceElement);
 
+    const $input = deviceElement.querySelector('input[type="text"]');
+    const $editIcon = deviceElement.querySelector('.fa-pencil-alt');
+    const $deleteIcon = deviceElement.querySelector('.fa-trash-alt');
+
+    $editIcon.addEventListener('click', handleEditClick);
+    $deleteIcon.addEventListener('click', handleDeleteClick);
+    $input.addEventListener('keydown', handleInputKeydown);
+}
+export function setDevice(data){
+    if(!d.querySelector('.tab-container-devices')) return;
+    const {device,state,name}=data;
+    const $device=d.querySelector(`[data-device="${device}"]`)
+    if(state){  //si existe cambiamos el estado
+        const $stateContainer=$device.querySelector("span");
+        $stateContainer.className="";//limpliamos la lista de clases
+        $stateContainer.classList.add(state === 'online' ? 'online-icon' : 'offline-icon');
+        $stateContainer.innerHTML=`<i class="fa-solid fa-circle"></i>${state == 'online' ? 'Online' : 'Offline'}`;
+        
+    }
+    if(name){   //si existe cambiamos el nombre
+        const $input=$device.querySelector('input');
+
+        $input.setAttribute("placeholder",name);
+    }
+
+}
 function initializeDeviceSection() {
+    //creo todos las etiqueta device
+    console.log("Agregando dispositivos a la pantalla");
+    const user=getUser(),
+        {devices}=user;
+    devices.forEach(device => {
+        const newDevice=device;
+        newDevice.img="./assets/img/user.jpg";//FALTA CAMBIAR ESTO QUE DEPENDIENDO DEL TIPO ES LA IMAGEN
+        console.log(device);
+        addNewDevice(newDevice);
+        
+    });
+    
     const $devices = d.querySelectorAll('.device-n');
 
     $devices.forEach($device => {
@@ -83,20 +131,7 @@ function initializeDeviceSection() {
     });
 }
 
-//Función para añadir un dipositivo
-export function addNewDevice(device) {
-    const $devicesContainer = d.querySelector('.tab-container-devices');
-    const deviceElement = createDeviceElement(device);
-    $devicesContainer.appendChild(deviceElement);
 
-    const $input = deviceElement.querySelector('input[type="text"]');
-    const $editIcon = deviceElement.querySelector('.fa-pencil-alt');
-    const $deleteIcon = deviceElement.querySelector('.fa-trash-alt');
-
-    $editIcon.addEventListener('click', handleEditClick);
-    $deleteIcon.addEventListener('click', handleDeleteClick);
-    $input.addEventListener('keydown', handleInputKeydown);
-}
 
 
 function handleEditClick(event) {
@@ -404,12 +439,16 @@ function closeChangePasswordModalOnOutsideClick(e) {
 function stopPropagation(e) {
     e.stopPropagation();
 }
+//variables que usare para almacenar al objeto bluetooth
+let ssem=null,
+    ssemLa=null
 
 // Sección de Add Device
 function initializeAddDeviceForm() {
     const $addCardBtn = d.getElementById('add-card-btn');
     const $cardList = d.getElementById('card-list');
     const $addDeviceForm = d.querySelector('.add-device-form');
+    const $bluetoothBtn=d.querySelectorAll(".device-name");
 
     if ($addCardBtn && $cardList) {
         $addCardBtn.addEventListener('click', addNewCardItem);
@@ -417,6 +456,48 @@ function initializeAddDeviceForm() {
 
     if ($addDeviceForm) {
         $addDeviceForm.addEventListener('submit', handleAddDeviceSubmit);
+    }
+    $bluetoothBtn.forEach($btn => {
+        $btn.addEventListener("click",connecteBluetooth);
+    });
+}
+async function connecteBluetooth(e){
+    const   $btn=e.target.closest("[data-type-device]"),
+            state=$btn.getAttribute('data-state'),
+            device=$btn.getAttribute("data-type-device");
+    if(state=="disconnected"){  //estamos tratando de conectar a un dispositivo bluetooth
+        console.log("Conectando dispositivo bluetooth");
+        if(device=="SSEM"){
+            ssem=await tryBluetoothConnection(device);
+            console.log(ssem);
+            if(ssem){   //si existe cambiamos el atributo
+                $btn.setAttribute("data-state","connected");
+            }
+        }
+        else if(device=="SSEM_LA"){
+            ssemLa= await tryBluetoothConnection(device);
+            console.log(ssem);
+            if(ssemLa){
+                $btn.setAttribute("data-state","connected");
+            }
+        }
+    }
+    if(state=="connected"){ //queremos desconectar al dispositivo bluetooth
+        console.log("Desconectando dispositivo bluetooth");
+        if(device=="SSEM"){
+            if(ssem){
+                ssem.disconnect();
+                ssem=null;
+                $btn.setAttribute("data-state","disconnected");
+            }
+        }
+        else if(device=="SSEM_LA"){
+            if(ssemLa){
+                ssemLa.disconnect();
+                ssemLa=null;
+                $btn.setAttribute("data-state","disconnected");
+            }
+        }
     }
 }
 
