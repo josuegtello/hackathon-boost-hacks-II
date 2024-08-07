@@ -1,5 +1,8 @@
-import {setUser,getUser} from "../main.js";
-import { tryBluetoothConnection } from "./bluetooth.js";
+import {setUser,getUser,setLoadingScreen,removeLoadingScreen} from "../main.js";
+import {Bluetooth} from "./bluetooth.js";
+import {createToast} from "./notification.js";
+import { sleep } from "./sleep.js";
+import {uuidv4} from "./uuidv4.js";
 
 
 const d = document;
@@ -475,8 +478,8 @@ function stopPropagation(e) {
     e.stopPropagation();
 }
 //variables que usare para almacenar al objeto bluetooth
-let ssem=null,
-    ssemLa=null
+const ssem=new Bluetooth("SSEM"),
+    ssemLa=new Bluetooth("SSEM_LA");
 
 // Sección de Add Device
 function initializeAddDeviceForm() {
@@ -503,35 +506,39 @@ async function connecteBluetooth(e){
     if(state=="disconnected"){  //estamos tratando de conectar a un dispositivo bluetooth
         console.log("Conectando dispositivo bluetooth");
         if(device=="SSEM"){
-            ssem=await tryBluetoothConnection(device);
-            console.log(ssem);
-            if(ssem){   //si existe cambiamos el atributo
+            const connected = await ssem.connect();
+            await sleep(1000);
+            if (connected) {
+                console.log("Conexión exitosa y verificada");
+                createToast("success","Bluetooth: ","Successful connection to bluetooth device");
                 $btn.setAttribute("data-state","connected");
+                ssem.disconnect();
+            } else {
+                console.log("No se pudo conectar o verificar el dispositivo");
+                createToast("error","Bluetooth: ","Failed to connect to bluetooth device");
             }
         }
         else if(device=="SSEM_LA"){
-            ssemLa= await tryBluetoothConnection(device);
-            console.log(ssem);
-            if(ssemLa){
+            const connected = await ssemLa.connect();
+            if (connected) {
+                console.log("Conexión exitosa y verificada");
+                createToast("success","Bluetooth: ","Successful connection to bluetooth device");
                 $btn.setAttribute("data-state","connected");
+            } else {
+                console.log("No se pudo conectar o verificar el dispositivo");
+                createToast("error","Bluetooth: ","Failed to connect to bluetooth device");
             }
         }
     }
     if(state=="connected"){ //queremos desconectar al dispositivo bluetooth
         console.log("Desconectando dispositivo bluetooth");
         if(device=="SSEM"){
-            if(ssem){
-                ssem.disconnect();
-                ssem=null;
-                $btn.setAttribute("data-state","disconnected");
-            }
+            await ssem.disconnect();
+            $btn.setAttribute("data-state","disconnected");
         }
         else if(device=="SSEM_LA"){
-            if(ssemLa){
-                ssemLa.disconnect();
-                ssemLa=null;
-                $btn.setAttribute("data-state","disconnected");
-            }
+            await ssemLa.disconnect();
+            $btn.setAttribute("data-state","disconnected");
         }
     }
 }
@@ -561,7 +568,92 @@ function createCardItemElement() {
     return cardItem;
 }
 
-function handleAddDeviceSubmit(e) {
+async function handleAddDeviceSubmit(e) {
     e.preventDefault();
+    const $form=e.target;
+    console.log($form);
+    setLoadingScreen("Configuring device, please wait...");
+    //FALTA hacer condiciones dependiendo del dispositivo que estoy conectando
+    /*
+    if(!ssem.txCharacteristic){   //por pruebas nada mas seria el de SSEM, FALTA poner que ssemLa tambien exista
+        await sleep(750);
+        removeLoadingScreen();
+        createToast("error","Error: ","Both devices must be connected to bluetooth");
+        return;
+    }
+        */
+
+    const id=uuidv4();
+    const user=getUser();
+    console.log(user);
+    const webCredentials={
+        id:id,
+        name:$form.device_name.value,
+        device:user.devices.length,
+        type:'SSEM'
+    }
+    console.log(webCredentials);
+    const bthCredentials={
+        issue:"Set credentials",
+        body:{
+            id:id,
+            password:$form.device_password.value,
+            ssid:$form.ssid_name.value,
+            ssid_password:$form.ssid_password.value
+        }
+    }
+    console.log(bthCredentials);
+    //FALTA mandar las credentiales a la web y confirmar que se han guardado
+
+
+    //FALTA intercambiar datos entre SSEM_LA y SSEM (Direccion MAC de SSEM_LA)
+
+    //Mando las credentiales a SSEM y espero su respuesta
+    
+    try {
+        console.log("Iniciando conexión con SSEM...");
+        await ssem.disconnect(false);
+        const connected = await ssem.connect();
+        if (!connected) {
+            throw new Error("Failed to connect to SSEM device");
+        }
+        
+        console.log("Mandando datos bluetooth a SSEM esperando respuesta...");        
+        await ssem.sendBluetoothMessage(bthCredentials);
+        
+        console.log("Esperando respuesta de SSEM...");
+        const dataString = await ssem.waitForResponse();
+        const data = JSON.parse(dataString);
+        console.log("Data bluetooth de SSEM recibido", data);
+        
+        if (data.issue !== "Set credentials" || data.state !== "OK") {
+            throw new Error("A problem occurred while configuring the SSEM device");
+        }
+    } catch (err) {
+        console.error("Error during device configuration:", err);
+        removeLoadingScreen();
+        createToast("error", "Error: ", err.message || "An unexpected error occurred with SSEM device");
+        return;
+    } finally {
+        console.log("Proceso de configuración de SSEM finalizado");
+    }
+    //FALTA mandar las credenciales a SSEM_LA y esperar respuesta
+
+
+
+    //si todo esta bien confirmamos que se guardo el dispositivo
+    const {name,type,device}=webCredentials
+    const newDevice={
+        name,
+        type,
+        device,
+        img:"./assets/img/user.jpg",
+        state:"offline"
+    }
+    user.devices.push(newDevice);//agregamos el dispositivo al objeto user
+    setUser(user);//actualizamos el usuario para que todos tengan el usuario
+    addNewDevice(newDevice);   //agregamos al html el dispositivo
+    removeLoadingScreen();
+    createToast("success","Device: ","Device added successfully");
     console.log('Device added');
 }

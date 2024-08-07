@@ -34,7 +34,6 @@
 
                 </div>
             </section>
-
             <!-- Dashboard -->
             <section id="dashboard" class="devices-tab">
                 <h2 class="device-name-dashboard">Device Name</h2>
@@ -117,7 +116,6 @@
                     </div>
                 </dialog>
             </section>
-
             <!-- Add device -->
             <section id="add" class="devices-tab add-device">
                 <h2>Add Device</h2>
@@ -125,8 +123,8 @@
                     <div class="add-device-content">
                         <div class="form-group">
                             <label for="deviceList">Select Device:</label>
-                            <select id="deviceList" name="deviceList">
-                                <option value="electromagneticLock">CelestialSec Lock</option>
+                            <select id="deviceList" name="device_list">
+                                <option value="CelestialSec Lock">CelestialSec Lock</option>
                                 <option value="camera">Security Camera</option>
                                 <option value="sensor">Motion Sensor</option>
                             </select>
@@ -145,7 +143,7 @@
                         </div>
                         <div class="form-group">
                             <label for="ssidPassword">SSID password:</label>
-                            <input type="password" id="ssidPassword" name="ssid_name" required>
+                            <input type="password" id="ssidPassword" name="ssid_password" required>
                         </div>
                     </div>
                     <div class="device-list">
@@ -167,8 +165,6 @@
                     <button type="submit" class="add-device-button">Add</button>
                 </form>
             </section>
-
-
         </section>
     </article>
     <!-- Modal de confirmación -->

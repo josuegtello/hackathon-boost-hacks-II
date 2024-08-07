@@ -12,8 +12,6 @@ import {initializeTabs,initializeChangePassword,initializeEditProfile} from "./v
 import { initializeDevices, addNewDevice } from "./vendor/devices.js";
 import { initializateContactUs } from "./vendor/contact_us.js";
 
-//IMPORT DEMASIADO PROVISIONAL
-import {tryBluetoothConnection} from "./vendor/bluetooth.js";
 
 const d = document,
   w = window,
@@ -37,7 +35,21 @@ export function getUser() {
 export function isAuthenticated() {
   return user !== null;
 }
-
+export function setLoadingScreen(text=null){
+  const $screen=d.querySelector(".loader-container"),
+        $textContainer=$screen.querySelector("p");
+  if(text){ //significa que quiere que pongamos texto
+    $textContainer.textContent=text;
+  }
+  else{
+    $textContainer.textContent="";
+  }
+  $screen.classList.remove("pointer-events-none","opacity-0");
+}
+export function removeLoadingScreen(){
+  const $screen=d.querySelector(".loader-container");
+  $screen.classList.add("pointer-events-none","opacity-0");
+}
 /*
 Creamos una clase usuario, esta instancia se va a crear a base de las credenciales de usuario que tengamos, tengra el nombre, 
 la ruta de tu foto de perfil, tus dispositivos (datos publicos) , los que estan conectados etc.
@@ -209,7 +221,7 @@ const startClient = async function () {
 };
 
 //Funciones generales
-const startContent = function () {
+const startContent =async function () {
   //Verificamos si la hay una ruta existente
   const redirect={
     route:'',
@@ -232,9 +244,10 @@ const startContent = function () {
         {route,href}=redirect
   $a.setAttribute('href',href);
   $a.setAttribute('data-redirect',"replace-main");
-  redirects($a,null);
+  await redirects($a,null);
   //comentar esta linea en live server
   history.replaceState(null, '', route);
+  return true;
 };
 
 const submenuFunction = function (e) {
@@ -291,8 +304,12 @@ const initializateSubmenu = function (submenu, $el) {
 const redirects = async function ($el, e=null) {
   if(e)e.preventDefault();
   const url = $el.getAttribute("href");
+  const redirect = $el.getAttribute("data-redirect");
   console.log(url);
-  fetchRequest({
+  if(redirect == "replace-main"){
+    setLoadingScreen("Loading...");
+  }
+  await fetchRequest({
     method: "GET",
     url: url,
     contentType: "text/html",
@@ -301,7 +318,6 @@ const redirects = async function ($el, e=null) {
     async success(response) {
       if (response.ok) {
         //200-299
-        const redirect = $el.getAttribute("data-redirect");
         if (redirect == "replace-main") {
           //cuando el atributo tenga esta valor remplazara la etiqueta main
           console.log("Remplazando etiqueta main");
@@ -337,6 +353,7 @@ const redirects = async function ($el, e=null) {
           //COMENTAR LA LINEA DE ABAJO SI ESTAN EN LIVE SERVER
           history.replaceState(null, '', redirect.route);
           sessionStorage.setItem("route",JSON.stringify(redirect));
+          removeLoadingScreen();
         } else if (redirect == "submenu") {
           //cuando tenga este valor nos traera un submenu de ese enlace
           //como queremos obtimizar ya no lo volveremos a traer y ya solo controlaremos sus eventos
@@ -402,6 +419,7 @@ const redirects = async function ($el, e=null) {
       console.log(err);
     },
   });
+  return true;
 };
 function removeElement(e) {
   const $target = e.target;
