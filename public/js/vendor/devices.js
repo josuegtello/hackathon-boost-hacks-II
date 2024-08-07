@@ -9,7 +9,7 @@ export function initializeDevices() {
     initializeAddDeviceForm();
 }
 
-// Sección de Tabs
+// SECCION DE TABS
 function initializeTabs() {
     const $tabs = d.querySelectorAll('.devices-nav li');
     const $tabContents = d.querySelectorAll('.devices-tab');
@@ -41,7 +41,32 @@ function initializeTabs() {
     }
 }
 
-// Sección de Devices
+// SECCION DE DEVICES
+
+//Función para crear/añadir el contenedor del dispositivo
+function createDeviceElement(device) {
+    const deviceElement = d.createElement('div');
+    deviceElement.className = 'device-n';
+    deviceElement.innerHTML = `
+        <figure class="tab-device-img">
+            <img src="${device.img}" alt="Device image">
+        </figure>
+        <div class="tab-device-content">
+            <input type="text" placeholder="${device.name}" name="Name device" disabled data-original-value="${device.name}">
+            <h4>${device.type}</h4>
+            <span class="${device.state === 'online' ? 'online-icon' : 'offline-icon'}">
+                <i class="fa-solid fa-circle"></i>${device.state === 'online' ? 'Online' : 'Offline'}
+            </span>
+        </div>
+        <div class="tab-device-icons">
+            <i class="fas fa-pencil-alt"></i>
+            <i class="fas fa-trash-alt"></i>
+        </div>
+    `;
+
+    return deviceElement;
+}
+
 function initializeDeviceSection() {
     const $devices = d.querySelectorAll('.device-n');
 
@@ -58,6 +83,22 @@ function initializeDeviceSection() {
     });
 }
 
+//Función para añadir un dipositivo
+export function addNewDevice(device) {
+    const $devicesContainer = d.querySelector('.tab-container-devices');
+    const deviceElement = createDeviceElement(device);
+    $devicesContainer.appendChild(deviceElement);
+
+    const $input = deviceElement.querySelector('input[type="text"]');
+    const $editIcon = deviceElement.querySelector('.fa-pencil-alt');
+    const $deleteIcon = deviceElement.querySelector('.fa-trash-alt');
+
+    $editIcon.addEventListener('click', handleEditClick);
+    $deleteIcon.addEventListener('click', handleDeleteClick);
+    $input.addEventListener('keydown', handleInputKeydown);
+}
+
+
 function handleEditClick(event) {
     const $element = event.target.closest('.device-n, .card-info');
     if ($element) {
@@ -66,19 +107,18 @@ function handleEditClick(event) {
         
         if ($input.disabled) {
             $input.disabled = false;
-            $input.focus();
+            $element.classList.add('editing');
             $editIcon.classList.add('editing');
+            $input.focus();
         } else {
-            $input.disabled = true;
-            $editIcon.classList.remove('editing');
-            $input.value = $input.getAttribute('data-original-value');
+            saveInputChanges($input);
         }
     }
 }
 
 function handleDeleteClick(event) {
     const $element = event.target.closest('.device-n, .card-info');
-    if ($element && confirm('¿Estás seguro de que quieres eliminar este elemento?')) {
+    if ($element && confirm('Are you sure you want to remove this item?')) {
         $element.remove();
         if ($element.classList.contains('card-info')) {
             updateSaveChangesButtonVisibility();
@@ -96,7 +136,12 @@ function handleInputKeydown(e) {
 
 function saveInputChanges($input) {
     $input.disabled = true;
-    $input.parentElement.querySelector('.fa-pencil-alt').classList.remove('editing');
+    const $element = $input.closest('.device-n, .card-info');
+    $element.classList.remove('editing');
+    const $editIcon = $element.querySelector('.fa-pencil-alt');
+    if ($editIcon) {
+        $editIcon.classList.remove('editing');
+    }
 
     if ($input.value !== $input.getAttribute('data-original-value')) {
         console.log(`Nuevo valor guardado: ${$input.value}`);
@@ -107,16 +152,26 @@ function saveInputChanges($input) {
 function cancelInputEdit($input) {
     $input.value = $input.getAttribute('data-original-value');
     $input.disabled = true;
-    $input.parentElement.querySelector('.fa-pencil-alt').classList.remove('editing');
+    const $element = $input.closest('.device-n, .card-info');
+    $element.classList.remove('editing');
+    $element.querySelector('.fa-pencil-alt').classList.remove('editing');
 }
 
 // Sección del Dashboard
 function initializeDashboard() {
     const $dashboardButtons = d.querySelectorAll('.btn-dashboard');
+    const $openCardsLink = d.getElementById('open-cards-modal');
 
     $dashboardButtons.forEach($button => {
         $button.addEventListener('click', handleDashboardButtonClick);
     });
+
+    if ($openCardsLink) {
+        $openCardsLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            openPasswordModal('cards');
+        });
+    }
 }
 
 function handleDashboardButtonClick() {
@@ -132,6 +187,8 @@ function handleDashboardButtonClick() {
         }
     } else if (buttonText === 'password') {
         showPasswordTemporarily(this);
+    } else if (buttonText === 'change password') {
+        openPasswordModal('changePassword');
     }
 }
 
@@ -145,16 +202,11 @@ function showPasswordTemporarily($button) {
 
 // Modal de tarjetas
 function initializeCardModal() {
-    const $openCardsModal = d.getElementById('open-cards-modal');
     const $cardsModal = d.getElementById('cards-modal');
     const $closeModalBtn = d.querySelector('.close-modal-cards');
     const $saveChangesBtn = d.getElementById('btn-save-change-cards');
     const $addCardBtn = d.querySelector('.add-card');
     const $changeCardsForm = d.getElementById('change-cards-form');
-
-    if ($openCardsModal && $cardsModal) {
-        $openCardsModal.addEventListener('click', openCardModal);
-    }
 
     if ($closeModalBtn) {
         $closeModalBtn.addEventListener('click', closeCardModal);
@@ -173,8 +225,7 @@ function initializeCardModal() {
     updateCardListeners();
 }
 
-function openCardModal(e) {
-    e.preventDefault();
+function openCardModal() {
     d.getElementById('cards-modal').style.display = 'block';
     updateCardListeners();
 }
@@ -184,6 +235,10 @@ function closeCardModal() {
 }
 
 function saveCardChanges() {
+    const $cardInputs = d.querySelectorAll('#change-cards-form .card-info input');
+    $cardInputs.forEach($input => {
+        saveInputChanges($input);
+    });
     console.log('Cambios guardados');
     closeCardModal();
 }
@@ -217,6 +272,10 @@ function createNewCardHTML(cardNumber) {
 function closeModalOnOutsideClick(e) {
     if (e.target === d.getElementById('cards-modal')) {
         closeCardModal();
+    } else if (e.target === d.querySelector('.modal-password-user-devices')) {
+        d.querySelector('.modal-password-user-devices').style.display = 'none';
+    } else if (e.target === d.getElementById('modal-change-password-device')) {
+        closeChangePasswordModal();
     }
 }
 
@@ -245,48 +304,100 @@ function updateSaveChangesButtonVisibility() {
 }
 
 // Modal Change Password
+// Modal de contraseña
 function initializePasswordModal() {
     const $openChangePasswordModal = d.getElementById('open-change-password-modal');
     const $modalChangePassword = d.getElementById('modal-change-password-device');
     const $modalContent = d.querySelector('.modal-change-password-content');
     const $closeModalPasswordBtn = d.querySelector('.close-modal-password-device');
     const $savePasswordBtn = d.getElementById('btn-save-password-device');
+    const $passwordModal = d.querySelector('.modal-password-user-devices');
 
     if ($openChangePasswordModal && $modalChangePassword) {
-        $openChangePasswordModal.addEventListener('click', openPasswordModal);
+        $openChangePasswordModal.addEventListener('click', () => openPasswordModal('changePassword'));
     }
 
     if ($closeModalPasswordBtn) {
-        $closeModalPasswordBtn.addEventListener('click', closePasswordModal);
+        $closeModalPasswordBtn.addEventListener('click', () => {
+            closeChangePasswordModal();
+            clearPasswordInput();
+        });
     }
 
     if ($savePasswordBtn) {
         $savePasswordBtn.addEventListener('click', saveNewPassword);
     }
 
-    window.addEventListener('click', closePasswordModalOnOutsideClick);
+    if ($passwordModal) {
+        $passwordModal.querySelector('form').addEventListener('submit', verifyPassword);
+    }
+
+    window.addEventListener('click', (e) => {
+        closeChangePasswordModalOnOutsideClick(e);
+        if (e.target === $passwordModal) {
+            closePasswordModal();
+            clearPasswordInput();
+        }
+    });
 
     if ($modalContent) {
         $modalContent.addEventListener('click', stopPropagation);
     }
 }
 
-function openPasswordModal() {
-    d.getElementById('modal-change-password-device').style.display = 'block';
+function openPasswordModal(action) {
+    const $passwordModal = d.querySelector('.modal-password-user-devices');
+    $passwordModal.style.display = 'block';
+    $passwordModal.dataset.action = action;
 }
 
 function closePasswordModal() {
+    const $passwordModal = d.querySelector('.modal-password-user-devices');
+    $passwordModal.style.display = 'none';
+}
+
+function clearPasswordInput() {
+    const $passwordInput = d.getElementById('modal-password-user-devices');
+    if ($passwordInput) {
+        $passwordInput.value = '';
+    }
+}
+
+function verifyPassword(e) {
+    e.preventDefault();
+    const password = d.getElementById('modal-password-user-devices').value;
+    const action = e.target.closest('.modal-password-user-devices').dataset.action;
+    // Simulando que la contraseña correcta es "1234"
+    if (password === "1234") {
+        closePasswordModal();
+        clearPasswordInput();
+        if (action === 'changePassword') {
+            openChangePasswordModal();
+        } else if (action === 'cards') {
+            openCardModal();
+        }
+    } else {
+        alert("Contraseña incorrecta");
+    }
+}
+
+function openChangePasswordModal() {
+    d.getElementById('modal-change-password-device').style.display = 'block';
+}
+
+function closeChangePasswordModal() {
     d.getElementById('modal-change-password-device').style.display = 'none';
 }
 
 function saveNewPassword() {
     console.log('Nueva contraseña guardada');
-    closePasswordModal();
+    closeChangePasswordModal();
 }
 
-function closePasswordModalOnOutsideClick(e) {
+function closeChangePasswordModalOnOutsideClick(e) {
     if (e.target === d.getElementById('modal-change-password-device')) {
-        closePasswordModal();
+        closeChangePasswordModal();
+        clearPasswordInput();
     }
 }
 
@@ -296,40 +407,45 @@ function stopPropagation(e) {
 
 // Sección de Add Device
 function initializeAddDeviceForm() {
-    const $openFormAddCard = d.getElementById('open-form-add-card');
-    const $addCardForm = d.getElementById('add-card-form');
+    const $addCardBtn = d.getElementById('add-card-btn');
+    const $cardList = d.getElementById('card-list');
+    const $addDeviceForm = d.querySelector('.add-device-form');
 
-    if ($openFormAddCard && $addCardForm) {
-        $openFormAddCard.addEventListener('click', toggleAddCardForm);
+    if ($addCardBtn && $cardList) {
+        $addCardBtn.addEventListener('click', addNewCardItem);
     }
 
-    const $tabs = d.querySelectorAll('.devices-nav li');
-    $tabs.forEach(tab => {
-        tab.addEventListener('click', closeAddCardForm);
-    });
-
-    window.addEventListener('beforeunload', closeAddCardForm);
+    if ($addDeviceForm) {
+        $addDeviceForm.addEventListener('submit', handleAddDeviceSubmit);
+    }
 }
 
-function toggleAddCardForm(e) {
+function addNewCardItem() {
+    const $cardList = d.getElementById('card-list');
+    const cardItem = createCardItemElement();
+    $cardList.appendChild(cardItem);
+}
+
+function createCardItemElement() {
+    const cardItem = d.createElement('div');
+    cardItem.className = 'card-item';
+    cardItem.innerHTML = `
+        <button type="button">
+            <i class="fa-solid fa-address-card"></i>
+        </button>
+        <input type="text" placeholder="Card Name">
+        <button type="button" class="delete-card-devices">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+    `;
+
+    const deleteBtn = cardItem.querySelector('.delete-card-devices');
+    deleteBtn.addEventListener('click', () => cardItem.remove());
+
+    return cardItem;
+}
+
+function handleAddDeviceSubmit(e) {
     e.preventDefault();
-    const $addCardForm = d.getElementById('add-card-form');
-    const $icon = this.querySelector('i');
-    const isHidden = $addCardForm.style.display === 'none';
-    
-    $addCardForm.style.display = isHidden ? 'flex' : 'none';
-    $icon.classList.toggle('fa-caret-down', !isHidden);
-    $icon.classList.toggle('fa-caret-up', isHidden);
-}
-
-function closeAddCardForm() {
-    const $addCardForm = d.getElementById('add-card-form');
-    const $openFormAddCard = d.getElementById('open-form-add-card');
-    
-    if ($addCardForm) {
-        $addCardForm.style.display = 'none';
-        const $icon = $openFormAddCard.querySelector('i');
-        $icon.classList.remove('fa-caret-up');
-        $icon.classList.add('fa-caret-down');
-    }
+    console.log('Device added');
 }

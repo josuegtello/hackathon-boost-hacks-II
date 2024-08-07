@@ -13,59 +13,30 @@
             <!-- Devices -->
             <section id="devices" class="devices-tab devices-active">
                 <div class="tab-container-devices">
-                    <div class="device-n">
-                        <figure class="tab-device-img">
-                            <img src="./assets/img/user.jpg" alt="Device image">
-                        </figure>
-                        <div class="tab-device-content">
-                            <input type="text" placeholder="Name Device" name="Name device" disabled
-                                data-original-value="">
-                            <h4>Name Device</h4>
-                            <span class="active-icon"><i class="fa-solid fa-circle"></i>Online</span>
-                        </div>
-                        <div class="tab-device-icons">
-                            <i class="fas fa-pencil-alt"></i>
-                            <i class="fas fa-trash-alt"></i>
-                        </div>
-                    </div>
+                    <button id="addDeviceButton">Add Device</button>
 
-                    <div class="device-n">
+                    <!-- <div class="device-n">
                         <figure class="tab-device-img">
                             <img src="./assets/img/user.jpg" alt="Device image">
                         </figure>
                         <div class="tab-device-content">
                             <input type="text" placeholder="Name Device" name="Name device" disabled>
                             <h4>Name Device</h4>
-                            <span class="active-icon"><i class="fa-solid fa-circle"></i>Online</span>
+                            <span class="online-icon"><i class="fa-solid fa-circle"></i>Online</span>
                         </div>
                         <div class="tab-device-icons">
                             <i class="fas fa-pencil-alt"></i>
                             <i class="fas fa-trash-alt"></i>
                         </div>
-                    </div>
-
-                    <div class="device-n">
-                        <figure class="tab-device-img">
-                            <img src="./assets/img/user.jpg" alt="Device image">
-                        </figure>
-                        <div class="tab-device-content">
-                            <input type="text" placeholder="Name Device" name="Name device" disabled>
-                            <h4>Name Device</h4>
-                            <span class="active-icon"><i class="fa-solid fa-circle"></i>Online</span>
-                        </div>
-                        <div class="tab-device-icons">
-                            <i class="fas fa-pencil-alt"></i>
-                            <i class="fas fa-trash-alt"></i>
-                        </div>
-                    </div>
+                    </div>  -->
 
                 </div>
             </section>
 
             <!-- Dashboard -->
             <section id="dashboard" class="devices-tab">
+                <h2 class="device-name-dashboard">Device Name</h2>
                 <div class="tab-container-dashboard">
-
                     <button type="button" class="btn-dashboard">
                         <h4>Alarm</h4>
                         <i class="fa-solid fa-tower-broadcast"></i>
@@ -95,6 +66,17 @@
                     </button>
 
                     <a id="open-cards-modal" class="link-cards">Cards</a>
+                </div>
+
+                <!-- Modal solitud de contraseña de usuario -->
+                <div class="modal-password-user-devices">
+                    <div class="modal-password-content-devices">
+                        <h2>Please enter your password.</h2>
+                        <form>
+                            <input id="modal-password-user-devices" type="password" placeholder="Account Password">
+                            <button type="submit">Verify</button>
+                        </form>
+                    </div>
                 </div>
 
                 <!-- Ventana change password -->
@@ -147,44 +129,31 @@
                                 <option value="sensor">Motion Sensor</option>
                             </select>
                         </div>
-            
                         <div class="form-group">
                             <label for="deviceName">Device Name:</label>
                             <input type="text" id="deviceName" name="deviceName" required>
                         </div>
-            
                         <div class="form-group">
                             <label for="devicePassword">Device Password:</label>
                             <input type="password" id="devicePassword" name="devicePassword" required>
                         </div>
                     </div>
-            
                     <div class="device-list">
                         <div class="device-name">
                             <i class="fa-brands fa-bluetooth"></i>
                             <h3>SSEM</h3>
                         </div>
-            
                         <div class="device-name">
                             <i class="fa-brands fa-bluetooth"></i>
                             <h3>SMLA</h3>
                         </div>
                     </div>
-            
-                    <div class="add-card-device">
-                        <a id="open-form-add-card"> 
-                            <i class="fa-solid fa-caret-down"></i> Add Card
-                        </a>
-                        <div id="add-card-form" class="form-add-card-device">
-                            <button type="button" aria-label="New card">
-                                <i class="fa-solid fa-address-card"></i>
-                            </button>
-                            <label for="nameCard">Name:</label>
-                            <input id="nameCard" type="text" placeholder="Card Name">
-                            <i class="fas fa-trash-alt"></i>
-                        </div>
+                    <div class="add-card-container">
+                        <button type="button" id="add-card-btn" class="add-card-btn">
+                            <i class="fa-solid fa-plus"></i> Add Card
+                        </button>
+                        <div id="card-list" class="card-list"></div>
                     </div>
-            
                     <button type="submit" class="add-device-button">Add</button>
                 </form>
             </section>

@@ -125,7 +125,12 @@
     font-weight: 300;
 }
 
-.active-icon {
+.tab-device-content i {
+    font-size: 0.5rem;
+    margin-right: 0.5rem;
+}
+
+.online-icon {
     color: var(--online);
     width: 100%;
     display: flex;
@@ -133,9 +138,12 @@
     margin: 0.5rem 0 0 0;
 }
 
-.active-icon i {
-    font-size: 0.5rem;
-    margin-right: 0.5rem;
+.offline-icon {
+    color: var(--offline);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin: 0.5rem 0 0 0;
 }
 
 .tab-device-icons {
@@ -165,6 +173,12 @@
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 1rem;
+}
+
+.device-name-dashboard {
+    color: var(--bg-color);
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .btn-dashboard {
@@ -226,7 +240,65 @@
     background-color: var(--box-shadow-4);
 }
 
-/*      Tab Dashboard - Modal Cards     */
+/*      Tab Dashboard - Modal Password User     */
+
+.modal-password-user-devices {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-password-content-devices {
+    background-color: var(--text-color-3);
+    margin: 22% auto;
+    padding: 1.5rem;
+    max-width: 28.125rem;
+    border-radius: 0.5rem;
+}
+
+.modal-password-user-devices h2 {
+    color: var(--bg-color);
+    margin-bottom: 1rem;
+}
+
+.modal-password-user-devices input {
+    outline: none;
+    font-family: var(--font-text);
+    font-size: 1rem;
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: none;
+    border-radius: 0.5rem;
+}
+
+.modal-password-user-devices input:focus {
+    border: solid 0.1rem var(--container-color-1);
+    border-radius: 0.5rem;
+}
+
+.modal-password-user-devices button {
+    width: 100%;
+    padding: 0.5rem;
+    background-color: var(--bg-color);
+    color: var(--text-color-3);
+    border: none;
+    border-radius: 0.25rem;
+    font-family: var(--font-text);
+    text-transform: uppercase;
+}
+
+.modal-password-user-devices button:hover {
+    background-color: var(--box-shadow-4);
+}
+
+/*      Modal Cards     */
 
 .modal-cards {
     display: none;
@@ -304,6 +376,22 @@
     font-family: var(--font-text);
     font-size: 1rem;
     padding: 0;
+}
+
+.card-info.editing {
+    background-color: var(--box-shadow-4);
+    border: 0.1rem solid var(--container-color-1); 
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    transition: all 0.05s ease;
+}
+
+.card-info.editing input {
+    background-color: transparent;
+}
+
+.card-info.editing input:focus {
+    background-color: var(--box-shadow-4); 
 }
 
 .modal-cards i {
@@ -401,8 +489,23 @@
     color: var(--color-1);
 }
 
-.modal-change-password-device form label,.modal-change-password-device form input {
+.modal-change-password-device form label{
     margin-bottom: 1rem;
+}
+
+.modal-change-password-device form input {
+    outline: none;
+    margin-bottom: 1rem;
+    font-family: var(--font-text);
+    width: 100%;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 0.5rem;
+}
+
+.modal-change-password-device form input:focus {
+    border: solid 0.1rem var(--container-color-1);
+    border-radius: 0.5rem;
 }
 
 .btn-save-password-device {
@@ -435,6 +538,10 @@
     border-radius: 1rem;
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
     margin: 0 auto;
+    max-height: 82vh; 
+    overflow-y: auto;
+    padding-right: 1rem;
+    position: relative;
 }
 
 .add-device h2 {
@@ -445,8 +552,8 @@
 }
 
 .add-device-form {
-    display: grid;
-    gap: 1rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .add-device-content {
@@ -467,6 +574,7 @@
 
 .form-group input,
 .form-group select {
+    outline: none;
     padding: 0.5rem;
     font-size: 1rem;
     border: 0.06rem solid var(--box-shadow-4);
@@ -476,11 +584,16 @@
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+.form-group input:focus, 
+.form-group select:focus {
+    border: solid 0.1rem var(--container-color-1);
+}
+
 .device-list {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-top: 1rem;
 }
 
 .device-name {
@@ -503,67 +616,75 @@
     font-size: 1.5rem;
 }
 
-.add-card-device {
+/*          Add Card Devices       */
+.add-card-container {
+    margin: 1.5rem 0 1rem 0;
+}
+
+.add-card-btn {
+    color: var(--bg-color);
+    border: none;
+    font-size: 1rem;
     margin-bottom: 1rem;
 }
 
-.add-card-device a {
-    color: var(--bg-color);
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+.add-card-btn:hover {
+    color: var(--container-color-1);
 }
 
-.form-add-card-device {
-    display: none;
-    margin-top: 1rem;
+.card-list {
+    max-height: none;
+    overflow-y: visible;
+}
+
+.card-item {
     display: flex;
     align-items: center;
     gap: 1rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.5rem;
+    border-radius: 0.25rem;
 }
 
-.form-add-card-device button {
+.card-item input {
+    outline: none;
+    flex-grow: 1;
+    border: none;
+    padding: 0.5rem;
+    font-family: var(--font-text);
+    font-size: 1rem;
+    background-color: transparent;
+    color: var(--bg-color);
+}
+
+.card-item input:focus {
+    border: solid 0.1rem var(--container-color-1);
+    border-radius: 0.5rem;
+}
+
+.card-item button {
     background-color: transparent;
     border: none;
+    color: var(--container-color-1);
+    padding: 0;
 }
 
-.form-add-card-device {
-    color: var(--bg-color);
+.card-item button:hover {
+    color: var(--color-1);
 }
 
-.form-add-card-device button i {
+.card-item i {
     font-size: 2rem;
-    color: var(--container-color-1);
 }
 
-.form-add-card-device button i:hover {
-    color: var(--color-1);
-}
-
-.form-add-card-device input {
-    flex-grow: 1;
-    padding: 0.5rem;
+.card-item .delete-card-devices i {
     font-size: 1rem;
-    border: 0.06rem solid var(--box-shadow-4);
-    border-radius: 0.5rem;
-    color: var(--bg-color);
-    font-family: var(--font-text);
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.form-add-card-device .fa-trash-alt {
-    font-size: 1.5rem;
-    color: var(--container-color-1);
-}
-
-.form-add-card-device .fa-trash-alt:hover {
-    color: var(--color-1);
 }
 
 .add-device-button {
     width: 100%;
     padding: 0.5rem;
+    margin-top: 1rem;
     font-size: 1.25rem;
     background-color: var(--bg-color);
     color: var(--text-color-3);

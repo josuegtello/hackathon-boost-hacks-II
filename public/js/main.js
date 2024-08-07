@@ -8,7 +8,7 @@ import { error404 } from "./vendor/error_404.js";
 import { faq } from "./vendor/faq.js";
 import { connectWebSocket } from "./vendor/web_socket.js";
 import { initializeTabs, initializeChangePassword,initializeEditProfile } from "./vendor/edit_profile.js";
-import { initializeDevices } from "./vendor/devices.js";
+import { initializeDevices,addNewDevice } from "./vendor/devices.js";
 
 const d = document,
     w = window,
@@ -293,6 +293,19 @@ function loadEditProfile() {
 }
 
 
+//PRUEBA DE AÑADIR DISPOSITIVO
+// Función para manejar la adición de nuevos dispositivos
+function handleAddDevice() {
+    const newDevice = {
+        name: "Puerta",
+        type: "Electromagnetic Lock",
+        state: "offline",
+        img: "./assets/img/user.jpg"
+    };
+    addNewDevice(newDevice);
+}
+//PRUEBA DE AÑADIR DISPOSITIVO
+
 d.addEventListener('DOMContentLoaded', async e => {
     startCursor();
     startClient();
@@ -350,6 +363,12 @@ d.addEventListener('DOMContentLoaded', async e => {
             loadEditProfile();
         }
             */
+
+        //PRUEBA DE AÑADIR DISPOSITIVO
+        if (e.target.matches('#addDeviceButton')) {
+            handleAddDevice();
+        }
+        //PRUEBA DE AÑADIR DISPOSITIVO
     });
     await sleep(1000);
 
