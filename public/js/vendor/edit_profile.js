@@ -12,7 +12,6 @@ const startEdit = function (e) {
     //significa que queremos desactivarlo, ponemos todos los valores que ya tenia
     $btn.setAttribute("data-edit-mode", "desactive");
     $btn.classList.remove("container-edit-active");
-    //FALTA regresar a los valores que ya tenia a la imagen
     const $inputs = d.querySelectorAll(".settings-tab-form input");
     const $btnSave = d.querySelector(".btn-edit-profile button");
     const $changePasswordBtn = d.querySelector(".link-change-password");
@@ -28,6 +27,8 @@ const startEdit = function (e) {
     const $newInput = d.createElement("input"),
       $img = d.querySelector("#userProfileImage"),
       src = $img.getAttribute("data-old-value"),
+      $profileImg=d.getElementById("navUserAvatar"),
+      srcProfile=$profileImg.getAttribute("data-old-value"),
       $inputFile = d.querySelector(".profile-input-file");
     $newInput.setAttribute("id", "file");
     $newInput.setAttribute("name", "input_file");
@@ -36,6 +37,7 @@ const startEdit = function (e) {
     $newInput.classList.add("profile-input-file");
     $inputFile.replaceWith($newInput);
     $img.setAttribute("src", src);
+    $profileImg.setAttribute("src",srcProfile);
     $newInput.addEventListener("change", newProfileImage);
   } else if (mode == "desactive") {
     $btn.setAttribute("data-edit-mode", "active");
@@ -270,13 +272,16 @@ export async function initializeEditProfile() {
         if (profile_img) {
           imgURL = `./assets/profile_img/${profile_img}`;
         }
-        d.getElementById("userProfileImage").src =
-          imgURL || "./assets/img/user.jpg";
+        d.getElementById("userProfileImage").src =imgURL || "./assets/img/user.jpg";
+        //NUEVO
+        d.getElementById("navUserAvatar").src = imgURL || "./assets/img/user.jpg"; // Actualiza la imagen en el navbar
+        //NUEVO
         d.getElementById("userProfileName").textContent = name;
         d.getElementById("usernameEdit").value = name;
         d.getElementById("emailEdit").value = email;
         d.getElementById("phoneEdit").value = phone || "";
-        d.getElementById("userProfileImage").setAttribute(
+        d.getElementById("userProfileImage").setAttribute("data-old-value",imgURL || "./assets/img/user.jpg");
+        d.getElementById("navUserAvatar").setAttribute(
           "data-old-value",
           imgURL || "./assets/img/user.jpg"
         );
@@ -345,9 +350,12 @@ export async function initializeEditProfile() {
             //si existe significa que hay nueva imagen guardada para perfil
             data.profile_img = result.profile_img;
             const $img=d.getElementById("userProfileImage"),
+                $profileImg=d.getElementById("navUserAvatar"),
               $inputFile = d.querySelector(".profile-input-file"),
               $newInput = $inputFile.cloneNode(false),
               timestamp = new Date().getTime(); // Obtiene el tiempo actual en milisegundos
+            $profileImg.src=`${result.profile_img}?timestamp=${timestamp}`;
+            $profileImg.setAttribute("data-old-value",`${result.profile_img}?timestamp=${timestamp}`);
             $img.src=`${result.profile_img}?timestamp=${timestamp}`;
             $img.setAttribute("data-old-value",`${result.profile_img}?timestamp=${timestamp}`);
             $inputFile.replaceWith($newInput);
@@ -387,6 +395,10 @@ const newProfileImage = function (e) {
     reader.onload = function (e) {
       const $img = d.getElementById("userProfileImage");
       $img.src = e.target.result;
+     //NUEVO 
+      const $navImg = d.getElementById("navUserAvatar");
+      $navImg.src = e.target.result; // Actualiza la imagen en el navbar
+      //NUEVO
       $img.style.display = "block";
     };
     reader.readAsDataURL(file);

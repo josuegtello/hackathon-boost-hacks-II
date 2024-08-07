@@ -6,7 +6,7 @@
     "password": "lalopop123456",
     "devices": [
       {
-        "device": 1,
+        "device": 0,
         "id": "1234",
         "type": "SSEM",
         "name": "Puerta de mi casa"
@@ -55,7 +55,8 @@
     "name": "Papu2",
     "email": "papu2@gmail.com",
     "password": "papau123",
-    "devices": []
+    "devices": [],
+    "profile_img": "user6.jpg"
   },
   {
     "id": "b5dc8835-2b3b-46d9-84f9-6a0bcda1b31e",

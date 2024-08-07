@@ -151,7 +151,7 @@ function handleEditClick(event) {
     }
 }
 
-function handleDeleteClick(event) {
+/* function handleDeleteClick(event) {
     const $element = event.target.closest('.device-n, .card-info');
     if ($element && confirm('Are you sure you want to remove this item?')) {
         $element.remove();
@@ -159,7 +159,42 @@ function handleDeleteClick(event) {
             updateSaveChangesButtonVisibility();
         }
     }
-}
+} */
+
+    function handleDeleteClick(event) {
+        const $element = event.target.closest('.device-n, .card-info');
+        if ($element) {
+            showCustomConfirmModal(() => {
+                $element.remove();
+                if ($element.classList.contains('card-info')) {
+                    updateSaveChangesButtonVisibility();
+                }
+            });
+        }
+    }
+    
+    function showCustomConfirmModal(onConfirm) {
+        const modal = document.getElementById('custom-confirm-modal');
+        const yesBtn = document.getElementById('custom-confirm-yes');
+        const noBtn = document.getElementById('custom-confirm-no');
+    
+        modal.style.display = 'block';
+    
+        yesBtn.onclick = function() {
+            modal.style.display = 'none';
+            onConfirm();
+        }
+    
+        noBtn.onclick = function() {
+            modal.style.display = 'none';
+        }
+    
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    }
 
 function handleInputKeydown(e) {
     if (e.key === 'Enter') {

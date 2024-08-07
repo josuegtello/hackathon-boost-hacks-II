@@ -69,6 +69,12 @@ class User {
             const $user = $nav.querySelector('[data-type="user"] > span');
             $user.textContent = user.name;
           }
+          if(user.profile_img){ //si existe hay una foto de perfil, la inserto
+            //NUEVO
+            const $userAvatar = $nav.querySelector('#navUserAvatar');
+            $userAvatar.src = user.profile_img ? `./assets/profile_img/${user.profile_img}` : "./assets/img/user.jpg";
+            //NUEVO
+          }
           body.insertAdjacentElement("afterbegin", $nav);
           initializeToast();
         } else {
