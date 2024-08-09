@@ -270,6 +270,7 @@ export async function initializeEditProfile() {
         const { name, email, phone, profile_img } = userData.credentials;
         let imgURL = null;
         if (profile_img) {
+          await sleep(100);
           imgURL = `./assets/profile_img/${profile_img}`;
         }
         d.getElementById("userProfileImage").src =imgURL || "./assets/img/user.jpg";

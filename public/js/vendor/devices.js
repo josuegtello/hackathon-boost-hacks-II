@@ -15,12 +15,13 @@ export function initializeDevices() {
     initializePasswordModal();
     initializeAddDeviceForm();
     //testConnection();
-
+    /*
     // Añade evento al botón de prueba para dar clic a un decives y ser redireccionado al dashboard
     const testButton = d.getElementById('testDeviceButton');
     if (testButton) {
         testButton.addEventListener('click', testAddAndSelectDevice);
     }
+        */
 }
 
 // SECCION DE TABS
@@ -150,7 +151,7 @@ function testAddAndSelectDevice() {
     addNewDevice(testDevice);
 }
 
-
+ */
 //función de prueba para actualizar la información en la sección del dashboard
 function updateDashboard(deviceData) {
     const dashboardSection = d.getElementById('dashboard');
@@ -170,7 +171,8 @@ function updateDashboard(deviceData) {
     // Actualizar la contraseña mostrada
     const passwordButton = dashboardSection.querySelector('.btn-dashboard:nth-child(3)');
     passwordButton.querySelector('.see-password-dashboard').textContent = deviceData.password || 'password';
-} */
+} 
+   
 
 function initializeDeviceSection() {
     //creo todos las etiqueta device
