@@ -6,10 +6,10 @@
     "password": "lalopop123456",
     "devices": [
       {
+        "id": "4647bb6c-9f16-4c51-97bf-b664ea65b3f8",
         "device": 0,
-        "id": "1234",
         "type": "SSEM",
-        "name": "Puerta de mi casa"
+        "name": "Garage 2"
       }
     ],
     "phone": "5565092151",
