@@ -900,7 +900,7 @@ function signOut() {
   });
 }
 
-//PRUEBA DE AÑADIR DISPOSITIVO
+/* //PRUEBA DE AÑADIR DISPOSITIVO
 // Función para manejar la adición de nuevos dispositivos
 function handleAddDevice() {
   const newDevice = {
@@ -912,7 +912,7 @@ function handleAddDevice() {
   };
   addNewDevice(newDevice);
 }
-//PRUEBA DE AÑADIR DISPOSITIVO
+//PRUEBA DE AÑADIR DISPOSITIVO */
 
 d.addEventListener("DOMContentLoaded", async (e) => {
   startCursor();
@@ -937,17 +937,18 @@ d.addEventListener("DOMContentLoaded", async (e) => {
       signOut();
     }
     /*
-        if (e.target.matches('#edit-profile-btn') || e.target.closest('#edit-profile-btn')) {
-            e.preventDefault();
-            loadEditProfile();
-        }
-            */
+    if (e.target.matches('#edit-profile-btn') || e.target.closest('#edit-profile-btn')) {
+      e.preventDefault();
+      loadEditProfile();
+    }
+    */
 
-    //PRUEBA DE AÑADIR DISPOSITIVO
-    if ($target.matches("#addDeviceButton")) {
+    /* //PRUEBA DE AÑADIR DISPOSITIVO
+    if (e.target.matches("#addDeviceButton")) {
       handleAddDevice();
     }
-    //PRUEBA DE AÑADIR DISPOSITIVO
+    //PRUEBA DE AÑADIR DISPOSITIVO */
+
     //PRUEB PARA INICIAR CONEXION BLUETOOTH
     if ($target.matches("#connectBluetooth")) {
       tryBluetoothConnection();

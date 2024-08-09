@@ -15,6 +15,12 @@ export function initializeDevices() {
     initializePasswordModal();
     initializeAddDeviceForm();
     //testConnection();
+
+    // Añade evento al botón de prueba para dar clic a un decives y ser redireccionado al dashboard
+    const testButton = d.getElementById('testDeviceButton');
+    if (testButton) {
+        testButton.addEventListener('click', testAddAndSelectDevice);
+    }
 }
 
 // SECCION DE TABS
@@ -72,6 +78,9 @@ function createDeviceElement(data) {
         </div>
     `;
 
+    // Agregar evento de clic al elemento del dispositivo
+    deviceElement.addEventListener('click', (e) => handleDeviceClick(e, data));
+
     return deviceElement;
 }
 //Función para añadir un dipositivo
@@ -106,6 +115,63 @@ export function setDevice(data){
     }
 
 }
+
+//función que se ejecuta cuando se hace clic en el contenedor del dispositivo
+function handleDeviceClick(e, deviceData) {
+    // Verificar si el clic fue en un elemento que no debe activar el dashboard
+    if (
+        e.target.matches('.fa-pencil-alt') ||
+        e.target.matches('.fa-trash-alt') ||
+        e.target.matches('input[type="text"]') ||
+        e.target.closest('.tab-device-icons')
+    ) {
+        // No hacer nada si el clic fue en estos elementos
+        return;
+    }
+    console.log("Dispositivo clickeado:", deviceData);
+    updateDashboard(deviceData);
+    setActiveTab('dashboard');
+}
+
+/* // Función de prueba para añadir y seleccionar un dispositivo
+function testAddAndSelectDevice() {
+    const testDevice = {
+        name: "Test Device",
+        type: "Test Type",
+        state: "online",
+        device: "test123",
+        img: "./assets/img/user.jpg",
+        alarm: 'on',
+        lock: 'locked',
+        password: 'testpass'
+    };
+
+    // Añadir el dispositivo
+    addNewDevice(testDevice);
+}
+
+
+//función de prueba para actualizar la información en la sección del dashboard
+function updateDashboard(deviceData) {
+    const dashboardSection = d.getElementById('dashboard');
+    const deviceNameElement = dashboardSection.querySelector('.device-name-dashboard');
+    deviceNameElement.textContent = deviceData.name;
+
+    // Actualizar el estado del botón de alarma
+    const alarmButton = dashboardSection.querySelector('.btn-dashboard:nth-child(1)');
+    alarmButton.classList.toggle('active', deviceData.alarm === 'on');
+
+    // Actualizar el estado del botón de cerradura
+    const lockButton = dashboardSection.querySelector('.btn-dashboard:nth-child(2)');
+    lockButton.classList.toggle('active', deviceData.lock === 'locked');
+    lockButton.querySelector('i').classList.toggle('fa-lock', deviceData.lock === 'locked');
+    lockButton.querySelector('i').classList.toggle('fa-lock-open', deviceData.lock === 'unlocked');
+
+    // Actualizar la contraseña mostrada
+    const passwordButton = dashboardSection.querySelector('.btn-dashboard:nth-child(3)');
+    passwordButton.querySelector('.see-password-dashboard').textContent = deviceData.password || 'password';
+} */
+
 function initializeDeviceSection() {
     //creo todos las etiqueta device
     console.log("Agregando dispositivos a la pantalla");
@@ -116,6 +182,17 @@ function initializeDeviceSection() {
         newDevice.img="./assets/img/user.jpg";//FALTA CAMBIAR ESTO QUE DEPENDIENDO DEL TIPO ES LA IMAGEN
         console.log(device);
         addNewDevice(newDevice);
+
+        /* //Pueba para agregar un nuevo dispositivo
+        const newDevice = {
+            ...device,
+            img: "./assets/img/user.jpg",
+            alarm: 'off',
+            lock: 'unlocked',
+            password: '1234'
+        };
+        console.log(newDevice);
+        addNewDevice(newDevice); */
         
     });
     
@@ -547,6 +624,13 @@ function initializeAddDeviceForm() {
     const $cardList = d.getElementById('card-list');
     const $addDeviceForm = d.querySelector('.add-device-form');
     const $bluetoothBtn=d.querySelectorAll(".device-name");
+    const $devicePasswordInput = d.getElementById('devicePassword');
+
+    if ($devicePasswordInput) {
+        $devicePasswordInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+    }
 
     if ($addCardBtn && $cardList) {
         $addCardBtn.addEventListener('click', addNewCardItem);

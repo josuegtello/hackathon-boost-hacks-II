@@ -55,10 +55,10 @@
     width: 100%;
     padding: 2rem;
     border-left: 0.2rem solid var(--text-color-3);
-    display: flex;
+    /* display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: center; */
 }
 
 .devices-tab {
@@ -117,6 +117,7 @@
 }
 
 .tab-device-content input {
+    cursor: none;
     width: 95%;
     background: transparent;
     border: none;
@@ -155,6 +156,7 @@
 
 .tab-device-icons {
     width: 16%;
+    height: 1rem;
     display: flex;
     justify-content: space-between;
     color: var(--container-color-1);
@@ -189,6 +191,7 @@
 }
 
 .btn-dashboard {
+    cursor: none;
     height: 10rem;
     display: flex;
     flex-direction: column;
@@ -234,6 +237,7 @@
 }
 
 .link-cards {
+    cursor: none;
     width: 100%;
     background-color: var(--box-shadow-5);
     padding: 1rem;
@@ -266,7 +270,7 @@
     margin: 22% auto;
     padding: 1.5rem;
     max-width: 28.125rem;
-    border-radius: 0.5rem;
+    border-radius: 1rem;
 }
 
 .modal-password-user-devices h2 {
@@ -291,6 +295,7 @@
 }
 
 .modal-password-user-devices button {
+    cursor: none;
     width: 100%;
     padding: 0.5rem;
     background-color: var(--bg-color);
@@ -374,6 +379,7 @@
 }
 
 .card-info label, .card-info input {
+    cursor: none;
     color: var(--bg-color);
 }
 
@@ -427,6 +433,7 @@
 }
 
 .btn-save-changes-cards button {
+    cursor: none;
     border: none;
     background-color: var(--bg-color);
     color:  var(--text-color-3);
@@ -457,9 +464,9 @@
     color: var(--bg-color);
     background-color: var(--text-color-3);
     margin: 15% auto;
-    padding: 20px;
+    padding: 1.25rem;
     border-radius: 0.5rem;
-    width: 300px;
+    width: 23rem;
     position: relative;
 }
 
@@ -497,17 +504,20 @@
 }
 
 .modal-change-password-device form label{
+    cursor: none;
     margin-bottom: 1rem;
 }
 
 .modal-change-password-device form input {
     outline: none;
-    margin-bottom: 1rem;
-    font-family: var(--font-text);
     width: 100%;
+    font-family: var(--font-text);
+    font-size: 1rem;
+    margin-bottom: 1rem;
     padding: 0.5rem;
-    border: none;
+    border: 0.06rem solid var(--box-shadow-4);
     border-radius: 0.5rem;
+    background-color: transparent;
 }
 
 .modal-change-password-device form input:focus {
@@ -522,6 +532,7 @@
 }
 
 .btn-save-password-device button {
+    cursor: none;
     width: 60%;
     padding: 0.5rem;
     border: none;
@@ -576,12 +587,15 @@
 }
 
 .form-group label {
+    cursor: none;
+    margin-bottom: 0.5rem;
     font-size: 1rem;
     color: var(--bg-color);
 }
 
 .form-group input,
 .form-group select {
+    cursor: none;
     outline: none;
     padding: 0.5rem;
     font-size: 1rem;
@@ -632,11 +646,11 @@
 .device-name[data-state="connected"]:hover *{
     color: var(--offline);
 }
-/*          Add Card Devices       */
-.add-card-container {
-}
 
+
+/*          Add Card Devices       */
 .add-card-btn {
+    cursor: none;
     color: var(--bg-color);
     border: none;
     font-size: 1rem;
@@ -689,6 +703,7 @@
 }
 
 .card-item i {
+    cursor: none;
     font-size: 2rem;
 }
 
@@ -697,6 +712,7 @@
 }
 
 .add-device-button {
+    cursor: none;
     width: 100%;
     padding: 0.5rem;
     margin-top: 1rem;
@@ -759,6 +775,7 @@
 }
 
 #custom-confirm-yes {
+    cursor: none;
     background-color: var(--color-1);
     color: var(--font-text);
 }
@@ -768,6 +785,7 @@
 }
 
 #custom-confirm-no {
+    cursor: none;
     background-color: var(--container-color-1);
     color: var(--text-color-3);
 }
