@@ -1,6 +1,7 @@
 import { fetchRequest } from "./fetch_request.js";
 import { createToast } from "./notification.js";
 import { sleep } from "./sleep.js";
+import { updateProfileImage } from "./profile_image.js";
 const d = document,
   body = d.body;
 
@@ -272,6 +273,9 @@ export function initializeEditProfile() {
         }
         d.getElementById("userProfileImage").src =
           imgURL || "./assets/img/user.jpg";
+        //NUEVO
+        d.getElementById("navUserAvatar").src = imgURL || "./assets/img/user.jpg"; // Actualiza la imagen en el navbar
+        //NUEVO
         d.getElementById("userProfileName").textContent = name;
         d.getElementById("usernameEdit").value = name;
         d.getElementById("emailEdit").value = email;
@@ -383,8 +387,16 @@ const newProfileImage = function (e) {
     reader.onload = function (e) {
       const $img = d.getElementById("userProfileImage");
       $img.src = e.target.result;
+     //NUEVO 
+     
+      const $navImg = d.getElementById("navUserAvatar");
+      $navImg.src = e.target.result; // Actualiza la imagen en el navbar
+      //NUEVO
       $img.style.display = "block";
     };
     reader.readAsDataURL(file);
+    //NUEVO
+    updateProfileImage(file);
+    //NUEVO
   }
 };

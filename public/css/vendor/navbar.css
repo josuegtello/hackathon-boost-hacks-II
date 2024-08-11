@@ -102,6 +102,25 @@
     display: none;
 }
 
+.user-avatar {
+    width: 2.8125rem;
+    height: 2.8125rem;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 0.625rem;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.nav-users a[data-type="user"] {
+    display: flex;
+    align-items: center;
+}
+
 /*      Responsive      */
 
 

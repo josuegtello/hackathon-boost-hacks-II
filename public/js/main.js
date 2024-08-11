@@ -166,6 +166,10 @@ const startClient = async function () {
                 if (user) {
                     const $user = $nav.querySelector('[data-type="user"] > span');
                     $user.textContent = user.name;
+                    //NUEVO
+                    const $userAvatar = $nav.querySelector('#navUserAvatar');
+                    $userAvatar.src = user.profile_img ? `./assets/profile_img/${user.profile_img}` : "./assets/img/user.jpg";
+                    //NUEVO
                 }
                 body.insertAdjacentElement('afterbegin', $nav);
                 initializeToast();
