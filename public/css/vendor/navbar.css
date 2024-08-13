@@ -94,10 +94,6 @@
     margin-left: 1.8rem;
 }
 
-.nav-users span{
-    font-size: 0.9rem;
-}
-
 .user{
     display: none;
 }
@@ -121,10 +117,12 @@
     align-items: center;
 }
 
-/*      Responsive      */
-span {
+.span-navbar {
+    font-size: 0.9rem;
     pointer-events: none;
 }
+
+/*      Responsive      */
 
 @media (max-width:431px) {
     .navbar{

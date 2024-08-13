@@ -13,8 +13,8 @@
   }
   
   .popup-content {
-    background-color: white;
-    padding: 3.3rem;
+    background-color: var(--text-color-3);
+    padding: 3rem;
     border-radius: 1rem;
     width: 30rem;
     position: relative;
@@ -24,41 +24,53 @@
   .popup-content h2 {
     color: var(--container-color-2);
     font-family: var(--font-title);
+    font-size: 2rem;
     margin-top: 0;
     text-align: center;
     text-transform: capitalize;
   }
   
   .popup-content label {
+    cursor: none;
     color: var(--bg-color);
     font-family: var(--font-text);
     display: block;
-    margin: 10px 0 5px;
+    margin: 0.625rem 0 0.4rem 0;
     font-weight: bold;
   }
   
   .popup-content input {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    outline: none;
+    background-color: transparent;
+    font-family: var(--font-text);
+    font-size: 1rem;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 0.06rem solid var(--box-shadow-4);
+    border-radius: 0.5rem;
     box-sizing: border-box;
+  }
+
+  .popup-content input:focus {
+    border: solid 0.1rem var(--container-color-1);
+    border-radius: 0.5rem;
   }
   
   .popup-content button {
+    cursor: none;
     width: 100%;
-    padding: 10px;
+    padding: 0.5rem;
     background-color: var(--bg-color);
     color: var(--text-color-3);
+    text-transform: uppercase;
     border: none;
     transition: ease-in 0.3s;
-    border-radius: 4px;
-    cursor: pointer;
+    border-radius: 0.25rem;
   }
   
   .popup-content button:hover {
-    background-color: var(--container-color-9);
+    background-color: var(--box-shadow-4);
   }
   
   .close-button {
@@ -66,8 +78,10 @@
     position: absolute;
     top: 2rem;
     right: 2rem;
-    font-weight: 5rem;
-    cursor: pointer;
+  }
+
+  .close-button:hover {
+    color: var( --color-1);
   }
   
   @keyframes slideDown {
