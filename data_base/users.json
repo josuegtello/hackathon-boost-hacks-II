@@ -92,5 +92,15 @@
     "phone": "5561444435",
     "profile_img": null,
     "devices": []
+  },
+  {
+    "id": "343d31ba-a7a0-4a67-853b-c980e0ff297b",
+    "user": 12,
+    "name": "Eder and Eder",
+    "email": "urban.garcia.eder.zaid@gmail.com",
+    "password": "UWUW",
+    "phone": null,
+    "profile_img": null,
+    "devices": []
   }
 ]
