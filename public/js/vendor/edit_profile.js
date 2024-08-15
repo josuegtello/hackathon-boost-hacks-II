@@ -162,6 +162,7 @@ export function initializeTabs() {
     setActiveTab(firstTabId);
   }
 
+  //PRUEBA NOTIS BOTON
   // Inicializar el botón de prueba de las notificaciones
   const addNotificationBtn = document.getElementById('addNotificationProfileBtn');
   if (addNotificationBtn) {
@@ -169,6 +170,7 @@ export function initializeTabs() {
           addTestNotification();
       });
   } 
+  //PRUEBA NOTIS BOTON
 }
 
 export function initializeChangePassword() {
@@ -416,7 +418,7 @@ const newProfileImage = function (e) {
 
 /*    Notificaciones    */
 
-//Funcion para agregar la notificación
+//Funcion para agregar la notificación /*FUNCIÓN IMPORTANTE DE LAS NOTIS*/
 function addNotification(notification) {
   const notificationsContainer = document.getElementById('notifications-container-edit-profile');
   
@@ -441,6 +443,7 @@ function addNotification(notification) {
   });
 }
 
+//PRUEBA DE NOTIS
 //Función de prueba para crear una notificación
 function addTestNotification() {
   const now = new Date();
@@ -452,3 +455,4 @@ function addTestNotification() {
   };
   addNotification(testNotification);
 }
+//PRUEBA DE NOTIS

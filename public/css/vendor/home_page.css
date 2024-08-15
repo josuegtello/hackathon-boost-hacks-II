@@ -275,13 +275,13 @@
 }
 
 .card-team:nth-child(4) {
-	background: url('') center center no-repeat;
+	background: url('../../assets/img/ary.png') center center no-repeat;
 	background-size: 110%;
 	background-position: 50% 70%;
 }
 
 .card-team:nth-child(4):hover {
-	background: url('') left center no-repeat;
+	background: url('../../assets/img/ary.png') left center no-repeat;
 	background-size: 200%;
 	background-position: 0% 30%;
 }
