@@ -14,6 +14,7 @@ const signOut = require("./routes/sign_out");
 const signInDevice = require("./routes/sign_in_devices");
 const devices = require("./routes/devices");
 const profile = require("./routes/profile");
+const password=require("./routes/password");
 
 //obtenemos la direccion IP de nuestro servidor para acceder a el desde cualquier dispositivo
 function getLocalIpAddress() {
@@ -176,11 +177,13 @@ webSocket.on("connection", (ws, req) => {
       console.log("del cliente");
       console.log(client);
       const { issue } = data;
-      if (issue == "send a message to a specific client") {
-        const { ws_id, body } = data,
+      //Solo hay dos tipos de mensaje, mensajes del usuario web y de un dispositivo IoT(mensaje y notificaciones)
+      if (issue == "send a message to a specific client") { //de un usuario web
+        const { ws_id, body,correlationId } = data,
           clientMessage = {
             issue: "client message",
             body: body,
+            correlationId:correlationId
           };
         if (ws_id != "" && body) {
           websocketManager.sendToSpecificClient(
@@ -195,14 +198,15 @@ webSocket.on("connection", (ws, req) => {
           ws.send(JSON.stringify(callback));
         }
       } 
-      else if (issue == "IoT device sending specific message") {
+      else if (issue == "IoT device sending specific message") {  //mensaje de un dispositivo IoT
         const { user_id,ws_id,device } = client;
-        const { body } = data,
+        const { body,correlationId} = data,
         clientMessage = {
           issue: "IoT device message",
           ws_id:ws_id,
           device:device,
-          body: body
+          body: body,
+          correlationId:correlationId //si es que existe la mandamos
         };
         if (body) {
           console.log("Mandando mensaje a clientes web de dispositivo IoT");
@@ -212,6 +216,35 @@ webSocket.on("connection", (ws, req) => {
           );
         } 
         else {
+          console.log("La estructura del mensaje es invalida");
+          const callback = {
+            issue: "invalid data format",
+          };
+          ws.send(JSON.stringify(callback));
+        }
+      }
+      else if (issue == "IoT device sending notification") {  //notificacion de un dispositivo IoT
+        //(FALTA) actualizar en nuestra base de datos esa notificacion con un metodo de websocketManager
+        const { user_id,ws_id,device,type} = client;
+        const { body } = data,
+        date=Date.now().toString(),
+        clientMessage = {
+          issue: "IoT device notification",
+          ws_id:ws_id,
+          device:device,
+          body: body,
+          date:date,
+          type:type
+        };
+        if (body) {
+          console.log("Mandando notificacion a clientes web de dispositivo IoT");
+          websocketManager.sendToSpecificClient(
+            clientMessage,
+            (metadata) => metadata.user_id == user_id && !metadata.device_id
+          );
+        } 
+        else {
+          console.log("La estructura de la notificacion es invalida");
           const callback = {
             issue: "invalid data format",
           };
@@ -260,6 +293,7 @@ app.use("/sign-out", signOut);
 app.use("/sign-in-device", signInDevice);
 app.use("/devices", devices);
 app.use("/profile", profile);
+app.use("/password", password);
 
 //cuando la ruta no pertenezca a una definida lanzaremos un estado de respuesta 404
 app.use((req, res) => {
@@ -274,16 +308,11 @@ httpServer.listen(80, () => {
   console.log("/sign-in Ruta para iniciar sesion");
   console.log("/sign-out Ruta para cerrar sesion");
   console.log("/sign-in-device Ruta para inicio de sesion de dispositivos IoT");
-  console.log(
-    "/devices Ruta para obtener los dispositivos asociados a tu cuenta, actualizar con uno nuevo"
-  );
-  console.log(
-    "/devices/connected Ruta que me devuelve los dispositivos conectados asociados a mi cuenta"
-  );
-  console.log(
-    "/profile Ruta que me permite leer, actualizar y eliminar perfil"
-  );
+  console.log("/devices Ruta para obtener los dispositivos asociados a tu cuenta, actualizar con uno nuevo");
+  console.log("/devices/connected Ruta que me devuelve los dispositivos conectados asociados a mi cuenta");
+  console.log("/profile Ruta que me permite leer, actualizar y eliminar perfil");
   console.log("/profile/password Ruta que me permite cambiar la contraseña");
+  console.log("/password Ruta que me permite verificar mi contraseña"); 
 });
 function uuidv4() {
   //genero un ID unico para cada cliente wenSocket que tenga para poder identificarlos
