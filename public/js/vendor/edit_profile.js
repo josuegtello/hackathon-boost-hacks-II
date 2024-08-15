@@ -161,6 +161,16 @@ export function initializeTabs() {
     const firstTabId = $tabs[0].getAttribute("data-tab");
     setActiveTab(firstTabId);
   }
+
+  //PRUEBA NOTIS BOTON
+  // Inicializar el botón de prueba de las notificaciones
+  const addNotificationBtn = document.getElementById('addNotificationProfileBtn');
+  if (addNotificationBtn) {
+      addNotificationBtn.addEventListener('click', () => {
+          addTestNotification();
+      });
+  } 
+  //PRUEBA NOTIS BOTON
 }
 
 export function initializeChangePassword() {
@@ -405,3 +415,44 @@ const newProfileImage = function (e) {
     reader.readAsDataURL(file);
   }
 };
+
+/*    Notificaciones    */
+
+//Funcion para agregar la notificación /*FUNCIÓN IMPORTANTE DE LAS NOTIS*/
+function addNotification(notification) {
+  const notificationsContainer = document.getElementById('notifications-container-edit-profile');
+  
+  const notificationItem = document.createElement('div');
+  notificationItem.className = 'notification-item-edit-profile';
+  
+  notificationItem.innerHTML = `
+      <img src="${notification.image}" alt="Notification Image" class="notification-img-edit-profile">
+      <div class="notification-content-edit-profile">
+          <p class="notification-text-edit-profile">${notification.text}</p>
+          <span class="notification-time-edit-profile">${notification.date} ${notification.time}</span>
+      </div>
+      <i class="fa-solid fa-times notification-delete-edit-profile"></i>
+  `;
+  
+  notificationsContainer.appendChild(notificationItem);
+  
+  // Agregar evento para eliminar la notificación
+  const deleteButton = notificationItem.querySelector('.notification-delete-edit-profile');
+  deleteButton.addEventListener('click', function() {
+      notificationItem.remove();
+  });
+}
+
+//PRUEBA DE NOTIS
+//Función de prueba para crear una notificación
+function addTestNotification() {
+  const now = new Date();
+  const testNotification = {
+      image: './assets/img/ssem-icon.png',
+      text: 'This is a test notification',
+      date: now.toLocaleDateString(),
+      time: now.toLocaleTimeString()
+  };
+  addNotification(testNotification);
+}
+//PRUEBA DE NOTIS
