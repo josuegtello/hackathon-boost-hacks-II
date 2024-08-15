@@ -1,7 +1,10 @@
-import {setUser,getUser} from "../main.js";
-import { tryBluetoothConnection } from "./bluetooth.js";
-
-
+import {setUser,getUser,setLoadingScreen,removeLoadingScreen} from "../main.js";
+import {sendWebSocketMessage} from "./web_socket.js";
+import {Bluetooth} from "./bluetooth.js";
+import {createToast} from "./notification.js";
+import { sleep } from "./sleep.js";
+import {uuidv4} from "./uuidv4.js";
+import {fetchRequest} from "./fetch_request.js";
 const d = document;
 
 export function initializeDevices() {
@@ -12,12 +15,13 @@ export function initializeDevices() {
     initializePasswordModal();
     initializeAddDeviceForm();
     //testConnection();
-
+    /*
     // Añade evento al botón de prueba para dar clic a un decives y ser redireccionado al dashboard
     const testButton = d.getElementById('testDeviceButton');
     if (testButton) {
         testButton.addEventListener('click', testAddAndSelectDevice);
     }
+        */
 }
 
 // SECCION DE TABS
@@ -147,7 +151,7 @@ function testAddAndSelectDevice() {
     addNewDevice(testDevice);
 }
 
-
+ */
 //función de prueba para actualizar la información en la sección del dashboard
 function updateDashboard(deviceData) {
     const dashboardSection = d.getElementById('dashboard');
@@ -167,7 +171,8 @@ function updateDashboard(deviceData) {
     // Actualizar la contraseña mostrada
     const passwordButton = dashboardSection.querySelector('.btn-dashboard:nth-child(3)');
     passwordButton.querySelector('.see-password-dashboard').textContent = deviceData.password || 'password';
-} */
+} 
+   
 
 function initializeDeviceSection() {
     //creo todos las etiqueta device
@@ -228,40 +233,111 @@ function handleEditClick(event) {
     }
 }
 
-function handleDeleteClick(event) {
+/* function handleDeleteClick(event) {
     const $element = event.target.closest('.device-n, .card-info');
+    if ($element && confirm('Are you sure you want to remove this item?')) {
+        $element.remove();
+        if ($element.classList.contains('card-info')) {
+            updateSaveChangesButtonVisibility();
+        }
+    }
+} */
+
+function handleDeleteClick(event) {
+    const $cardInfo=event.target.closest(".card-info");
+    if($cardInfo){
+        showCustomConfirmModal(async () => {
+            $cardInfo.remove();
+            updateSaveChangesButtonVisibility();
+        })
+        return;
+    }
+    
+    const $element = event.target.closest('.device-n');
     if ($element) {
-        showCustomConfirmModal(() => {
-            $element.remove();
-            if ($element.classList.contains('card-info')) {
-                updateSaveChangesButtonVisibility();
+        //Si no es ese es para eliminar un dispositivo
+        console.log("Eliminando Dispositivo");
+        //primero buscamos el dispositivo y vemos si esta online
+        const $container=event.target.closest(".device-n"),
+            device=Number($container.getAttribute("data-device"));
+        console.log($container,device);
+        let eliminate=false;
+        let position
+        const user=getUser();
+        user.devices.forEach((dvc,index) => {
+            if(dvc.device==device){
+                console.log("Dispositivo encontrado");
+                console.log(dvc);
+                position=index;
+                eliminate=true;
             }
+        });
+        if(!eliminate){
+            createToast("info","Devices: ","To delete a device it must be online");
+
+            return;
+        }
+        showCustomConfirmModal(async () => {
+            //hacemos una peticion fecha para eliminar el dispisitivo
+            console.log(`Solicitud a http://${location.hostname}/devices`);
+            await fetchRequest({
+                method:"DELETE",
+                url:`http://${location.hostname}/devices`,
+                contentType:"application/json",
+                data:JSON.stringify({pos:device}),
+                async success(response){
+                    if(response.ok){    //eliminamos el dispositivo
+                        console.log("Dispositivo a eliminar",user.devices[position]);
+                        //le decimos al dispositivo web socket que se elimine
+                        const wsId=user.devices[position].wsId
+                        const message={
+                            ws_id:wsId,
+                            issue:"send a message to a specific client",
+                            body:{
+                                issue:"Delete credentials"
+                            }
+                        }
+                        sendWebSocketMessage(message);
+                        user.devices.splice(position, 1);
+                        setUser(user);
+                        $element.remove();
+                        createToast("success","Success: ","Device successfully deleted");
+                    }
+                    else{
+                        createToast("error","Error: ","Unauthorized action");
+                    }
+                },
+                async error(err){
+                    console.error("Un error ha ocurrido durante la peticion",err);
+                    createToast("error","Error: ","An unexpected server error occurred");
+                }
+            })
+           
         });
     }
 }
-
-function showCustomConfirmModal(onConfirm) {
-    const modal = document.getElementById('custom-confirm-modal');
-    const yesBtn = document.getElementById('custom-confirm-yes');
-    const noBtn = document.getElementById('custom-confirm-no');
-
-    modal.style.display = 'block';
-
-    yesBtn.onclick = function () {
-        modal.style.display = 'none';
-        onConfirm();
-    }
-
-    noBtn.onclick = function () {
-        modal.style.display = 'none';
-    }
-
-    window.onclick = function (event) {
-        if (event.target == modal) {
+    function showCustomConfirmModal(onConfirm) {
+        const modal = document.getElementById('custom-confirm-modal');
+        const yesBtn = document.getElementById('custom-confirm-yes');
+        const noBtn = document.getElementById('custom-confirm-no');
+    
+        modal.style.display = 'block';
+    
+        yesBtn.onclick = function() {
+            modal.style.display = 'none';
+            onConfirm();
+        }
+    
+        noBtn.onclick = function() {
             modal.style.display = 'none';
         }
+    
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
     }
-}
 
 function handleInputKeydown(e) {
     if (e.key === 'Enter') {
@@ -542,8 +618,7 @@ function stopPropagation(e) {
     e.stopPropagation();
 }
 //variables que usare para almacenar al objeto bluetooth
-let ssem=null,
-    ssemLa=null
+let ssem, ssemLA;
 
 // Sección de Add Device
 function initializeAddDeviceForm() {
@@ -567,48 +642,57 @@ function initializeAddDeviceForm() {
         $addDeviceForm.addEventListener('submit', handleAddDeviceSubmit);
     }
     $bluetoothBtn.forEach($btn => {
-        $btn.addEventListener("click",connecteBluetooth);
+        $btn.addEventListener("click",connectBluetooth);
     });
 }
-async function connecteBluetooth(e){
-    const   $btn=e.target.closest("[data-type-device]"),
-            state=$btn.getAttribute('data-state'),
-            device=$btn.getAttribute("data-type-device");
-    if(state=="disconnected"){  //estamos tratando de conectar a un dispositivo bluetooth
-        console.log("Conectando dispositivo bluetooth");
-        if(device=="SSEM"){
-            ssem=await tryBluetoothConnection(device);
-            console.log(ssem);
-            if(ssem){   //si existe cambiamos el atributo
-                $btn.setAttribute("data-state","connected");
-            }
+//funcion para conectar un dispositivo bluetooth
+async function connectBluetooth(e) {
+    console.log("Iniciando conexion con dispositio bluetooth",e.target);
+    const $btn = e.target.closest(".device-name");
+    const state = $btn.getAttribute("data-state");
+    const device = $btn.getAttribute("data-type-device");
+
+    console.log(state,device);
+    if (state === "disconnected") {
+      console.log("Conectando dispositivo Bluetooth...");
+      let connected = false;
+      try {
+        if (device === "SSEM") {
+            if(!ssem) ssem = new Bluetooth(device);
+            connected = await ssem.connect();
+        } else if (device === "SSEM_LA") {
+          if(!ssemLA)ssemLA = new Bluetooth(device);
+          connected = await ssemLA.connect();
         }
-        else if(device=="SSEM_LA"){
-            ssemLa= await tryBluetoothConnection(device);
-            console.log(ssem);
-            if(ssemLa){
-                $btn.setAttribute("data-state","connected");
-            }
+        await sleep(500);
+        removeLoadingScreen();
+        if (connected) {
+          console.log("Conexión exitosa");
+          $btn.setAttribute("data-state", "connected");
         }
+      } catch (error) {
+        console.error("Error de conexión:", error);
+        removeLoadingScreen();
+      }
+    } else if (state === "connected") {
+      console.log("Desconectando dispositivo Bluetooth...");
+      try {
+        if (device === "SSEM") {
+          await ssem.disconnect();
+        } else if (device === "SSEM_LA") {
+          await ssemLA.disconnect();
+        }
+        $btn.setAttribute("data-state", "disconnected");
+      } catch (error) {
+        console.error("Error de desconexión:", error);
+        createToast(
+          "error",
+          "Bluetooth: ",
+          "Error disconnecting from Bluetooth device"
+        );
+      }
     }
-    if(state=="connected"){ //queremos desconectar al dispositivo bluetooth
-        console.log("Desconectando dispositivo bluetooth");
-        if(device=="SSEM"){
-            if(ssem){
-                ssem.disconnect();
-                ssem=null;
-                $btn.setAttribute("data-state","disconnected");
-            }
-        }
-        else if(device=="SSEM_LA"){
-            if(ssemLa){
-                ssemLa.disconnect();
-                ssemLa=null;
-                $btn.setAttribute("data-state","disconnected");
-            }
-        }
-    }
-}
+  }
 
 function addNewCardItem() {
     const $cardList = d.getElementById('card-list');
@@ -635,7 +719,127 @@ function createCardItemElement() {
     return cardItem;
 }
 
-function handleAddDeviceSubmit(e) {
+async function handleAddDeviceSubmit(e) {
     e.preventDefault();
-    console.log('Device added');
-}
+    const $form = e.target;
+    setLoadingScreen("Configuring device, please wait...");
+    //ssem = new Bluetooth("SSEM");
+    if (!ssem) {
+      await sleep(750);
+      createToast("error", "Bluetooth: ", "Both devices must be conected");
+      removeLoadingScreen();
+      return;
+    }
+    const id = uuidv4();
+    const user = getUser();
+    const webCredentials = {
+      id: id,
+      name: $form.device_name.value,
+      device: null,
+      type: "SSEM",
+    };
+    const ssemCredentials = {
+      issue: "Set credentials",
+      id: id,
+      password: $form.device_password.value,
+      ssid: $form.ssid_name.value,
+      ssid_password: $form.ssid_password.value,
+    };
+    const ssemLACredentials = {
+      issue: "Set credentials",
+      body: {
+        ssid: $form.ssid_name.value,
+        ssid_password: $form.ssid_password.value,
+      },
+    };
+    /*
+    //enviamos las credenciales al dispositivo SSEM LA
+    try {
+      console.log("Sending Bluetooth data to SSEM...");
+      await ssemLA.sendMessage(ssemLACredentials);
+      console.log("Waiting for SSEM response...");
+      const data = await ssemLA.waitForResponse();
+      console.log("Bluetooth data received from SSEM", data);
+      if (data.issue !== "Set credentials" || data.state !== "OK") {
+        throw new Error("A problem occurred while configuring the SSEM device");
+      }
+    } catch (err) {
+      console.error(`Error during device configuration`, err);
+      createToast("error", "Bluetooth: ", "Error during SSMLA device configuration");
+      removeLoadingScreen();
+      return;
+    }
+    */
+    //enviamos las credenciales al dispositivo SSEM
+    console.log("Enviando credenciales al dispositivo SSEM");
+    try {
+      await ssem.sendMessage(ssemCredentials);
+      const dataString = await ssem.waitForResponse();
+      const data = JSON.parse(dataString);
+      console.log("Informacion recibida de SSEM",data);
+      if (data.issue != "Set credentials" && data.state != "OK") {
+        throw new Error("A problem occurred while configuring the SSEM device");
+      }
+      /*
+      console.log(ssemCredentials);
+      const wasSent=await ssem.connect("Set credentials",ssemCredentials);
+      if(!wasSent){
+        throw new Error("A problem occurred while configuring the SSEM device");
+      }
+        */
+    } catch (err) {
+      console.error(`Error during device configuration`, err);
+      createToast(
+        "error",
+        "Bluetooth: ",
+        "Error during SSEM device configuration"
+      );
+      removeLoadingScreen();
+      return;
+    }
+    console.log("Haciendo peticion fetch para guardar los cambios");
+    let savedCredentials = false;
+    //Hago la peticion fech para ver si
+    await fetchRequest({
+      url: `http://${location.hostname}/devices`,
+      method: "POST",
+      data: JSON.stringify(webCredentials),
+      contentType: "application/json",
+      async success(response) {
+        if (response.ok) {
+            savedCredentials = true;
+            const result = await response.json();
+            console.log('respuesta del servidor',result);
+            webCredentials.device = result.deviceNumber;
+        }
+      },
+      async error(err) {
+        console.log("error de servidor");
+        console.error(err);
+      },
+    });
+    if (!savedCredentials) {
+      //si entra a este if el usuario no se ha creado de manera correcta
+      removeLoadingScreen();
+      createToast("error", "Error: ", "problem creating device on server");
+      return;
+    }
+    //enviamos las credenciales al dispositivo SSEM_LA cuando este la prubea completa lo descomentamos
+  
+    // Si todo está bien confirmamos que se guardó el dispositivo
+    await sleep(1000);
+    const { name, type, device } = webCredentials;
+    const newDevice = {
+      name,
+      type,
+      device,
+      img: "./assets/img/user.jpg",
+      state: "offline",
+    };
+    user.devices.push(newDevice);
+    setUser(user);
+    addNewDevice(newDevice);
+    removeLoadingScreen();
+    createToast("success", "Device: ", "Device added successfully");
+    console.log("Device added");
+  }

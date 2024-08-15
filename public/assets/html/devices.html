@@ -14,10 +14,12 @@
             <section id="devices" class="devices-tab devices-active">
                 <div class="tab-container-devices">
                     <!-- <button id="addDeviceButton" style="display: none;">Add Device</button>
-                    <button id="connectBluetooth" style="display: none;">Connect Bluetooth</button> -->
+                    <button id="connectBluetooth" style="display: none;">Connect Bluetooth</button> 
+                        <button id="testDeviceButton" style="display: none;"">Test Add and Select Device</button>
+                    -->
                     
                     <!-- Boton de prueba para añadir dispositivo -->
-                    <!-- <button id="testDeviceButton">Test Add and Select Device</button> -->
+                    <!--  -->
 
                     <!-- 
                         <button id="addDeviceButton" style="display: none;">Connect Bluetooth</button>
@@ -38,7 +40,6 @@
 
                 </div>
             </section>
-
             <!-- Dashboard -->
             <section id="dashboard" class="devices-tab">
                 <h2 class="device-name-dashboard">Device Name</h2>
@@ -121,7 +122,6 @@
                     </div>
                 </dialog>
             </section>
-
             <!-- Add device -->
             <section id="add" class="devices-tab">
                 <article class="add-device">
@@ -130,8 +130,8 @@
                         <div class="add-device-content">
                             <div class="form-group">
                                 <label for="deviceList">Select Device:</label>
-                                <select id="deviceList" name="deviceList">
-                                    <option value="electromagneticLock">CelestialSec Lock</option>
+                                <select id="deviceList" name="device_list">
+                                    <option value="CelestialSec Lock">CelestialSec Lock</option>
                                     <option value="camera">Security Camera</option>
                                     <option value="sensor">Motion Sensor</option>
                                 </select>
@@ -150,7 +150,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="ssidPassword">SSID password:</label>
-                                <input type="password" id="ssidPassword" name="ssid_name" required>
+                                <input type="password" id="ssidPassword" name="ssid_password" required>
                             </div>
                         </div>
                         <div class="device-list">
@@ -173,8 +173,6 @@
                     </form>
                 </article>
             </section>
-
-
         </section>
     </article>
     <!-- Modal de confirmación -->

@@ -8,12 +8,14 @@ import { initializeToast, createToast } from "./vendor/notification.js";
 import { error404 } from "./vendor/error_404.js";
 import { faq } from "./vendor/faq.js";
 import { connectWebSocket } from "./vendor/web_socket.js";
-import {initializeTabs,initializeChangePassword,initializeEditProfile} from "./vendor/edit_profile.js";
+import {
+  initializeTabs,
+  initializeChangePassword,
+  initializeEditProfile,
+} from "./vendor/edit_profile.js";
 import { initializeDevices, addNewDevice } from "./vendor/devices.js";
 import { initializateContactUs } from "./vendor/contact_us.js";
-
-//IMPORT DEMASIADO PROVISIONAL
-import {tryBluetoothConnection} from "./vendor/bluetooth.js";
+import { uuidv4 } from "./vendor/uuidv4.js";
 
 const d = document,
   w = window,
@@ -37,7 +39,21 @@ export function getUser() {
 export function isAuthenticated() {
   return user !== null;
 }
-
+export function setLoadingScreen(text = null) {
+  const $screen = d.querySelector(".loader-container"),
+    $textContainer = $screen.querySelector("p");
+  if (text) {
+    //significa que quiere que pongamos texto
+    $textContainer.textContent = text;
+  } else {
+    $textContainer.textContent = "";
+  }
+  $screen.classList.remove("pointer-events-none", "opacity-0");
+}
+export function removeLoadingScreen() {
+  const $screen = d.querySelector(".loader-container");
+  $screen.classList.add("pointer-events-none", "opacity-0");
+}
 /*
 Creamos una clase usuario, esta instancia se va a crear a base de las credenciales de usuario que tengamos, tengra el nombre, 
 la ruta de tu foto de perfil, tus dispositivos (datos publicos) , los que estan conectados etc.
@@ -51,9 +67,9 @@ class User {
     this.profile_img = profile_img;
     this.devices = [];
   }
-  getHeader(url) {
+  async getHeader(url) {
     //hacemos la peticion normal
-    fetchRequest({
+    await fetchRequest({
       method: "GET",
       url: url,
       credentials: "include",
@@ -69,10 +85,13 @@ class User {
             const $user = $nav.querySelector('[data-type="user"] > span');
             $user.textContent = user.name;
           }
-          if(user.profile_img){ //si existe hay una foto de perfil, la inserto
+          if (user.profile_img) {
+            //si existe hay una foto de perfil, la inserto
             //NUEVO
-            const $userAvatar = $nav.querySelector('#navUserAvatar');
-            $userAvatar.src = user.profile_img ? `./assets/profile_img/${user.profile_img}` : "./assets/img/user.jpg";
+            await sleep(100);
+            const $userAvatar = $nav.querySelector("#navUserAvatar"),
+                  timestamp = new Date().getTime();
+            $userAvatar.setAttribute("src",`${user.profile_img}?timestamp=${timestamp}`);
             //NUEVO
           }
           body.insertAdjacentElement("afterbegin", $nav);
@@ -90,6 +109,7 @@ class User {
         console.error(err);
       },
     });
+    return;
   }
   async getDevices() {
     //obtenemos los dispositivos conectados
@@ -179,7 +199,6 @@ class User {
     this._wsId = wsId;
   }
 }
-
 //funcion para inicio, traera la navbar respectivo y a lo mejor otras licencias que necesitemos
 const startClient = async function () {
   const credentials = sessionStorage.getItem("credentials");
@@ -193,7 +212,7 @@ const startClient = async function () {
     console.log("usuario creado");
     console.log(user);
     //aqui tambien haremos el llamado de el buzon de notificacion y demas datos que necesite de primera instancia
-    user.getHeader(url);
+    await user.getHeader(url);
     await user.getDevices(); //esperamos a obtener los dispositivos conectados
     connectWebSocket(); //iniciamos la comunicacion web Socket, solo los usuario tiene acceso a este tipo de notificaciones
   } else {
@@ -204,37 +223,36 @@ const startClient = async function () {
     user.getHeader(url);
   }
 
-
   return true;
 };
 
 //Funciones generales
-const startContent = function () {
+const startContent = async function () {
   //Verificamos si la hay una ruta existente
-  const redirect={
-    route:'',
-    href:''
-  }
-  if(sessionStorage.getItem("route")){
-    const data=JSON.parse(sessionStorage.getItem('route')),
-          $main=d.querySelector("main"),
-          {route,href}=data;
-    $main.setAttribute("data-html",href);
+  const redirect = {
+    route: "",
+    href: "",
+  };
+  if (sessionStorage.getItem("route")) {
+    const data = JSON.parse(sessionStorage.getItem("route")),
+      $main = d.querySelector("main"),
+      { route, href } = data;
+    $main.setAttribute("data-html", href);
     console.log(data);
-    redirect.route=route;
-    redirect.href=href;
+    redirect.route = route;
+    redirect.href = href;
+  } else {
+    redirect.route = "/home";
+    redirect.href = "./assets/html/home_page.html";
   }
-  else{
-    redirect.route="/home";
-    redirect.href="./assets/html/home_page.html";
-  }
-  const $a=d.createElement('a'),
-        {route,href}=redirect
-  $a.setAttribute('href',href);
-  $a.setAttribute('data-redirect',"replace-main");
-  redirects($a,null);
+  const $a = d.createElement("a"),
+    { route, href } = redirect;
+  $a.setAttribute("href", href);
+  $a.setAttribute("data-redirect", "replace-main");
+  await redirects($a, null);
   //comentar esta linea en live server
-  history.replaceState(null, '', route);
+  history.replaceState(null, "", route);
+  return true;
 };
 
 const submenuFunction = function (e) {
@@ -258,7 +276,7 @@ const submenuFunction = function (e) {
     $link.setAttribute("data-state", "hidden");
     $submenu.classList.add("pointer-events-none");
   }
-  if(selector=="notificationSubmenu" || selector=="profileMenu"){
+  if (selector == "notificationSubmenu" || selector == "profileMenu") {
     $submenu.style.setProperty("left", `${rect.right - rectSub.width}px`);
   }
 };
@@ -288,11 +306,15 @@ const initializateSubmenu = function (submenu, $el) {
 //falta generar un item en sessionStorage, y cambiar la url para que indique que estamos en esa seccion
 //y en caso de recargar la pagina aparezcamos en esa seccion
 
-const redirects = async function ($el, e=null) {
-  if(e)e.preventDefault();
+const redirects = async function ($el, e = null) {
+  if (e) e.preventDefault();
   const url = $el.getAttribute("href");
+  const redirect = $el.getAttribute("data-redirect");
   console.log(url);
-  fetchRequest({
+  if (redirect == "replace-main") {
+    setLoadingScreen("Loading...");
+  }
+  await fetchRequest({
     method: "GET",
     url: url,
     contentType: "text/html",
@@ -301,42 +323,42 @@ const redirects = async function ($el, e=null) {
     async success(response) {
       if (response.ok) {
         //200-299
-        const redirect = $el.getAttribute("data-redirect");
         if (redirect == "replace-main") {
           //cuando el atributo tenga esta valor remplazara la etiqueta main
           console.log("Remplazando etiqueta main");
           const $main = d.querySelector("main"),
             $html = await response.text(),
-            redirect={
-              route:"",
-              href:""
-            }
+            redirect = {
+              route: "",
+              href: "",
+            };
           $main.outerHTML = $html;
-          redirect.href=url;
+          redirect.href = url;
           //es estos if inicializamos los datos
           if (url.includes("log_in")) {
-            redirect.route="/sign-in";
+            redirect.route = "/sign-in";
             console.log("log in obtenido");
             initializeLogin();
           } else if (url.includes("home_page")) {
             console.log("home page obtenido");
-            redirect.route="/home";
+            redirect.route = "/home";
             faq();
             //funcion para inicializar los eventos del home page
           } else if (url.includes("devices")) {
             console.log("devices obtenido");
-            redirect.route="/my-devices";
+            redirect.route = "/my-devices";
             initializeDevices();
           } else if (url.includes("edit_profile")) {
             console.log("edit profile obtenido");
-            redirect.route="/my-profile";
+            redirect.route = "/my-profile";
             initializeTabs();
             initializeChangePassword();
             initializeEditProfile();
           }
           //COMENTAR LA LINEA DE ABAJO SI ESTAN EN LIVE SERVER
-          history.replaceState(null, '', redirect.route);
-          sessionStorage.setItem("route",JSON.stringify(redirect));
+          history.replaceState(null, "", redirect.route);
+          sessionStorage.setItem("route", JSON.stringify(redirect));
+          removeLoadingScreen();
         } else if (redirect == "submenu") {
           //cuando tenga este valor nos traera un submenu de ese enlace
           //como queremos obtimizar ya no lo volveremos a traer y ya solo controlaremos sus eventos
@@ -402,6 +424,7 @@ const redirects = async function ($el, e=null) {
       console.log(err);
     },
   });
+  return true;
 };
 function removeElement(e) {
   const $target = e.target;
@@ -453,7 +476,7 @@ function handleAddDevice() {
     type: "Electromagnetic Lock",
     state: "offline",
     img: "./assets/img/user.jpg",
-    device:1,
+    device: 1,
   };
   addNewDevice(newDevice);
 }
@@ -495,10 +518,8 @@ d.addEventListener("DOMContentLoaded", async (e) => {
     //PRUEBA DE AÑADIR DISPOSITIVO */
 
     //PRUEB PARA INICIAR CONEXION BLUETOOTH
-    if (e.target.matches("#connectBluetooth")) {
+    if ($target.matches("#connectBluetooth")) {
       tryBluetoothConnection();
     }
-
-
   });
 });

@@ -222,6 +222,14 @@
 
 .card-team:nth-child(1):hover {
 	background: url('../../assets/img/gera.png') left center no-repeat;
+
+	background: url('../../assets/img/anahi-5.png') center center no-repeat ;
+	background-size: 100%;
+}
+
+.card-team:nth-child(1):hover {
+	background: url('../../assets/img/anahi-5.png') left center no-repeat;
+
 	background-size: 200%;
 	background-position: 0% 30%;
 }
