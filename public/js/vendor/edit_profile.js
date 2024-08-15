@@ -161,6 +161,14 @@ export function initializeTabs() {
     const firstTabId = $tabs[0].getAttribute("data-tab");
     setActiveTab(firstTabId);
   }
+
+  /* // Inicializar el botón de prueba de las notificaciones
+  const addNotificationBtn = document.getElementById('addNotificationProfileBtn');
+  if (addNotificationBtn) {
+      addNotificationBtn.addEventListener('click', () => {
+          addTestNotification();
+      });
+  } */
 }
 
 export function initializeChangePassword() {
@@ -404,3 +412,40 @@ const newProfileImage = function (e) {
     reader.readAsDataURL(file);
   }
 };
+
+/*    Notificaciones    */
+
+//Funcion para agregar la notificación
+function addNotification(notification) {
+  const notificationsContainer = document.getElementById('notifications-container-edit-profile');
+  
+  const notificationItem = document.createElement('div');
+  notificationItem.className = 'notification-item-edit-profile';
+  
+  notificationItem.innerHTML = `
+      <img src="${notification.image}" alt="Notification Image" class="notification-img-edit-profile">
+      <div class="notification-content-edit-profile">
+          <p class="notification-text-edit-profile">${notification.text}</p>
+          <span class="notification-time-edit-profile">${notification.time}</span>
+      </div>
+      <i class="fa-solid fa-times notification-delete-edit-profile"></i>
+  `;
+  
+  notificationsContainer.appendChild(notificationItem);
+  
+  // Agregar evento para eliminar la notificación
+  const deleteButton = notificationItem.querySelector('.notification-delete-edit-profile');
+  deleteButton.addEventListener('click', function() {
+      notificationItem.remove();
+  });
+}
+
+/* //Función de prueba para crear una notificación
+function addTestNotification() {
+  const testNotification = {
+      image: './assets/img/ssem-icon.png',
+      text: 'This is a test notification ',
+      time: new Date().toLocaleTimeString()
+  };
+  addNotification(testNotification);
+} */
