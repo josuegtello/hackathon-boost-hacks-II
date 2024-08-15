@@ -410,7 +410,7 @@ async function handleDashboardButtonClick() {
     });
     if(device.state=="offline" || !device){
         // crear un mensaje que diga que si esta offline no se puede hacer ningun accion, preguntarle al Eder si esta bien 
-        createToast("error","Device: ", `Your device "${device.name}" must be online to interact whith him`);
+        createToast("error","Devices: ", `Your device "${device.name}" must be online to interact whith it`);
         return;
     }
     try {
