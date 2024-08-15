@@ -283,13 +283,13 @@
 }
 
 .card-team:nth-child(4) {
-	background: url('https://i.pinimg.com/564x/b1/05/57/b105578f42ad066281769d6fc998724a.jpg') center center no-repeat;
+	background: url('') center center no-repeat;
 	background-size: 110%;
 	background-position: 50% 70%;
 }
 
 .card-team:nth-child(4):hover {
-	background: url('https://i.pinimg.com/564x/b1/05/57/b105578f42ad066281769d6fc998724a.jpg') left center no-repeat;
+	background: url('') left center no-repeat;
 	background-size: 200%;
 	background-position: 0% 30%;
 }
