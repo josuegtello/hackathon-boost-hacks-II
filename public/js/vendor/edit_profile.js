@@ -162,13 +162,13 @@ export function initializeTabs() {
     setActiveTab(firstTabId);
   }
 
-  /* // Inicializar el botón de prueba de las notificaciones
+  // Inicializar el botón de prueba de las notificaciones
   const addNotificationBtn = document.getElementById('addNotificationProfileBtn');
   if (addNotificationBtn) {
       addNotificationBtn.addEventListener('click', () => {
           addTestNotification();
       });
-  } */
+  } 
 }
 
 export function initializeChangePassword() {
@@ -427,7 +427,7 @@ function addNotification(notification) {
       <img src="${notification.image}" alt="Notification Image" class="notification-img-edit-profile">
       <div class="notification-content-edit-profile">
           <p class="notification-text-edit-profile">${notification.text}</p>
-          <span class="notification-time-edit-profile">${notification.time}</span>
+          <span class="notification-time-edit-profile">${notification.date} ${notification.time}</span>
       </div>
       <i class="fa-solid fa-times notification-delete-edit-profile"></i>
   `;
@@ -441,12 +441,14 @@ function addNotification(notification) {
   });
 }
 
-/* //Función de prueba para crear una notificación
+//Función de prueba para crear una notificación
 function addTestNotification() {
+  const now = new Date();
   const testNotification = {
       image: './assets/img/ssem-icon.png',
-      text: 'This is a test notification ',
-      time: new Date().toLocaleTimeString()
+      text: 'This is a test notification',
+      date: now.toLocaleDateString(),
+      time: now.toLocaleTimeString()
   };
   addNotification(testNotification);
-} */
+}
