@@ -208,6 +208,19 @@
 	justify-content: space-around;
 }
 
+.social-icons-team a{ 
+	cursor: none;
+}
+
+.social-icons-team i {
+	cursor: none;
+	color: var(--text-color-3);
+}
+
+.social-icons-team i:hover {
+	color: var(--text-color-1);
+}
+
 .fab {
 	opacity: 0;
 	transition: opacity 1s;
