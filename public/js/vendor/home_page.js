@@ -44,7 +44,7 @@ export async function initializeHomepage() {
 		$VideoContainer.classList.add('VideoShow');
 		$VideoSection.classList.remove('pointer-events-none');
 		$modalVideo.play();
-		// $modalVideo.volume = 0.8;
+		$modalVideo.volume = 0.5;
 		$DigInto.classList.add('display-none');
 
 		await sleep(1000);
@@ -59,28 +59,28 @@ export async function initializeHomepage() {
 		});
 		if (alreadywatched == 1) $VideoSection.classList.add('pointer-events-none');
 	});
-	$btnCelestialSmartPot.addEventListener('click', () => {
-		$cardCelestialSecLock.classList.toggle('display-none');
-		$cardCelestialSmartWatch.classList.add('display-none');
-		$cardCelestialSmartPot.classList.add('display-none');
-		$Celock.classList.remove('display-none');
-		$VideoSection.classList.toggle('VideoHide');
-		$VideoContainer.classList.toggle('VideoShow');
-		$VideoSection.classList.remove('pointer-events-none');
-		$DigInto.classList.add('display-none');
-		if (alreadywatched == 1) $VideoSection.classList.add('pointer-events-none');
-	});
-	$btnCelestialSmartWatch.addEventListener('click', () => {
-		$cardCelestialSecLock.classList.toggle('display-none');
-		$cardCelestialSmartWatch.classList.add('display-none');
-		$cardCelestialSmartPot.classList.add('display-none');
-		$Celock.classList.remove('display-none');
-		$VideoSection.classList.toggle('VideoHide');
-		$VideoContainer.classList.toggle('VideoShow');
-		$VideoSection.classList.remove('pointer-events-none');
-		$DigInto.classList.add('display-none');
-		if (alreadywatched == 1) $VideoSection.classList.add('pointer-events-none');
-	});
+	// $btnCelestialSmartPot.addEventListener('click', () => {
+	// 	$cardCelestialSecLock.classList.toggle('display-none');
+	// 	$cardCelestialSmartWatch.classList.add('display-none');
+	// 	$cardCelestialSmartPot.classList.add('display-none');
+	// 	$Celock.classList.remove('display-none');
+	// 	$VideoSection.classList.toggle('VideoHide');
+	// 	$VideoContainer.classList.toggle('VideoShow');
+	// 	$VideoSection.classList.remove('pointer-events-none');
+	// 	$DigInto.classList.add('display-none');
+	// 	if (alreadywatched == 1) $VideoSection.classList.add('pointer-events-none');
+	// });
+	// $btnCelestialSmartWatch.addEventListener('click', () => {
+	// 	$cardCelestialSecLock.classList.toggle('display-none');
+	// 	$cardCelestialSmartWatch.classList.add('display-none');
+	// 	$cardCelestialSmartPot.classList.add('display-none');
+	// 	$Celock.classList.remove('display-none');
+	// 	$VideoSection.classList.toggle('VideoHide');
+	// 	$VideoContainer.classList.toggle('VideoShow');
+	// 	$VideoSection.classList.remove('pointer-events-none');
+	// 	$DigInto.classList.add('display-none');
+	// 	if (alreadywatched == 1) $VideoSection.classList.add('pointer-events-none');
+	// });
 
 	$GetBack.addEventListener('click', () => {
 		$VideoSection.classList.add('pointer-events-none');
@@ -89,7 +89,6 @@ export async function initializeHomepage() {
 		$cardCelestialSecLock.classList.remove('display-none');
 		$DigInto.classList.toggle('display-none');
 		$Celock.classList.add('display-none');
-
 		$VideoSection.classList.toggle('VideoHide');
 		$VideoContainer.classList.toggle('VideoShow');
 	});
@@ -98,14 +97,17 @@ export async function initializeHomepage() {
 
 	function handleFullscreenChange() {
 		if (document.fullscreenElement === $videostill) {
-			$videostill.currentTime = 0; // Set the $videostill time to the beginning
-			$videostill.play(); // Play the $videostill
+			$videostill.currentTime = 0;
+			$videostill.play();
+			$videostill.muted = false;
+		} else {
+			$videostill.muted = true;
 		}
 	}
 
 	// To toggle fullscreen mode on $videostill click
 
 	$videostill.addEventListener('click', () => {
-		if (!document.fullscreenElement) $videostill.requestFullscreen(); // Enter fullscreen mode
+		if (!document.fullscreenElement) $videostill.requestFullscreen();
 	});
 }

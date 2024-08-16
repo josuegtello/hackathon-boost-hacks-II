@@ -603,7 +603,7 @@
 	margin: 0;
 }
 
-.Video {
+.VideoSectionclass {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -775,7 +775,7 @@ p info-column {
 	color: #8d7bff;
 }
 
-.first_section {
+.first_info_section {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
@@ -789,11 +789,11 @@ p info-column {
 	align-items: center;
 }
 
-.first_section h2 {
+.first_info_section h2 {
 	color: var(--text-color-2);
 }
 
-.parragraph {
+.first_info_section .parragraph {
 	color: var(--text-color-3);
 	border-radius: 20px;
 	width: 80%;
