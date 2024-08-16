@@ -205,6 +205,7 @@ void setup(){
     //Inicializacion de objetos principales
     Serial.begin(115200); //inicializo el puerto serie del microcontrolador
     Wire.begin(); //inicializo la comunicacion I2C
+    getCredentials();
     bluetooth.connection=true;
     Bth.begin(9600); //Inicializo la comunicacion seria con el modulo bluetooth
     lcd0.begin(0,lcd_width); //Inicializo las pantallas LCD
@@ -226,7 +227,7 @@ void setup(){
     digitalWrite(led_pin, LOW);
     //obtenemos las credenciales de la EEPROM
     //deleteCredentials();
-    getCredentials();
+    
     Serial.println("Iniciando en el modo conexion");
     Serial.println("Mi direccion MAC es:");
     Serial.println(WiFi.macAddress());
@@ -287,7 +288,7 @@ void setup(){
 }
 
 void loop() {
-	systemFunction();
+	  systemFunction();
     serialFunction();
 }
 
@@ -303,6 +304,7 @@ COMANDOS DE SIMULACION
 
   
 */
+
 //funcion provisional para simular acciones
 void serialFunction(){
   if (Serial.available()){ //si entra a este if quiere decir que hay datos bluetooth en espera
@@ -950,6 +952,20 @@ void parseJSONString(const String& payload,Device dvc) {
                 body_response["issue"]=body_issue;
                 body_response["state"]="OK";
                 send_message=true;
+            }
+            else if(body_issue=="Restart"){
+                Serial.println("Restableciendo dispositivo");
+                body_response["issue"]=body_issue;
+                body_response["state"]="OK";
+                response["correlationId"]=correlationId;
+                sendJSONMessage(response,WEBSOCKET);
+                for (int i = 0; i <= 5; i++){
+                    delay(500);
+                    digitalWrite(led_pin, HIGH);
+                    delay(500);
+                    digitalWrite(led_pin, LOW);
+                }
+                ESP.restart();
             }
             else{
                 Serial.println("Mensaje no reconocido");
