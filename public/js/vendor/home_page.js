@@ -43,8 +43,10 @@ export async function initializeHomepage() {
 		$VideoContainer.classList.remove('VideoHide');
 		$VideoContainer.classList.add('VideoShow');
 		$VideoSection.classList.remove('pointer-events-none');
-		$modalVideo.play();
-		$modalVideo.volume = 0.5;
+		if (alreadywatched == 0) {
+			$modalVideo.play();
+			$modalVideo.volume = 0.5;
+		}
 		$DigInto.classList.add('display-none');
 
 		await sleep(1000);

@@ -503,21 +503,21 @@
 }
 
 .card-project:nth-child(1):before {
-	background-image: url('/public/assets/img/celestialsecMain.png');
+	background-image: url('../../assets/img/celestialsecMain.png');
 	background-position: top center;
 	background-repeat: no-repeat;
 	background-size: 100% 85%;
 }
 
 .card-project:nth-child(2):before {
-	background-image: url('/public/assets/img/CelestialSecSmartPot.jpg');
+	background-image: url('../../assets/img/CelestialSecSmartPot.jpg');
 	background-position: top center;
 	background-repeat: no-repeat;
 	background-size: 100% 90%;
 }
 
 .card-project:nth-child(3):before {
-	background-image: url('/public/assets/img/celestialSecWatch.png');
+	background-image: url('../../assets/img/celestialSecWatch.png');
 	background-position: top center;
 	background-repeat: no-repeat;
 	background-size: 100% 100%;
