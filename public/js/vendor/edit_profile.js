@@ -434,6 +434,7 @@ export function addNotification(notification) {
   notificationItem.innerHTML = `
       <img src="${imgURL}" alt="Notification Image" class="notification-img-edit-profile">
       <div class="notification-content-edit-profile">
+          <h4 class="notification-device-name-edit-profile">${name}</h4>
           <p class="notification-text-edit-profile">${message}</p>
           <span class="notification-time-edit-profile">${dateNotification} ${timeNotification}</span>
       </div>
