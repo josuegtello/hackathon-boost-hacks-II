@@ -4,6 +4,13 @@
 
 Hello! We are **Celestial Sec**, a team dedicated to addressing the rising crime rates in our city by offering innovative technological solutions. Our mission is to help prevent theft and other property-related crimes. To achieve this, we have developed advanced door-locking hardware integrated with a web application that allows you to manage access to your porch, gates, interior doors, and more.
 
+## Platform Compatibility
+
+Please note that, at this time, **Celestial Sec** is designed exclusively for use on desktop computers. While our project leverages the Web Bluetooth API, which is supported in major browsers, we recommend accessing the web application from a computer to ensure full functionality and a seamless user experience.
+
+Mobile and tablet support are not yet implemented, and certain features may not work as expected on these devices.
+
+
 ## Prerequisites
 
 To run this project, you need to have Node.js version `v20.11.0` installed. We recommend using Node Version Manager (NVM) to manage your Node.js versions.

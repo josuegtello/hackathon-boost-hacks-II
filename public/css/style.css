@@ -222,3 +222,19 @@ cursor: none;
 .opacity-0{
     opacity: 0 !important;
 }
+
+/* Estilo para toda la barra de desplazamiento */
+::-webkit-scrollbar {
+    width: 0.5rem;
+  }
+  
+  /* Estilo para el "track" (fondo) de la barra */
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+  
+  /* Estilo para el "thumb" (la parte móvil) de la barra */
+  ::-webkit-scrollbar-thumb {
+    background: var(--container-color-8);
+    border-radius: 0.365rem;
+  }
