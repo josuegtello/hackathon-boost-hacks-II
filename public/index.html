@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="./css/vendor/notification.css">
     <link rel="stylesheet" href="./css/vendor/profile_menu.css">
     <link rel="stylesheet" href="./css/vendor/notification_menu.css">
+    <link rel="stylesheet" href="./css/vendor/contact_us.css">
     <link rel="stylesheet" href="./css/vendor/error_404.css">
     <link rel="stylesheet" href="./css/vendor/edit_profile.css">
     <link rel="stylesheet" href="./css/vendor/devices.css">
@@ -21,13 +22,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://loader.css">
 </head>
 <body>
     <!--Genericos-->
-    
-    <main data-html="./assets/html/home_page.html" data-html-action="replace" ></main>
-    <div data-html="./assets/html/error_404.html" data-html-action="save" data-name="Error 404"></div>
-
+    <main></main>
     <!--
     <nav data-html="./assets/html/navbar.html" data-html-action="replace"></nav>
     <nav data-html="./assets/html/navbar_users.html" data-html-action="replace"></nav>
@@ -57,7 +56,10 @@
         </div>
     </section>
     -->
-
+    <section class="loader-container position-fixed">
+        <div class="loader"></div>
+        <p>Loading...</p>
+    </section>
     <!--Librerias externas-->
     <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.0/gsap.min.js'></script>
     <!--script principal-->

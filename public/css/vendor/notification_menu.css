@@ -10,8 +10,6 @@
     border-radius: 0.8rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     opacity: 1;
-    transform: translateX(-100%);
-    animation: fadeInUp 0.8s ease;
     overflow-y: auto;
 }
 
@@ -64,28 +62,11 @@
     font-weight: 400;
 }
 .submenu-out{
-    animation: fadeOutDown 0.5s ease;
+    animation: fadeOutDown 0.5s ease forwards;
+}
+.submenu-in{
+    animation: fadeInUp 0.8s ease;
 }
 
-/*      Animation       */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translate(-100%,-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translate(-100%,0);
-    }
-}
-@keyframes fadeOutDown {
-    from {
-        opacity: 1;
-        transform: translate(0,0);
-    }
-    to {
-        opacity: 0;
-        transform: translate(0,10px);
-    }
-}
+
 

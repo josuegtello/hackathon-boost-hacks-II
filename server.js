@@ -76,6 +76,8 @@ httpServer.on("upgrade", (request, socket, head) => {
 });
 
 //WebSocket
+const PING_INTERVAL = 30000; // Intervalo para enviar PINGs (30 segundos)
+const PONG_TIMEOUT = 10000; // Tiempo para esperar un PONG (10 segundos)
 const webSocket = new WebSocket.Server({ noServer: true }); //El web socket funcionara en el puerto 80 tambien
 webSocket.on("connection", (ws, req) => {
   //El webSocket es una caracterestica unica para clientes registrados, por lo que unicamente clientes van a poder conectarse
@@ -85,15 +87,25 @@ webSocket.on("connection", (ws, req) => {
     ws_id = uuidv4(), //genero el ID webSocket
     color = Math.floor(Math.random() * 360), //genero un color aleatorio
     metadata = { ws_id, color }; //creo un objeto con este metadata
-  
   //Definimos metadata especifica dependiendo del usuario
   if (user) {
     metadata.user_id = user.id;
     metadata.type = user.type;
   } else if (device) {
+    metadata.user_id = device.user_id;
     metadata.device_id = device.id;
     metadata.type = device.type;
-    metadata.device=device.device;
+    metadata.device = device.device;
+    //mandamos el mensaje que se ha conectado un dispositivo IoT
+    const {user_id,ws_id}=metadata,
+          clientMessage={
+            issue:"IoT device connected",
+            ws_id:ws_id,
+            device:device.device,
+          }
+    websocketManager.sendToSpecificClient(
+      clientMessage,
+      (metadata) => metadata.user_id == user_id && !metadata.device_id);
   }
   console.log("Nuevo cliente conectado");
   console.log(metadata);
@@ -104,6 +116,26 @@ webSocket.on("connection", (ws, req) => {
     ws_id: ws_id,
   };
   ws.send(JSON.stringify(callback)); //su primer conexion, le mandamos el id que le asignamos
+  //Manejadores de los eventos ping y pong
+  let pongReceived = true;
+  // Función para enviar PING
+  const sendPing = () => {
+    if (!pongReceived) {
+      const client=websocketManager.getClient(ws);
+      console.log(`No se recibió PONG de ${client.type}, cerrando conexión`);
+      ws.terminate(); // Terminar conexión si no se recibió PONG
+      return;
+    }
+    pongReceived = false;
+    ws.ping(); // Enviar PING
+  };
+  const pingInterval = setInterval(sendPing, PING_INTERVAL);
+
+  ws.on("pong", () => {
+    const client=websocketManager.getClient(ws);
+    console.log(`PONG recibido de ${client.type}`);
+    pongReceived = true; // Se recibió PONG
+  });
   //En caso de error vemos que paso con el cliente web socket
   ws.on("error", (err) => {
     //si tenemos un error en conexion con alguno de los clientes el servidor nos informara el error
@@ -111,46 +143,94 @@ webSocket.on("connection", (ws, req) => {
   });
   //en caso de que se cierre conexion con el cliente WebSocket
   ws.on("close", () => {
+    clearInterval(pingInterval); // Limpiar intervalo de PING al cerrar conexión
     //si el cliente webSocket se ha desconectado
-    console.log("disconnected");
-    console.log(websocketManager.getClient(ws)); //obtenemos al cliente que se desconecto
-    //FALTA GENERAR UNA FUNCION QUE AVISE a los clientes asociados que ese dispositivo se desconecto
-    websocketManager.removeClient(ws);
+    console.log("client disconnected");
+    const client = websocketManager.getClient(ws);
+    console.log(client); //obtenemos al cliente que se desconecto
+    //mandamos mensaje a todos los dispositivos asociados que se ha desconectado
+    if (client.device_id) {
+      //era un dispositivo IoT, envio mensaje a todos los usuarios web que se ha desconectado
+      const { ws_id, user_id,device } = client,
+        clientMessage = {
+          issue: "IoT device disconnected",
+          ws_id: ws_id,
+          device:device
+        };
+      console.log(`IoT device disconnected`);
+      websocketManager.sendToSpecificClient(
+        clientMessage,
+        (metadata) => metadata.user_id == user_id && !metadata.device_id
+      );
+    }
+    websocketManager.removeClient(ws); //removemos el elemento
   });
   //En caso de que el cliente mande un mensaje por WebSocket
   ws.on("message", (message) => {
     //cuando el cliente manda algun mensaje al servidor
     try {
       const data = JSON.parse(message);
-      const metadata = websocketManager.getClient(ws);
-      console.log("Cliente mandando mensaje");
-      console.log(metadata);
-      console.log("Mensaje recibido");
+      const client = websocketManager.getClient(ws);
+      console.log("Mensaje webSocket recibido");
       console.log(data);
-      const {issue}=data;
-      if(issue=="send specific message to client"){
-        const {ws_id,message}=data,
-              clientMessage={
-                issue:"client message",
-                message:message
-              }
-        if(ws_id!=""&&message!=""){
-          websocketManager.sendToSpecificClient(clientMessage,(metadata) => (metadata.ws_id == ws_id))
-        }
-        else{
-          const callback={
-            issue:"invalid data format"
-          }
+      console.log("del cliente");
+      console.log(client);
+      const { issue } = data;
+      if (issue == "send a message to a specific client") {
+        const { ws_id, body } = data,
+          clientMessage = {
+            issue: "client message",
+            body: body,
+          };
+        if (ws_id != "" && body) {
+          websocketManager.sendToSpecificClient(
+            clientMessage,
+            (metadata) => metadata.ws_id == ws_id
+          );
+        } 
+        else {
+          const callback = {
+            issue: "invalid data format",
+          };
           ws.send(JSON.stringify(callback));
         }
-        
+      } 
+      else if (issue == "IoT device sending specific message") {
+        const { user_id,ws_id,device } = client;
+        const { body } = data,
+        clientMessage = {
+          issue: "IoT device message",
+          ws_id:ws_id,
+          device:device,
+          body: body
+        };
+        if (body) {
+          console.log("Mandando mensaje a clientes web de dispositivo IoT");
+          websocketManager.sendToSpecificClient(
+            clientMessage,
+            (metadata) => metadata.user_id == user_id && !metadata.device_id
+          );
+        } 
+        else {
+          const callback = {
+            issue: "invalid data format",
+          };
+          ws.send(JSON.stringify(callback));
+        }
       }
-    } catch (err) {
+      else{
+        const callback = {
+          issue: "invalid data format",
+        };
+        ws.send(JSON.stringify(callback));
+      }
+    } 
+    catch (err) {
       console.log("Error en el formato de datos");
       console.error(err);
-      const callback={
-        issue:"invalid data format"
-      }
+      const callback = {
+        issue: "invalid data format",
+      };
       ws.send(JSON.stringify(callback));
     }
     //const outbound = JSON.stringify(data);
@@ -168,6 +248,11 @@ webSocket.on("error", (error) => {
 //HTTP
 //Ruta donde servira todo el html estatico
 app.use(express.static(path.join(__dirname + "/public")));
+// Definir la ruta que captura todas las rutas expecificas y las regreso al index.html
+const routes = ['/home', '/sign-up', '/sign-in','/my-devices',"/my-profile"];
+app.get(routes, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 //Rutas http que tenemos en el sitio
 app.use("/sign-up", signUp);
 app.use("/sign-in", signIn);
@@ -175,6 +260,7 @@ app.use("/sign-out", signOut);
 app.use("/sign-in-device", signInDevice);
 app.use("/devices", devices);
 app.use("/profile", profile);
+
 //cuando la ruta no pertenezca a una definida lanzaremos un estado de respuesta 404
 app.use((req, res) => {
   res.status(404);
@@ -188,9 +274,16 @@ httpServer.listen(80, () => {
   console.log("/sign-in Ruta para iniciar sesion");
   console.log("/sign-out Ruta para cerrar sesion");
   console.log("/sign-in-device Ruta para inicio de sesion de dispositivos IoT");
-  console.log("/devices Ruta para obtener los dispositivos asociados a tu cuenta");
-  console.log("/profile Ruta que me permite leer, actualizar y eliminar perfil");
-
+  console.log(
+    "/devices Ruta para obtener los dispositivos asociados a tu cuenta, actualizar con uno nuevo"
+  );
+  console.log(
+    "/devices/connected Ruta que me devuelve los dispositivos conectados asociados a mi cuenta"
+  );
+  console.log(
+    "/profile Ruta que me permite leer, actualizar y eliminar perfil"
+  );
+  console.log("/profile/password Ruta que me permite cambiar la contraseña");
 });
 function uuidv4() {
   //genero un ID unico para cada cliente wenSocket que tenga para poder identificarlos

@@ -33,7 +33,6 @@ export const removeToast = (toast) => {
 }
 
 export const createToast = (id, title = '', text = '') => {
-    
     const { icon } = toastDetails[id];
     const toast = d.createElement("li");
     toast.className = `toast ${id}`;
@@ -52,14 +51,19 @@ export const createToast = (id, title = '', text = '') => {
 
     //si ya esta registrado lo guardamos en su muro
     const data=sessionStorage.getItem('credentials');
+    return {
+        id,
+        title,
+        text,
+    }
     if(data){
         // Añadir la notificacion al menu
         //addNotificationToMenu(id, title, text);
     }
 }
 
-// Notificasiones del menu
-const addNotificationToMenu = (title, text, imageUrl) => {
+// Notificasiones del menu, FALTA cambiar esta funcion para que agarre la notificion de la clase user que tenemos
+export const addNotificationToMenu = (title, text, imageUrl) => { 
     const notifyItem = d.createElement("div"),
           $notifyMenu = d.querySelector(".notify-items"); // Contenedor del menu de notificaciones
     notifyItem.className = "notify-item";

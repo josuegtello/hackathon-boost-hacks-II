@@ -6,33 +6,14 @@
     "password": "lalopop123456",
     "devices": [
       {
-        "device": 1,
-        "id": "1234",
-        "type": "SSEM"
+        "id": "4a11f37d-16c0-4c18-bcb0-3fa451027323",
+        "device": 0,
+        "type": "CelestialSecLock",
+        "name": "Puerta trasera"
       }
     ],
-    "phone": "5565098090"
-  },
-  {
-    "id": "e1d3e9a6-e1fe-4d85-b11f-a515e3e62945",
-    "name": "Gerardo Josue",
-    "email": "guzman.tello.gerardo.josue@gmail.com",
-    "password": "gerardo2004$",
-    "devices": []
-  },
-  {
-    "id": "8c091bd5-9508-46ca-8c72-4bed290328b0",
-    "name": "",
-    "email": "",
-    "password": "",
-    "devices": []
-  },
-  {
-    "id": "4d0fabb0-6ae6-47b9-b5ab-d4161f019c53",
-    "name": "Gerardo Tello",
-    "email": "josuegtello@gmail.com",
-    "password": "pepeTo;o",
-    "devices": []
+    "phone": "5565092151",
+    "profile_img": "user0.jpg"
   },
   {
     "id": "58a3899a-1568-47c3-ba87-86888d7fe817",
@@ -56,13 +37,6 @@
     "devices": []
   },
   {
-    "id": "bb37c5dc-3122-4468-8ea7-98b6dfdb825d",
-    "name": "Panchito Feliz",
-    "email": "panchito@gmail.com",
-    "password": "perruelOrnitorrinco",
-    "devices": []
-  },
-  {
     "id": "7bece5bc-3bfd-4ae1-a232-895a18572528",
     "name": "Papu",
     "email": "papu@gmail.com",
@@ -80,8 +54,10 @@
     "id": "4f0cd227-d983-4823-93a8-a61d21e7611d",
     "name": "Papu2",
     "email": "papu2@gmail.com",
-    "password": "papau123",
-    "devices": []
+    "password": "papu2",
+    "devices": [],
+    "profile_img": "user6.jpg",
+    "phone": "6666666666"
   },
   {
     "id": "b5dc8835-2b3b-46d9-84f9-6a0bcda1b31e",

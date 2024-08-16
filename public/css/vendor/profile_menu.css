@@ -8,10 +8,8 @@
     width: 11rem;
     background-color: var(--text-color-3);
     border-radius: 0.8rem;
-    box-shadow: 0 0.22rem 0.2rem var(--box-shadow-3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     opacity: 1;
-    transform: translate(-100%,0);
-    animation: fadeInUp 0.8s ease;
 }
 
 .profile-menu{
@@ -52,19 +50,6 @@
     transform: translateX(0.4rem);
 }
 
-
-/*      Animation       */
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(-0.6rem);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
 /*      Responsive       */
 @media (max-width:431px) {
