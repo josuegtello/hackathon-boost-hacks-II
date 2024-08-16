@@ -48,6 +48,7 @@ wsEventEmitter.on('notification', (data) => {
     console.log("Notificacion Nueva:",notification);
     user.notifications.push(notification);
     setUser(user)
+    createToast("info",`${notification.name}`,body.message);
     // Verificacion del contenido en el que estamos
     if(d.querySelector(".notify-menu")){    //si ya esta el submenu en el document
         addNotificationToMenu(notification);
@@ -55,9 +56,6 @@ wsEventEmitter.on('notification', (data) => {
     if(d.querySelector("main.edit-profile")){   //si estamos en editar perfil
         addNotification(notification);
     }
-    
-
-
 });
 
 wsEventEmitter.on('message', (data) => {

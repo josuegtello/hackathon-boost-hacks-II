@@ -429,7 +429,7 @@ async function handleDashboardButtonClick() {
                 },true)
                 const body=response.body
                 if(body.issue!=issue && body.state!="OK"){
-                    throw new Error("Errar en la interpretacion de mensaje");
+                    throw new Error("Error en la interpretacion de mensaje");
                 }
             }
             if (buttonText === 'gate lock') {
@@ -447,7 +447,7 @@ async function handleDashboardButtonClick() {
                 },true)
                 const body=response.body;
                 if(body.issue!=issue && body.state!="OK"){
-                    throw new Error("Errar en la interpretacion de mensaje");
+                    throw new Error("Error en la interpretacion de mensaje");
                 }
                 
             }
@@ -468,7 +468,7 @@ async function handleDashboardButtonClick() {
             const body=response.body
             if(body.issue!=issue && body.state!="OK"){
                 $passwordSpan.style.display = 'none';
-                throw new Error("Errar en la interpretacion de mensaje");
+                throw new Error("Error en la interpretacion de mensaje");
             }
             $passwordSpan.textContent=body.password;
             await sleep(3000);
@@ -478,8 +478,22 @@ async function handleDashboardButtonClick() {
             console.log("cambiando contraseña del dispositivo");
             openPasswordModal('changePassword');
         }
+        else if(buttonText == "restart"){
+            console.log("Restableciendo dispositivo");
+            const issue="Restart";
+            const response=await sendWebSocketMessage({
+                issue:"send a message to a specific client",
+                ws_id:device.wsId,
+                body:{
+                    issue:issue
+                }
+            },true)
+            const body=response.body
+            if(body.issue!=issue && body.state!="OK"){
+                throw new Error("Error en la interpretacion de mensaje");
+            }
+        }
     } catch (err) {
-
         console.error("Error mandando mensaje: ", err)
         createToast("error","Websocket: ","An error occurred while communicating with your device, please try again.");
     }
@@ -648,11 +662,42 @@ function clearPasswordInput() {
     }
 }
 
-function verifyPassword(e) {
+async function verifyPassword(e) {
     e.preventDefault();
     const password = d.getElementById('modal-password-user-devices').value;
     const action = e.target.closest('.modal-password-user-devices').dataset.action;
     // Simulando que la contraseña correcta es "1234"
+
+    fetchRequest({
+        method:"POST",
+        url:`http://${location.hostname}:80/password`,
+        contentType:"application/json",
+        data:JSON.stringify({password:password}),
+        async success(response){
+            if(response.ok){
+                closePasswordModal();
+                clearPasswordInput();
+                if (action === 'changePassword') {
+                    openChangePasswordModal();
+                } else if (action === 'cards') {
+                    openCardModal();
+                }
+            }
+            else{
+                closePasswordModal();
+                clearPasswordInput();
+                createToast("error","Error: ","Password incorrect"); 
+            }
+        },
+        async error(err){
+            console.error(`Ocurrio un error en la peticion http://${location.hostname}:80/password`);
+            closePasswordModal();
+            clearPasswordInput();
+            createToast("error","Error: ","Server error");
+        }
+    })
+
+    /*
     if (password === "1234") {
         closePasswordModal();
         clearPasswordInput();
@@ -664,6 +709,7 @@ function verifyPassword(e) {
     } else {
         alert("Contraseña incorrecta");
     }
+    */
 }
 
 function openChangePasswordModal() {

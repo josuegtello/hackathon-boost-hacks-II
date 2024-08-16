@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.use(express.json()); 
 
-router.post((req,res)=>{
+router.route("/").post((req,res)=>{
     console.log("POST /password");
     res.setHeader("Content-Type", "application/json");
     const errors = validationResult(req),

@@ -1,6 +1,7 @@
 import { fetchRequest } from "./fetch_request.js";
 import { createToast ,imgDevice} from "./notification.js";
 import { sleep } from "./sleep.js";
+import { getUser,setUser } from "../main.js";
 const d = document,
   body = d.body;
 
@@ -147,7 +148,7 @@ const deleteAccount = function (e) {
     },
   });
 };
-export function initializeTabs() {
+export async function initializeTabs() {
   const $tabs = d.querySelectorAll(".edit-profile-nav li");
   $tabs.forEach((tab) => {
     tab.addEventListener("click", function () {
@@ -171,6 +172,12 @@ export function initializeTabs() {
       });
   } 
   //PRUEBA NOTIS BOTON
+  //Agregamos las notificaciones en el muro
+  const user=getUser();
+  user.notifications.forEach(notification => {
+    addNotification(notification);
+  });
+
 }
 
 export function initializeChangePassword() {
@@ -430,6 +437,8 @@ export function addNotification(notification) {
   const notificationItem = document.createElement('div');
   notificationItem.className = 'notification-item-edit-profile';
   notificationItem.setAttribute("data-device",device);
+  notificationItem.setAttribute("data-date",date);
+  notificationItem.setAttribute("data-type",type);
   //FALTA en la notificacion poner el nombre del dispositivo 
   notificationItem.innerHTML = `
       <img src="${imgURL}" alt="Notification Image" class="notification-img-edit-profile">
@@ -444,9 +453,36 @@ export function addNotification(notification) {
   notificationsContainer.appendChild(notificationItem);
   // Agregar evento para eliminar la notificación
   const deleteButton = notificationItem.querySelector('.notification-delete-edit-profile');
-  deleteButton.addEventListener('click', function() {
+  deleteButton.addEventListener('click', async function() {
+      notificationItem.classList.add("pointer-events-none");
+      const data={
+        device:device,
+        date:date,
+        type:type
+      }
       //FALTA hacer la peticion fetch para que elimine la notificacion en la base de datos
-      notificationItem.remove();
+      await fetchRequest({
+        method:"Delete",
+        url:`http://${location.hostname}:80/notifications`,
+        contentType:"application/json",
+        data:JSON.stringify(data),
+        async success(response){
+          const result=await response.json()
+          if(response.ok){
+            notificationItem.remove();
+            createToast("success","Server: ",result.response);
+          }
+          else{
+            notificationItem.classList.remove("pointer-events-none");
+            createToast("error","Server: ",result.response);
+          }
+        },
+        async error(err){
+          console.error("Ocurrio un error comunicandose con el servidor")
+          createToast("error","Server: ","Server error");
+          notificationItem.classList.remove("pointer-events-none");
+        }
+      });
   });
 }
 

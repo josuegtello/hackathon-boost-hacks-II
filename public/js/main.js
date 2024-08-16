@@ -4,15 +4,11 @@ import { dinamicHTML } from './vendor/dinamic_html.js';
 import { startCursor, startLinks } from './vendor/cursor.js';
 import { initializeLogin } from './vendor/log_in.js';
 import { fetchRequest } from './vendor/fetch_request.js';
-import { initializeToast, createToast } from './vendor/notification.js';
+import { initializeToast, createToast ,addNotificationToMenu} from './vendor/notification.js';
 import { error404 } from './vendor/error_404.js';
 import { faq } from './vendor/faq.js';
 import { connectWebSocket } from './vendor/web_socket.js';
-import {
-  initializeTabs,
-  initializeChangePassword,
-  initializeEditProfile,
-} from "./vendor/edit_profile.js";
+import {initializeTabs,initializeChangePassword,initializeEditProfile,addNotification} from "./vendor/edit_profile.js";
 import { initializeDevices} from "./vendor/devices.js";
 import { initializateContactUs } from "./vendor/contact_us.js";
 import { initializeHomepage } from './vendor/home_page.js';
@@ -213,8 +209,8 @@ class User {
       async error(err){
         console.error(`Error en la peticion: http://${location.hostname}:80/notifications`,err);
       }
-
     });
+    return true;
   }
   modifyPersonalData(name) {
     this.name = name;
@@ -241,7 +237,7 @@ const startClient = async function () {
     //aqui tambien haremos el llamado de el buzon de notificacion y demas datos que necesite de primera instancia
     await user.getHeader(url);
     await user.getDevices(); //esperamos a obtener los dispositivos conectados
-    user.getNotifications();
+    await user.getNotifications();
     connectWebSocket(); //iniciamos la comunicacion web Socket, solo los usuario tiene acceso a este tipo de notificaciones
   } else {
     //haremos llamado al navba normal
@@ -308,7 +304,7 @@ const submenuFunction = function (e) {
 		$submenu.style.setProperty('left', `${rect.right - rectSub.width}px`);
 	}
 };
-const initializateSubmenu = function (submenu, $el) {
+const initializateSubmenu = function (submenu, $el,url) {
 	const $submenu = submenu,
 		$link = $el;
 	const selector = $link.getAttribute('data-submenu');
@@ -329,6 +325,13 @@ const initializateSubmenu = function (submenu, $el) {
 		}
 	});
 	body.appendChild($submenu);
+
+  if(url.includes("notification_menu")){
+    user.notifications.forEach(notification => {
+      addNotificationToMenu(notification);
+    });
+  }
+
 };
 
 //falta generar un item en sessionStorage, y cambiar la url para que indique que estamos en esa seccion
@@ -383,6 +386,7 @@ const redirects = async function ($el, e = null) {
 						initializeTabs();
 						initializeChangePassword();
 						initializeEditProfile();
+            
 					}
 					//COMENTAR LA LINEA DE ABAJO SI ESTAN EN LIVE SERVER
 					history.replaceState(null, '', redirect.route);
@@ -406,10 +410,11 @@ const redirects = async function ($el, e = null) {
 						$submenu.style.setProperty('left', `${rect.right - rectSub.width}px`);
 					} else if (url.includes('notification_menu')) {
 						$submenu.style.setProperty('left', `${rect.right - rectSub.width}px`);
+
 					} else if (url.includes('another_menu')) {
 						$submenu.style.setProperty('left', `${rect.left - rectSub.width}px`);
 					}
-					initializateSubmenu($submenu, $el);
+					initializateSubmenu($submenu, $el,url);
 					/*
                     console.log(rect);
                     console.log('Top:', rect.top);

@@ -63,12 +63,12 @@ export const imgDevice=function(type){
 
 }
 // Notificasiones del menu, FALTA cambiar esta funcion para que agarre la notificion de la clase user que tenemos
-export const addNotificationToMenu = function(notification){
+export const addNotificationToMenu = function(notification,submenu=null){
     const {name,type,body}=notification;
     const imgURL=imgDevice(type);
     const message=body.message
     const notifyItem = d.createElement("div"),
-          $notifyMenu = d.querySelector(".drop-down"); // Contenedor del menu de notificaciones
+          $notifyMenu =submenu ? submenu : d.querySelector(".drop-down"); // Contenedor del menu de notificaciones
     notifyItem.className = "notify-item";
     notifyItem.innerHTML = `
         <figure class="notify-img">
