@@ -8,7 +8,7 @@
       {
         "id": "22c06348-e977-42b9-9236-ab76697499b4",
         "device": 0,
-        "type": "CelestialSecLock",
+        "type": "SSEM",
         "name": "Puerta trasera"
       }
     ],
