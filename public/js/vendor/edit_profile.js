@@ -450,7 +450,9 @@ export function addNotification(notification) {
       <i class="fa-solid fa-times notification-delete-edit-profile"></i>
   `;
   
-  notificationsContainer.appendChild(notificationItem);
+  // Insertar la nueva notificación al principio del contenedor
+  notificationsContainer.insertBefore(notificationItem, notificationsContainer.firstChild);
+  
   // Agregar evento para eliminar la notificación
   const deleteButton = notificationItem.querySelector('.notification-delete-edit-profile');
   deleteButton.addEventListener('click', async function() {

@@ -68,7 +68,7 @@ export const addNotificationToMenu = function(notification,submenu=null){
     const imgURL=imgDevice(type);
     const message=body.message
     const notifyItem = d.createElement("div"),
-          $notifyMenu =submenu ? submenu : d.querySelector(".drop-down"); // Contenedor del menu de notificaciones
+          $notifyMenu =submenu ? submenu : d.querySelector(".notify-menu-container-item"); // Contenedor del menu de notificaciones
     notifyItem.className = "notify-item";
     notifyItem.innerHTML = `
         <figure class="notify-img">
@@ -78,5 +78,7 @@ export const addNotificationToMenu = function(notification,submenu=null){
             <p>${name} - ${message}</p>
         </div>
     `;
-    $notifyMenu.appendChild(notifyItem);
+    
+    // Insertar la nueva notificación al principio del contenedor
+    $notifyMenu.insertBefore(notifyItem, $notifyMenu.firstChild);
 }

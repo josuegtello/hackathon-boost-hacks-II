@@ -120,11 +120,17 @@
 							<label for="new-password-device">New Password:</label>
 							<input
 								id="new-password-device"
-								type="password" />
+								type="password" 
+								pattern="[0-9]{1,16}"
+								maxlength="16"
+								inputmode="numeric"/>
 							<label for="confirm-password-device">Confirm New Password:</label>
 							<input
 								id="confirm-password-device"
-								type="password" />
+								type="password" 
+								pattern="[0-9]{1,16}"
+								maxlength="16"
+								inputmode="numeric"/>
 							<div class="btn-save-password-device">
 								<button
 									id="btn-save-password-device"
