@@ -2,6 +2,8 @@ const n = navigator;
 import { createToast } from "./notification.js";
 import { sleep } from "./sleep.js";
 import {setLoadingScreen,removeLoadingScreen} from "../main.js";
+
+
 export class Bluetooth {
   constructor(type) {
     this.type = type;
@@ -18,7 +20,6 @@ export class Bluetooth {
     this.operationQueue = [];
     this.operationTimeout = 30000; // Aumentado a 30 segundos
   }
-
   async connect(issue = null, data = null) {
     if (this.isConnected && this.gattServer?.connected && !issue) {
       console.log("Device already connected.");
@@ -52,12 +53,12 @@ export class Bluetooth {
         this.gattServer = await this.bluetoothDevice.gatt.connect();
       }
       console.log("Getting Service...");
-      this.service = await this.gattServer.getPrimaryService(
+      this.service = await this.gattServer.getPrimaryService( /*   FFE0    */
         "0000ffe0-0000-1000-8000-00805f9b34fb"
       );
 
       console.log("Getting TX Characteristic...");
-      this.txCharacteristic = await this.service.getCharacteristic(
+      this.txCharacteristic = await this.service.getCharacteristic(/*FFE1 */
         "0000ffe1-0000-1000-8000-00805f9b34fb"
       );
 

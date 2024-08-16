@@ -129,7 +129,7 @@ function handleDeviceClick(e, deviceData) {
         // No hacer nada si el clic fue en estos elementos
         return;
     }
-    console.log("Dispositivo clickeado:", deviceData);
+    console.log("Abriendo dashboard de dispositivo:", deviceData);
     updateDashboard(deviceData);
     setActiveTab('dashboard');
 }
@@ -153,24 +153,31 @@ function testAddAndSelectDevice() {
 
  */
 //función de prueba para actualizar la información en la sección del dashboard
-function updateDashboard(deviceData) {
-    const dashboardSection = d.getElementById('dashboard');
-    const deviceNameElement = dashboardSection.querySelector('.device-name-dashboard');
-    deviceNameElement.textContent = deviceData.name;
-
+export function updateDashboard(deviceData) {
+    const $dashboardSection = d.getElementById('dashboard');
+    const $deviceNameElement = $dashboardSection.querySelector('.device-name-dashboard');
+    $deviceNameElement.textContent = deviceData.name;
+    //vamos a setear data atributes
+    $dashboardSection.setAttribute("data-device-dashboard",deviceData.device);
+    $dashboardSection.setAttribute("data-ws-id",deviceData.wsId?deviceData.wsId:"");
+    $dashboardSection.setAttribute("data-state",deviceData.state);
     // Actualizar el estado del botón de alarma
-    const alarmButton = dashboardSection.querySelector('.btn-dashboard:nth-child(1)');
+    const alarmButton = $dashboardSection.querySelector('.btn-dashboard:nth-child(1)');
     alarmButton.classList.toggle('active', deviceData.alarm === 'on');
 
     // Actualizar el estado del botón de cerradura
-    const lockButton = dashboardSection.querySelector('.btn-dashboard:nth-child(2)');
+    const lockButton = $dashboardSection.querySelector('.btn-dashboard:nth-child(2)');
     lockButton.classList.toggle('active', deviceData.lock === 'locked');
     lockButton.querySelector('i').classList.toggle('fa-lock', deviceData.lock === 'locked');
     lockButton.querySelector('i').classList.toggle('fa-lock-open', deviceData.lock === 'unlocked');
 
     // Actualizar la contraseña mostrada
-    const passwordButton = dashboardSection.querySelector('.btn-dashboard:nth-child(3)');
+    const passwordButton = $dashboardSection.querySelector('.btn-dashboard:nth-child(3)');
     passwordButton.querySelector('.see-password-dashboard').textContent = deviceData.password || 'password';
+
+
+
+
 } 
    
 
@@ -386,31 +393,96 @@ function initializeDashboard() {
         });
     }
 }
-
-function handleDashboardButtonClick() {
+let device;
+async function handleDashboardButtonClick() {
     const $icon = this.querySelector('i');
     const buttonText = this.querySelector('h4').textContent.trim().toLowerCase();
-
-    if (buttonText === 'alarm' || buttonText === 'gate lock') {
-        this.classList.toggle('active');
-
-        if (buttonText === 'gate lock') {
-            $icon.classList.toggle('fa-lock');
-            $icon.classList.toggle('fa-lock-open');
+    //(FALTA) ver si esta online el dispositivo para tratar de hacer el cambio, de lo contrario no hacerlo
+    const $dashboard=d.querySelector("#dashboard"),
+            deviceNumber=Number($dashboard.getAttribute("data-device-dashboard"));
+    const user=getUser();
+    user.devices.forEach(dvc => {
+        if(dvc.device==deviceNumber){
+            console.log("Dispositivo IoT encontrado");
+            device=dvc;
+            console.log(device);
         }
-    } else if (buttonText === 'password') {
-        showPasswordTemporarily(this);
-    } else if (buttonText === 'change password') {
-        openPasswordModal('changePassword');
+    });
+    if(device.state=="offline" || !device){
+        // crear un mensaje que diga que si esta offline no se puede hacer ningun accion, preguntarle al Eder si esta bien 
+        createToast("error","Devices: ", `Your device "${device.name}" must be online to interact whith it`);
+        return;
     }
-}
+    try {
+        if (buttonText === 'alarm' || buttonText === 'gate lock') {
+            
+            if(buttonText === 'alarm'){
+                //mandamos el mensaje websocket primero antes de actualizar
+                const issue=this.classList.contains("active")?"Alarm off":"Alarm on";
+                this.classList.toggle('active');
+                const response=await sendWebSocketMessage({
+                    issue:"send a message to a specific client",
+                    ws_id:device.wsId,
+                    body:{
+                        issue:issue
+                    }
+                },true)
+                const body=response.body
+                if(body.issue!=issue && body.state!="OK"){
+                    throw new Error("Errar en la interpretacion de mensaje");
+                }
+            }
+            if (buttonText === 'gate lock') {
+                //(FALTA)mandamos el mensaje websocket primero antes de actualizar
+                const issue=this.classList.contains("active")?"Lock on":"Lock off";
+                $icon.classList.toggle('fa-lock');
+                $icon.classList.toggle('fa-lock-open');
+                this.classList.toggle('active');
+                const response=await sendWebSocketMessage({
+                    issue:"send a message to a specific client",
+                    ws_id:device.wsId,
+                    body:{
+                        issue:issue
+                    }
+                },true)
+                const body=response.body;
+                if(body.issue!=issue && body.state!="OK"){
+                    throw new Error("Errar en la interpretacion de mensaje");
+                }
+                
+            }
+            
+        } else if (buttonText === 'password') {
+            //(FALTA mandar mensaje wbsocket antes de actualizar)
+            const $passwordSpan = this.querySelector('.see-password-dashboard');
+            $passwordSpan.textContent="Getting password..";
+            $passwordSpan.style.display = 'block';
+            const issue="Get password";
+            const response=await sendWebSocketMessage({
+                issue:"send a message to a specific client",
+                ws_id:device.wsId,
+                body:{
+                    issue:issue
+                }
+            },true)
+            const body=response.body
+            if(body.issue!=issue && body.state!="OK"){
+                $passwordSpan.style.display = 'none';
+                throw new Error("Errar en la interpretacion de mensaje");
+            }
+            $passwordSpan.textContent=body.password;
+            await sleep(3000);
+            $passwordSpan.textContent="";
+            $passwordSpan.style.display = 'none';
+        } else if (buttonText === 'change password') {
+            console.log("cambiando contraseña del dispositivo");
+            openPasswordModal('changePassword');
+        }
+    } catch (err) {
 
-function showPasswordTemporarily($button) {
-    const $passwordSpan = $button.querySelector('.see-password-dashboard');
-    $passwordSpan.style.display = 'block';
-    setTimeout(() => {
-        $passwordSpan.style.display = 'none';
-    }, 3000);
+        console.error("Error mandando mensaje: ", err)
+        createToast("error","Websocket: ","An error occurred while communicating with your device, please try again.");
+    }
 }
 
 // Modal de tarjetas
@@ -527,7 +599,7 @@ function initializePasswordModal() {
     const $passwordModal = d.querySelector('.modal-password-user-devices');
 
     if ($openChangePasswordModal && $modalChangePassword) {
-        $openChangePasswordModal.addEventListener('click', () => openPasswordModal('changePassword'));
+        //$openChangePasswordModal.addEventListener('click', () => openPasswordModal('changePassword'));
     }
 
     if ($closeModalPasswordBtn) {
@@ -602,8 +674,30 @@ function closeChangePasswordModal() {
     d.getElementById('modal-change-password-device').style.display = 'none';
 }
 
-function saveNewPassword() {
-    console.log('Nueva contraseña guardada');
+async function saveNewPassword() {
+    console.log('Intentando guardar password');
+    const issue="Set password";
+    const password=d.querySelector("#new-password-device").value;
+    console.log(password);
+    try {
+        const response=await sendWebSocketMessage({
+            issue:"send a message to a specific client",
+            ws_id:device.wsId,
+            body:{
+                issue:issue,
+                password:password
+            }
+        },true)
+        const body=response.body
+        if(body.issue!=issue && body.state!="OK"){
+            throw new Error("Error en la interpretacion de mensaje");
+        }
+        console.log('Contraseña guardada');
+        createToast("success",`${device.name}: `,"Password saved");
+    } catch (err) {
+        console.error('Contraseña no guardada',err);
+        createToast("error","Websocket: ",`An error occurred while communicating "${device.name}" device, please try again.`);
+    }
     closeChangePasswordModal();
 }
 

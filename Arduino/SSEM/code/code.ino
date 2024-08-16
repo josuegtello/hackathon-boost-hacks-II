@@ -2,7 +2,6 @@
 #include <ESP8266WiFi.h>
 #include <WebSocketsClient.h>
 #include <ArduinoJson.h>
-#include <ThingerESP8266.h>
 // #include <LCD.h>//libreria para el bus de datos de la pantalla LCD para su correcto funcionamiento
 #include <LiquidCrystal_I2C.h> //libreria que se encarga de poder comunicarSE con el expansor I2C de la pantalla LCD
 #include <Keypad_I2C.h>        //libreria que se encarga de poder comunicarse con el expansor I2C de el teclado 4x3
@@ -26,7 +25,7 @@ bool Ralarma = 0;      // variable que me ayuda auxiliarmente a entrar a un if e
 bool RFIDCNAME;
 bool RFID_NEW_NAME;
 bool RFIDCCARD;
-bool LED;
+
 //(FALTA) generar una funcion que retorne los valores hexagesimales
 uint8_t receiverAddress[] = {0x98, 0xCD, 0xAC, 0x32, 0x2D, 0xBB}; // IMPORTANTE, SE TIENE QUE PONER LA DIRECCION MAC DEL DISPOSITIVO QUE DESEAMOS ENVIARLE DATOS 7C:87:CE:9C:65:13
 const byte lcd_width = 16;
@@ -41,12 +40,14 @@ const char keys[rows][cols] = {    // declaramos una matriz con las teclas del t
     {'*', '0', '#'}};
 byte bloqueo = 0; // variable que se incrementara cada que se tenga la contraseña incorrecta
 // byte cwifi=0;
-byte attemps_espnow = 0;    //(FALTA) ver en que se ocupa esta variable
+byte attemps_espnow = 0;    // Variable que aumenta de acuerdo a la cantidad de veces que trato de mandarle el mensaje a ssem la
+bool espnow_sent=false;
+bool turn_of_led;
 // byte id_usuario[limPos][4]; // variable que va a leer de la EEPROM el ID de las tarjetas
 byte fila = 0;
 byte NAMEB;
 byte retraso_bloqueo = 0; // variable que aumentara para el retraso, dependiendo de el numero de intentos erroneos seguidos que tengamos esta aumentara
-byte RFIDNUMBRER = 0;
+int available_rfid_position = -1;
 unsigned long temp1; // variable auxiliar para poder hacer el truco de retrasos sin detener el programa 1
 unsigned long temp2; // variable auxiliar para poder hacer el truco de retrasos sin detener el programa 2
 unsigned long temp3; // variable auxiliar para poder hacer el truco de retrasos sin detener el programa 3
@@ -69,7 +70,7 @@ WebSocketsClient webSocket;
 #define EEPROM_STORAGE_INDEX_device_password_lenght 104
 #define EEPROM_STORAGE_INDEX_device_password 105
 #define EEPROM_STORAGE_INDEX_cards_storage 121
-#define EEPROM_STORAGE_INDEX_device_id 961
+#define EEPROM_STORAGE_INDEX_device_id 1001
 // Todo en lowercase y separdo por underscore
 enum LCDDisplaymessages {
     HIDDEN_PASSWORD_DISPLAY,
@@ -97,13 +98,27 @@ enum LCDDisplaymessages {
     DEVICE_UNLOCKED_DISPLAY,
     TRANSMISION_SSEM_ERROR,
     RESTORE_TO_DEFAULT_SETTING_DISPLAY,
+    TRYING_TO_CONNECT,
+    CONNECTION_FAILED,
+    SUCCESSFUL_CONNECTION,
+    TURN_ON_LCD,
+    TURN_OFF_LCD
 };
-
+//modos del sistema
 enum Modes {
     CONNECTED_MODE,
     DISCONECTED_MODE
 };
 Modes system_mode;
+
+//modos del rfid
+enum rfid_structu_modes{
+    NORMAL_MODE,
+    TAP_TO_ADD_CARD,
+    TAP_TO_ADD_NEW_CARD
+};
+rfid_structu_modes rfid_modes;
+
 // Definimos un enum para los estados web Socket
 enum WebSocket {
     WEBSOCKET_DISABLED, // 0
@@ -114,12 +129,7 @@ enum Device{
     BLUETOOTH
 };
 WebSocket web_socket;
-
-
-
-
-
-
+//Estructura para el wifi
 struct wifi_struct {
     /* data */
     const int port=80;
@@ -131,14 +141,14 @@ struct wifi_struct {
     String session_cookie;
 };
 wifi_struct wifi;
-
+//Estructura para el bluetooth
 struct bluetooth_struct {
     /* data */
     bool connection;
     String data;
 };
 bluetooth_struct bluetooth;
-
+//estructura para el rfid
 struct rfid_struct {
     String name;
     int id[4];
@@ -152,6 +162,9 @@ struct device_struct {
     bool restart;        // para restablecer el dispositivo
     String password;     // contraseña del dispositivo  111111
     int password_lenght; /*FALTA ver si son mas parametros */
+    byte bloqueo;
+    byte retraso_bloqueo;
+    bool rfid_position[40];
 };
 device_struct device;
 String keypad_value;
@@ -185,12 +198,7 @@ Mensajes que enviaremos a SSEM
     BOLT_TEMP
     I_AM_ACTIVE
 */
-/*
-COMANDOS DE SIMULACION
-  WEBSOCKET_DISCONNECTED  //simula una desconexion web socket
-  WEBSOCKET_CONNECTED     //simula la reconexion web socket
-  
-*/
+
 
 
 void setup(){
@@ -223,12 +231,7 @@ void setup(){
     Serial.println("Mi direccion MAC es:");
     Serial.println(WiFi.macAddress());
     Serial.println("Iniciando conexion a internet");
-    //(FALTA) poner esto en la funcion de la pantalla lcd
-    lcd0.clear();
-    lcd0.setCursor(0,0);
-    lcd0.print(wifi.ssid);
-    lcd0.setCursor(0,1);
-    lcd0.print("  CONECTING...  ");
+    LCD_MessageDisplay(TRYING_TO_CONNECT);
     WiFi.mode(WIFI_AP_STA);//ponemos al ESP8266 como punto de acceso y estacion(necesario para tener correcta comunicacion con ESP NOW)
     digitalWrite(led_pin,HIGH);//prendo led azul de PCB como señalizacion para el inicio de conexion wifi
     WiFi.begin(wifi.ssid.c_str(), wifi.password.c_str()); // inicializamos la red
@@ -236,7 +239,7 @@ void setup(){
     while ((WiFi.status() != WL_CONNECTED) and (await < 100)){
         delay(200);
         Serial.print(".");
-        if (await % 10 == 0) Serial.println();
+        if (await % 20 == 0) Serial.println();
         await++;
     }
     Serial.println();
@@ -245,21 +248,13 @@ void setup(){
         system_mode = DISCONECTED_MODE;
         web_socket = WEBSOCKET_DISABLED;
         await=0;
-        //(FALTA) poner esto en la funcion de la pantalla lcd
-        lcd0.clear();
-        lcd0.setCursor(0,0);
-        lcd0.print("   CONNECTION   ");
-        lcd0.setCursor(0,1);
-        lcd0.print("     FAILED     ");
+        // poner esto en la funcion de la pantalla lcd
+        LCD_MessageDisplay(CONNECTION_FAILED);
     }
     else{
         digitalWrite(led_pin, LOW);
-        //(FALTA) poner esto en la funcion de la pantalla lcd
-        lcd0.clear();
-        lcd0.setCursor(0,0);
-        lcd0.print("   IP ADDRESS   ");
-        lcd0.setCursor(0,1);
-        lcd0.print(WiFi.localIP());//imprimimos la direccion IP por pantalla
+        // poner esto en la funcion de la pantalla lcd
+        LCD_MessageDisplay(SUCCESSFUL_CONNECTION);
         Serial.print("Conexion exitosa tu direccion IP es: ");
         Serial.println(WiFi.localIP());
         Serial.print("Wi-Fi Channel: ");
@@ -295,6 +290,20 @@ void loop() {
 	  systemFunction();
     serialFunction();
 }
+
+/*
+COMANDOS DE SIMULACION
+  WEBSOCKET_DISCONNECTED  //simula una desconexion web socket
+  WEBSOCKET_CONNECTED     //simula la reconexion web socket
+  ACCESS_ALLOWED_BY_BUTTON  //simula como si hubieras presionado el boton
+  ACCESS_ALLOWED_BY_LOCAL_PASSWORD  //simula la entrada por contraseña
+  INCORRECT_LOCAL_PASSWORD  //simula una contrasenia incorrecta
+  CARD_ACEPTED  //Simula una entrada por tarjeta
+  CARD_DENIED   //Simula una deteccion de tarjeta no registrada
+
+  
+*/
+
 //funcion provisional para simular acciones
 void serialFunction(){
   if (Serial.available()){ //si entra a este if quiere decir que hay datos bluetooth en espera
@@ -312,6 +321,64 @@ void serialFunction(){
           web_socket=WEBSOCKET_ENABLED;
           webSocket.setReconnectInterval(5000);
         }
+        else if(action=="ACCESS_ALLOWED_BY_BUTTON"){
+            Serial.println("Acceso por boton");
+            DynamicJsonDocument doc(1024);
+            //Vamos a enviar una notificacion
+            doc["issue"] = "IoT device sending notification";
+            // Crear el objeto "body" y sus atributos
+            JsonObject body = doc.createNestedObject("body");
+            body["message"]="Access allowed by button";
+            //Mandamos el mensaje por web Socket
+            sendJSONMessage(doc, WEBSOCKET);
+        }
+        else if(action=="ACCESS_ALLOWED_BY_LOCAL_PASSWORD"){
+            Serial.println("Acceso por contrasenia local");
+            DynamicJsonDocument doc(1024);
+            //Vamos a enviar una notificacion
+            doc["issue"] = "IoT device sending notification";
+            // Crear el objeto "body" y sus atributos
+            JsonObject body = doc.createNestedObject("body");
+            body["message"]="Access allowed by local password";
+            //Mandamos el mensaje por web Socket
+            sendJSONMessage(doc, WEBSOCKET);
+        }
+        else if(action=="INCORRECT_LOCAL_PASSWORD"){
+            Serial.println("Contrasenia incorrecta");
+             DynamicJsonDocument doc(1024);
+            //Vamos a enviar una notificacion
+            doc["issue"] = "IoT device sending notification";
+            // Crear el objeto "body" y sus atributos
+            JsonObject body = doc.createNestedObject("body");
+            body["message"]="Someone tried to enter by local password";
+            //Mandamos el mensaje por web Socket
+            sendJSONMessage(doc, WEBSOCKET);
+        }
+        else if(action=="CARD_ACEPTED"){
+            Serial.println("Tarjeta aceptada");
+            DynamicJsonDocument doc(1024);
+            //Vamos a enviar una notificacion
+            doc["issue"] = "IoT device sending notification";
+            // Crear el objeto "body" y sus atributos
+            JsonObject body = doc.createNestedObject("body");
+            body["message"]="TEST_USER was allowed entry";
+            //Mandamos el mensaje por web Socket
+            sendJSONMessage(doc, WEBSOCKET);
+        }
+        else if(action=="CARD_DENIED"){
+            Serial.println("Tarjeta no aceptada");
+            DynamicJsonDocument doc(1024);
+            //Vamos a enviar una notificacion
+            doc["issue"] = "IoT device sending notification";
+            // Crear el objeto "body" y sus atributos
+            JsonObject body = doc.createNestedObject("body");
+            body["message"]="Access by card denied";
+            //Mandamos el mensaje por web Socket
+            sendJSONMessage(doc, WEBSOCKET);
+        }
+        else{
+            Serial.println("Comando no reconocido");
+        }
    }
 }
 
@@ -325,22 +392,228 @@ void systemFunction(){
     bluetoothFunction();
     keypadFunction();
     rfidFunction();
+    espnowCommunication();
+    if(digitalRead(door_btn)==0){   //significa que se presiono el boton para abrir la puerta
+        delay(50);
+        while(digitalRead(door_btn)==0);
+        Serial.println("Puerta abierta por boton");
+        LCD_MessageDisplay(TURN_ON_LCD);
+        delay(50);
+        LCD_MessageDisplay(LOCK_OFF_DISPLAY);
+        //(FALTA) mandar a SSEM_LA
+
+        //(FALTA) mandar a la web que se abrio la puerta, en este caso en una notificacion
+        DynamicJsonDocument doc(1024);
+        //Vamos a enviar una notificacion
+        doc["issue"] = "IoT device sending notification";
+        // Crear el objeto "body" y sus atributos
+        JsonObject body = doc.createNestedObject("body");
+        body["message"]="Access allowed by button";
+        //Mandamos el mensaje por web Socket
+        sendJSONMessage(doc, WEBSOCKET);
+        delay(5000);    //doy el retraso de 5 segundos
+        LCD_MessageDisplay(LOCK_ON_DISPLAY);
+        delay(1500);
+        LCD_MessageDisplay(SCREEN_CLEAN_DISPLAY);
+        //Restablezco parametros
+        device.bloqueo=0;
+        device.retraso_bloqueo=0;
+        temp2=millis(); 
+    }
+    if(millis() - temp2 >= 60000){   //apagamos las pantallas LCD despues de 60 segundos
+        Serial.println("Apagando pantallas por inactividad");
+        LCD_MessageDisplay(TURN_OFF_LCD);
+        temp2=millis();
+    }
+}
+
+//funcion para el keypad
+void keypadFunction(){  
+    char key=keypad.getKey();   //leemos la tecla que se pulsa (si se pulsa alguna)
+    if(key){    //si existe key significa que se presiona la tecla
+        LCD_MessageDisplay(TURN_ON_LCD);
+        temp2=millis();
+        switch (key) {
+            case '#':   //borrando digito
+            {
+                Serial.println("Borrando digito");
+                String aux=keypad_value;
+                keypad_value="";
+                for(int i=0; i<aux.length()-1; i++){
+                    keypad_value+=aux[i];
+                }
+            }
+            break;
+            case '*':   //Verificar contraseña
+                Serial.println("Verificando contraseña");
+                if(keypad_value==device.password){  //si es el mismo es la misma contraseña
+                    Serial.println("Contraseña correcta");
+                    LCD_MessageDisplay(CORRECT_PASSWORD_DISPLAY);
+                    //(FALTA) enviar mensaje a SSEM_LA
+
+                    //(FALTA) enviar mensaje a la web
+                    DynamicJsonDocument doc(1024);
+                    //Vamos a enviar una notificacion
+                    doc["issue"] = "IoT device sending notification";
+                    // Crear el objeto "body" y sus atributos
+                    JsonObject body = doc.createNestedObject("body");
+                    body["message"]="Access allowed by local password";
+                    //Mandamos el mensaje por web Socket
+                    sendJSONMessage(doc, WEBSOCKET);
+                    delay(5000);
+                    LCD_MessageDisplay(SCREEN_CLEAN_DISPLAY);
+                }
+                else{
+                    Serial.println("Contraseña incorrecta");
+                    LCD_MessageDisplay(INCORRECT_PASSWORD_DISPLAY);
+                    //(FALTA) enviar mensaje a la web
+                    DynamicJsonDocument doc(1024);
+                    //Vamos a enviar una notificacion
+                    doc["issue"] = "IoT device sending notification";
+                    // Crear el objeto "body" y sus atributos
+                    JsonObject body = doc.createNestedObject("body");
+                    body["message"]="Someone tried to enter by local password";
+                    //Mandamos el mensaje por web Socket
+                    sendJSONMessage(doc, WEBSOCKET);
+                    LCD_MessageDisplay(SCREEN_CLEAN_DISPLAY);
+                }
+                keypad_value="";
+            break;
+            default:
+                if(keypad_value.length()>16) return;    //si es mayor a 16 regresamos no agregamos mas
+                keypad_value=keypad_value + String(key);
+                LCD_MessageDisplay(HIDDEN_PASSWORD_DISPLAY);
+            break;
+        }
+        Serial.println("Intento de contraseña actual: " + keypad_value);
+    }
+}
+//funcion para el lector de tarjetas
+void rfidFunction(){    
+    if (mfrc522.PICC_IsNewCardPresent() || mfrc522.PICC_ReadCardSerial()){  //se ha detectado una tarjeta
+        LCD_MessageDisplay(TURN_ON_LCD);
+        temp2=millis();
+        fila=0;
+        LCD_MessageDisplay(CARD_DETECTED_DISPLAY);
+        if(cardValidation()){   //Si regresa true es una tarjeta que esta en nuestra lista
+            //dependiendo de 
+            if(rfid_modes == NORMAL_MODE){    //si esta en normal mode significa que la tarjeta que se detecto es una registrada
+                Serial.println("Acceso aceptado");
+                LCD_MessageDisplay(ACCESS_ACCEPTED_DISPLAY);
+                //(FALTA) enviar mensaje a SSEM
+            
+
+                //(FALTA) enviar mensaje a la web
+                DynamicJsonDocument doc(1024);
+                //Vamos a enviar una notificacion
+                doc["issue"] = "IoT device sending notification";
+                // Crear el objeto "body" y sus atributos
+                JsonObject body = doc.createNestedObject("body");
+                body["message"]=rfid_cards[fila].name + " was allowed entry";
+                //Mandamos el mensaje por web Socket
+                sendJSONMessage(doc, WEBSOCKET);
+                delay(5000);
+                LCD_MessageDisplay(SCREEN_CLEAN_DISPLAY);
+            }
+            else if(rfid_modes == TAP_TO_ADD_CARD || rfid_modes == TAP_TO_ADD_NEW_CARD){   //Es una tarjeta preregistrada no podemos agregarla   
+                    Serial.println("LA TARJETA QUE USTED APOYO YA ESTA REGISTRADA");
+                    LCD_MessageDisplay(CARD_TAPPED_EXISTENT_DISPLAY);
+            }
+        }
+        else{   //La tarjeta que se escaneo no esta en nuestra lista
+            if(rfid_modes == NORMAL_MODE){
+                Serial.println("Acceso Denegado");
+                LCD_MessageDisplay(ACCESS_DENIED_DISPLAY);
+                //(FALTA) enviar mensaje a la web
+                DynamicJsonDocument doc(1024);
+                //Vamos a enviar una notificacion
+                doc["issue"] = "IoT device sending notification";
+                // Crear el objeto "body" y sus atributos
+                JsonObject body = doc.createNestedObject("body");
+                body["message"]="Access by card denied";
+                //Mandamos el mensaje por web Socket
+                sendJSONMessage(doc, WEBSOCKET);
+            }
+            else if(rfid_modes == TAP_TO_ADD_CARD){ //es para agregar una tarjeta pero con el mismo nombre
+                Serial.println("La nueva tarjeta se esta registrando y guardando en EEPROM");
+                delay(100);
+                for (byte z = 0; z < 4; z++) {
+                    // rfid_cards[40].name
+                    rfid_cards[available_rfid_position].id[z] = mfrc522.uid.uidByte[z];
+                    Serial.print(rfid_cards[available_rfid_position].id[z]);
+                    Serial.print(" ");
+                }
+                Serial.println();
+
+                //(FALTA) generar una funcion que guarde tarjeta por tarjeta
+
+                //(FALTA) enviar mensaje a la web
+
+                LCD_MessageDisplay(CARD_TAPPED_SAVED_DISPLAY);
+                rfid_modes=NORMAL_MODE;
+                available_rfid_position=-1;
+            }
+            else if(rfid_modes== TAP_TO_ADD_NEW_CARD ){ //es para agregar una nueva tarjeta 
+                Serial.println("La nueva tarjeta se esta registrando junto con su nombre en EEPROM");
+                delay(100);
+                for (byte z = 0; z < 4; z++) {
+                    // rfid_cards[40].name
+                    rfid_cards[available_rfid_position].id[z] = mfrc522.uid.uidByte[z];
+                    Serial.print(rfid_cards[available_rfid_position].id[z]);
+                    Serial.print(" ");
+                }
+                Serial.println();
+
+                //(FALTA) generar una funcion que guarde tarjeta por tarjeta
+
+                //(FALTA) enviar mensaje a la web
+
+                LCD_MessageDisplay(CARD_TAPPED_SAVED_DISPLAY);
+                rfid_modes=NORMAL_MODE;
+                available_rfid_position=-1;
+            }
+        }
+        Serial.println("Reseteando los valores almacenados por la tarjeta");
+        for (byte i = 0; i < mfrc522.uid.size; i++)
+        {
+            mfrc522.uid.uidByte[i] = 255;
+            Serial.print(mfrc522.uid.uidByte[i]);
+            Serial.print(" ");
+        }
+        Serial.println();
+    }
+}
+bool cardValidation(){
+    mfrc522.PICC_ReadCardSerial();
+    fila = 0;
+    //Leemos la informacion de la tarjeta y la decodificamos
+    Serial.print(F("Card UID:"));
+    for (byte i = 0; i < 4; i++){
+        Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
+        Serial.print(mfrc522.uid.uidByte[i]);
+    }
+    //INICIAMOS el prceso de verificacion
+    for (byte j = 0; j < 4; j++){
+        if (mfrc522.uid.uidByte[j] != rfid_cards[fila].id[j]){
+            fila++;
+            j = 0;
+            if (fila > 39){
+                return 0; // SI VALE 0 NO COINCIDE CON NINGUNA QUE TENGAMOS
+            }
+        }
+    }
+    return 1; // SI VALE 1 COINCIDE CON ALGUNA de la lista
+}
+
+void espnowCommunication(){
+
 }
 
 
-void keypadFunction(){  //(FALTA)funcion para el keypad
 
-}
-void rfidFunction(){    //(FALTA) funcion para el lector de tarjetas
-
-}
-
-
-
-
-
-//Funcion que pondra todas las credenciales (FALTA)
+//Funcion que pondra todas las credenciales
 void getCredentials(){
+    /*
     //credenciales wifi id,ssid y password
     //provisionalmente pondre las licencias a mano
     wifi.ssid="INFINITUM969C_2.4_EXT";
@@ -348,10 +621,9 @@ void getCredentials(){
        //ID de 36 caracteres
     //id unico de usuario
     device.id="";
-
+    */
     //Obtenemos las credenciales del dispositivo
     Serial.println("Obteniendo las licencias del dispositivo");
-
     Serial.println("1. Credenciales del dispositivo");
     device.id=readStringEEPROM(EEPROM_STORAGE_INDEX_device_id,36);
     Serial.println("ID:" + device.id);
@@ -373,18 +645,57 @@ void getCredentials(){
     //
 
 }
-/*
+
 //Solo seteo las credenciales wifi
 void setWifiCredentials(){
-
+    Serial.println("Configurando credenciales wifi");
+    Serial.println("SSID escribiendose en EEPROM...");
+    writeStringEEPROM(EEPROM_STORAGE_INDEX_ssid,wifi.ssid);
+    Serial.println("SSID length escribiendose en EEPROM...");
+    writeEEPROM(EEPROM_STORAGE_INDEX_ssid_lenght,wifi.ssid.length(),EEPROM_I2C_ADDRESS);
+    Serial.println("SSID password escribiendose en EEPROM...");
+    writeStringEEPROM(EEPROM_STORAGE_INDEX_password,wifi.password);
+    Serial.println("SSID password length escribiendose en EEPROM...");
+    writeEEPROM(EEPROM_STORAGE_INDEX_password_lenght,wifi.password.length(),EEPROM_I2C_ADDRESS);
+    //Tratamos de reconectarnos
+    Serial.println("Intentando restablecer conexion...");
+    LCD_MessageDisplay(TRYING_TO_CONNECT);
+    WiFi.begin(wifi.ssid.c_str(), wifi.password.c_str()); // inicializamos la red
+    await=0;
+    while ((WiFi.status() != WL_CONNECTED) and (await < 100)){
+        delay(200);
+        Serial.print(".");
+        if (await % 20 == 0) Serial.println();
+        await++;
+    }
+    Serial.println();
+    if(await > 99){
+        Serial.println("Error restableciendo la conexion wifi, inciando el sistema en modo desconectado");
+        system_mode=DISCONECTED_MODE;
+        LCD_MessageDisplay(CONNECTION_FAILED);
+    }
+    else{
+        Serial.println("Se restablecio la conexion wifi");
+        system_mode=CONNECTED_MODE;
+        LCD_MessageDisplay(SUCCESSFUL_CONNECTION);
+    }
 }
 //Solo seteo la contraseña y tarjetas
 void setDeviceCredentials(){
+    Serial.println("Configurando credenciales de acceso");
+    //Configurando la contraseña del dispositivo
+    Serial.println("Password del dispositivo escribiendose en EEPROM...");
+    writeStringEEPROM(EEPROM_STORAGE_INDEX_device_password,device.password);
+    Serial.println("Password length del dispositivo escribiendose en EEPROM...");
+    writeEEPROM(EEPROM_STORAGE_INDEX_device_password_lenght,device.password.length(),EEPROM_I2C_ADDRESS);
+    //(FALTA) Configurando las tarjetas
+
 
 }
-*/
+
 //Funcion para Setear todas las credentiales
 void setCredentials(){
+    Serial.println("Configurando credenciales");
     //Primero escribimos las licencias wifi
     Serial.println("SSID escribiendose en EEPROM...");
     writeStringEEPROM(EEPROM_STORAGE_INDEX_ssid,wifi.ssid);
@@ -400,14 +711,14 @@ void setCredentials(){
     writeEEPROM(EEPROM_STORAGE_INDEX_device_password_lenght,device.password.length(),EEPROM_I2C_ADDRESS);
     Serial.println("ID de identificacion escribiendose en EEPROM");
     writeStringEEPROM(EEPROM_STORAGE_INDEX_device_id,device.id);
-    //en caso de que exista las tarjetas las guardamos
+    //(FALTA) en caso de que exista las tarjetas las guardamos
+
 }
 
 //Funcion para remover todas las credenciales
 void deleteCredentials(){
     //Credenciales del dispositivo
-
-
+    Serial.println("Restableciendo dispositivo a valores de fabrica");
     //Credenciales wifi
     writeEEPROM(EEPROM_STORAGE_INDEX_ssid_lenght,0,EEPROM_I2C_ADDRESS);
     writeEEPROM(EEPROM_STORAGE_INDEX_password_lenght,0,EEPROM_I2C_ADDRESS);
@@ -418,10 +729,20 @@ void deleteCredentials(){
     writeStringEEPROM(EEPROM_STORAGE_INDEX_device_id,"00000000-0000-0000-0000-000000000000");
 
     //Tarjetas registradas
-
-
-
-
+    Serial.println("Restableciendo tarjetas");
+    rfid_struct restart_card;//estructura generica que va a resetear todas las posiciones
+    restart_card.name="";   //el nombre vacio
+    for (int i = 0; i < 4; i++){
+        restart_card.id[i]=0;
+    }
+    //Empezamos con la escritura de cada posicion RFID
+    for (int i = 0; i < 40; i++){   //para las 40 tarjetas que podemos registrar
+        Serial.println("Tarjeta " + String(i));
+        int posicion_lectura=EEPROM_STORAGE_INDEX_cards_storage + (i*22);
+        Serial.println("Posicion en la que empiezo a escribir valor de tarjeta: " + String(posicion_lectura) + " hasta " + String(posicion_lectura + 3));
+        Serial.println("Posicion en la que escribo la longitud del nombre: "+ String(posicion_lectura + 4));
+        Serial.println("Posicion en la que escribo el nombre: "+ String(posicion_lectura + 4 + 1) + " hasta " + String(posicion_lectura + 4 + 1 + 16));
+    }
 }
 
 // funcion para manipular datos bluetooth
@@ -431,6 +752,8 @@ void bluetoothFunction() {
         bluetooth.connection = false;
     }
     if (bluetooth.connection == false){ // el dispositivo a terminado de enviar
+        LCD_MessageDisplay(TURN_ON_LCD);
+        temp2=millis();
         Serial.println();
         if (bluetooth.data != "ERROR" && 
             bluetooth.data!= "OK+CONN" &&
@@ -539,6 +862,8 @@ void parseJSONString(const String& payload,Device dvc) {
         return;
     }
     String issue=doc["issue"];
+    String correlationId=doc["correlationId"];
+    Serial.println("correlationId:"+ correlationId);
     if(dvc==WEBSOCKET){
         if(issue=="Web Socket connected"){
             String ws_id=doc["ws_id"];
@@ -547,23 +872,95 @@ void parseJSONString(const String& payload,Device dvc) {
             device.ws_id=ws_id;
         }
         if(issue=="client message"){
-          Serial.println("Mensaje recibido de cliente web");
-          JsonObject body = doc["body"];
-          String bodyIssue = body["issue"];
-          Serial.println("Body Issue: " + bodyIssue);
-          if(bodyIssue=="Delete credentials"){  //si nos llega este mensaje desde la web eliminamos las credenciales
-            Serial.println("Eliminando credenciales"); 
-            //(FALTA) poner algun mensaje en pantalla de que el dispositivo se esta restableciendo
-            deleteCredentials();
-            for (int i = 0; i <= 5; i++){
-                delay(500);
-                digitalWrite(led_pin, HIGH);
-                delay(500);
-                digitalWrite(led_pin, LOW);
+            Serial.println("Mensaje recibido de cliente web");
+            bool send_message=false;
+            JsonObject body = doc["body"];
+            String body_issue = body["issue"];
+            DynamicJsonDocument response(1024);
+            JsonObject body_response = response.createNestedObject("body");
+            response["issue"] = "IoT device sending specific message";
+            Serial.println("Body Issue: " + body_issue);
+            if(body_issue=="Delete credentials"){  //si nos llega este mensaje desde la web eliminamos las credenciales
+                Serial.println("Eliminando credenciales"); 
+                // poner algun mensaje en pantalla de que el dispositivo se esta restableciendo
+                LCD_MessageDisplay(RESTORE_TO_DEFAULT_SETTING_DISPLAY);
+                deleteCredentials();
+                for (int i = 0; i <= 5; i++){
+                    delay(500);
+                    digitalWrite(led_pin, HIGH);
+                    delay(500);
+                    digitalWrite(led_pin, LOW);
+                }
+                ESP.restart();
             }
-            ESP.restart();
-          }
+            else if(body_issue=="Alarm off"){   //apagamos la alarma
+                Serial.println("Apagando alarma");
+                //(FALTA) mandar el mensaje a SSEM LA
+
+                //(FALTA) mostras los mensajes en la pantalla
+                body_response["issue"]=body_issue;
+                body_response["state"]="OK";
+                send_message=true;
+            }
+            else if(body_issue=="Alarm on"){    //prendemos la alarma   
+                Serial.println("Apagando alarma");
+                //(FALTA) mandar el mensaje a SSEM LA
+
+                //(FALTA) mostras los mensajes en la pantalla
+                body_response["issue"]=body_issue;
+                body_response["state"]="OK";
+                send_message=true;
+            }
+            else if(body_issue=="Lock on"){     //cierrto la puerta
+                Serial.println("Cerrando puerta");
+                //(FALTA) mandar el mensaje a SSEM LA
+
+                //(FALTA) mostrar los mensaje en la pantalla
+
+                body_response["issue"]=body_issue;
+                body_response["state"]="OK";
+                send_message=true;
+            }
+            else if(body_issue=="Lock off"){    //abro la puerta
+                Serial.println("Abriendo puerta");
+
+                //(FALTA) mandar el mensaje a SSEM LA
+
+                //(FALTA) mostrar los mensajes en la pantalla
+                LCD_MessageDisplay(PASSWORD_SENT_TO_WEB_DISPLAY);
+                LCD_MessageDisplay(SCREEN_CLEAN_DISPLAY);
+                body_response["issue"]=body_issue;
+                body_response["state"]="OK";
+                send_message=true;
+            }
+            else if(body_issue=="Get password"){
+                Serial.println("Enviando contraseña actual del dispositivo");
+                body_response["issue"]=body_issue;
+                body_response["state"]="OK";
+                body_response["password"]=device.password;
+                send_message=true;
+            }
+            else if(body_issue=="Set password"){
+                Serial.println("Cambiando contrasenia desde el dashboard");
+                String new_password=body["password"];
+                device.password=new_password;
+                Serial.println("Password del dispositivo escribiendose en EEPROM...");
+                writeStringEEPROM(EEPROM_STORAGE_INDEX_device_password,device.password);
+                Serial.println("Password length del dispositivo escribiendose en EEPROM...");
+                writeEEPROM(EEPROM_STORAGE_INDEX_device_password_lenght,device.password.length(),EEPROM_I2C_ADDRESS);
+                body_response["issue"]=body_issue;
+                body_response["state"]="OK";
+                send_message=true;
+            }
+            else{
+                Serial.println("Mensaje no reconocido");
+            }
+            if(correlationId!="null"){  //si es diferente  de null es un mensaje que espera respuesta
+                response["correlationId"]=correlationId;
+            }
+            if(send_message) sendJSONMessage(response,WEBSOCKET);
         }
+        
     }
     else if(dvc==BLUETOOTH){
         if(issue=="Device name"){ //me esta solicitando mi nombre, se lo mando
@@ -651,8 +1048,8 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
     case WStype_TEXT: //en caso de que recibamos mensajes de texto
     {
         Serial.printf("[WSc] Mensaje Recibido: %s\n", payload);
-        // Aquí puedes procesar el mensaje recibido
-        //TRANSFORMACION DEL payload a JSON
+        LCD_MessageDisplay(TURN_ON_LCD);
+        temp2=millis();
         String payloadString = String((char*)payload);
         parseJSONString(payloadString,WEBSOCKET);
       
@@ -731,22 +1128,33 @@ void writeStringEEPROM(const int pos_start, String data) {
         letter=readEEPROM(i,EEPROM_I2C_ADDRESS);
         Serial.print(letter);
     }
+    Serial.println();
 }
 //funcion encargada de informar si se ha enviado exitosamente la informacion por ESPNOW (FALTA) modificarla
 void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus) {
   //dado a que se envian diferentes datos se hacen if para modificar diferentes cosas o mostrar diferentes mensajes
   if(sendStatus == 0){
-    
+    Serial.println("Data enviada exitosamente");
+    digitalWrite(led_pin,HIGH);
+    temp1=millis();
+    turn_of_led=true;
+    espnow_sent=true;   //si ponemos a true estos
   }  
   else{
     Serial.println("Error en transmision");
     attemps_espnow++;
     if(attemps_espnow>100){
-      Serial.println("Demasiados intentos de transmision, SSEM LA DESCONECTADO");
-      //(FALTA) mandar mensaje a la web si estamos conectados a websocket de que ha habido un proble con la comunicacion SSEM LA
-
-      attemps_espnow=0;
-      LCD_MessageDisplay(TRANSMISION_SSEM_ERROR);   //escribimos en la lcd el mensaje
+        Serial.println("Demasiados intentos de transmision, SSEM LA DESCONECTADO");
+        // mandar mensaje a la web si estamos conectados a websocket de que ha habido un proble con la comunicacion SSEM LA
+        DynamicJsonDocument doc(1024);
+        //Vamos a enviar una notificacion
+        doc["issue"] = "IoT device sending notification";
+        // Crear el objeto "body" y sus atributos
+        JsonObject body = doc.createNestedObject("body");
+        body["message"]="The SSEM LA device may be disconnected.";
+        //Mandamos el mensaje por web Socket
+        sendJSONMessage(doc, WEBSOCKET);
+        LCD_MessageDisplay(TRANSMISION_SSEM_ERROR);   //escribimos en la lcd el mensaje
     }
   }
 }
@@ -769,7 +1177,7 @@ void ShowReaderDetails() {
   }
 }
 //funciones para escribir texto en la pantalla
-void lcdMessage(String firstRow, String secondRow, LiquidCrystal_I2C &display) {
+void lcdMessage(String firstRow, String secondRow, LiquidCrystal_I2C display) {
     display.clear();
     display.setCursor(0, 0);
     display.print(firstRow);
@@ -792,7 +1200,6 @@ void LCD_MessageDisplay(LCDDisplaymessages display_message) {
         }
     break;
     case CORRECT_PASSWORD_DISPLAY: // muestra si la contraseña a sido correcta
-        // thing["Ingreso"] >> outputValue("Acceso Aceptado");
         lcdMessage("     PASSWORD   ", "     CORRECT    ", lcd0);
         lcdMessage("     PASSWORD   ", "     CORRECT    ", lcd1);
         delay(1000);
@@ -876,39 +1283,38 @@ void LCD_MessageDisplay(LCDDisplaymessages display_message) {
         lcdMessage("ACCESS  ACCEPTED", "", lcd0);
         lcdMessage("ACCESS  ACCEPTED", "", lcd1);
         delay(1500);
-        //lcdMessage("    WELCOME    " + String(fila), NAME, lcd);  //(FALTA) ubicar quien es, con la estrucutra rfid_cards[]
-        //lcdMessage("    WELCOME    " + String(fila), NAME, lcd0);
-        delay(1000);
+        lcdMessage("    WELCOME    " + String(fila), rfid_cards[fila].name, lcd0);
+        lcdMessage("    WELCOME    " + String(fila), rfid_cards[fila].name, lcd1);
     break;
     case CARD_NAME_EDIT_ENABLED_DISPLAY: // Inserta el numero de la tarjeta y el nombre/se va a ocupar para el nombre que tiene ahora y el que tiene despues en bluetooth
-        //lcdMessage("  CARD NUMBER  ", "       " + String(RFIDNUMBRERS), lcd); //(FALTA) poner esto con el rfid_cards
+        //lcdMessage("  CARD NUMBER  ", "       " + String(available_rfid_positionS), lcd1); //(FALTA) poner esto con el rfid_cards
     break;
     case NEW_CARD_NAME_SET_UP_DISABLED_DISPLAY: // Inserta el numero de la tarjeta y el nombre/se va a ocupar para el nombre que tiene ahora y el que tiene despues en bluetooth
-        //lcdMessage(" NAME SAVED IN ", "CARD NUMBER  " + String(RFIDNUMBRER), lcd0); //(FALTA) poner esto con el rfid_cards
+        //lcdMessage(" NAME SAVED IN ", "CARD NUMBER  " + String(available_rfid_position), lcd1); //(FALTA) poner esto con el rfid_cards
         delay(2000);
         //lcdMessage(String(NAME), "", lcd0);    //(FALTA) poner esto con el rfid_cards
         delay(2000);
         lcdMessage("    PASSWORD    ", "", lcd0);
         lcdMessage("    PASSWORD    ", "", lcd1);
     break;
-    case ADD_CARD_ENABLED_DISPLAY: // Informa que el modo de cambio de nombre de tarjeta a sido activado  (FALTA) se va a retirar
-        lcdMessage("    ADD CARD    ", "     ENABLED    ", lcd0);
+    case ADD_CARD_ENABLED_DISPLAY: // Informa que el modo de cambio de nombre de tarjeta a sido activado  (FALTA)
+        lcdMessage("    ADD CARD    ", "     ENABLED    ", lcd1);
         delay(2000);
-        lcdMessage("  PLEASE TYPE   ", "    NEW CARD    ", lcd0);
+        lcdMessage("  PLEASE TYPE   ", "    NEW CARD    ", lcd1);
         delay(2000);
-        //lcdMessage("  CARD NAME " + String(RFIDNUMBRERS), String(NAME), lcd); 
+        //lcdMessage("  CARD NAME " + String(available_rfid_positionS), String(NAME), lcd); 
     break;
     case ADD_CARD_DISABLED_DISPLAY: // Informa que el modo de cambio de nombre de tarjeta a sido activado
-        lcdMessage("    ADD CARD    ", "    DISABLED    ", lcd0);
-        delay(2000);
-        //(FALTA) lcdMessage(" CARD SAVED IN  ", " THE POSITION " + String(RFIDNUMBRER), lcd);
+        lcdMessage("    ADD CARD    ", "    DISABLED    ", lcd1);
         delay(2000);
         lcdMessage("    PASSWORD    ", "", lcd0);
         lcdMessage("    PASSWORD    ", "", lcd1);;
         delay(2000);
     break;
     case CARD_TAPPED_SAVED_DISPLAY: // Informa que el modo de cambio de nombre de tarjeta a sido activado
-        lcdMessage("    NEW CARD    ", "   REGISTERED   ", lcd0);
+        lcdMessage("    NEW CARD    ", "   REGISTERED   ", lcd1);
+        delay(1500);
+        lcdMessage("    USERNAME:   ", rfid_cards[available_rfid_position].name, lcd1); 
         delay(2000);
         lcdMessage("    PASSWORD    ", "", lcd0);
         lcdMessage("    PASSWORD    ", "", lcd1);;
@@ -916,13 +1322,13 @@ void LCD_MessageDisplay(LCDDisplaymessages display_message) {
     break;
     case CARD_TAPPED_EXISTENT_DISPLAY:
         delay(1000);
-        lcdMessage(" CARD TAPED     ", "    EXISTENT    ", lcd0);
+        lcdMessage("   CARD TAPED   ", "    EXISTENT    ", lcd1);
         delay(2000);
-        lcdMessage("  CARD NUMBER " + String(fila), "", lcd0);
+        lcdMessage(" USERNAME  " + String(fila), rfid_cards[fila].name, lcd1);
         delay(2000);
-        lcdMessage("     TAP NEW    ", "      CARD      ", lcd0);
+        lcdMessage("     TAP NEW    ", "      CARD      ", lcd1);
         delay(2000);
-        lcdMessage("    NEW CARD    ", "", lcd0);
+        lcdMessage("    NEW CARD    ", "", lcd1);
     break;
     case DEVICE_UNLOCKED_DISPLAY: // muestra que se ha apagado el cerrojo
         lcdMessage("    UNLOCKED    ", "", lcd0);
@@ -933,10 +1339,38 @@ void LCD_MessageDisplay(LCDDisplaymessages display_message) {
     break;
     case RESTORE_TO_DEFAULT_SETTING_DISPLAY:
         lcdMessage(" DEVICE DELETED ", "   TO ACCOUNT   ", lcd0);
+        lcdMessage(" DEVICE DELETED ", "   TO ACCOUNT   ", lcd1);
         delay(1500);
         lcdMessage("  RESTORE   TO  ", " DEFAULT ENABLED", lcd0);
+        lcdMessage("  RESTORE   TO  ", " DEFAULT ENABLED", lcd1);
         delay(1500);
     break;
+    case TRYING_TO_CONNECT:
+        lcdMessage(wifi.ssid,"  CONECTING...  ",lcd0);
+    break;
+    case CONNECTION_FAILED:
+        lcdMessage("   CONNECTION   ","     FAILED     ",lcd0);
+    break;
+    case SUCCESSFUL_CONNECTION:
+    {
+        IPAddress ip = WiFi.localIP();
+        String ipString = ip.toString();
+        lcdMessage("   IP ADDRESS   ",ipString,lcd0);
+    }
+    break;
+    case TURN_ON_LCD:
+        lcd0.backlight();
+        lcd0.display();
+        lcd1.backlight();
+        lcd1.display();
+    break;
+    case TURN_OFF_LCD:
+        lcd0.noDisplay();
+        lcd0.noBacklight();
+        lcd1.noDisplay();
+        lcd1.noBacklight();
+    break;
+
     default:
 
     break;

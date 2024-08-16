@@ -215,14 +215,15 @@
 
 /*		Cards		*/
 .card-team:nth-child(1) {
-	background: url('../../assets/img/anahi-5.png') center center no-repeat ;
-	background-size: 100%;
+	background: url('../../assets/img/gera.png') center center no-repeat ;
+	background-size: 110%;
+	background-position: 50% 70%;
 }
 
 .card-team:nth-child(1):hover {
-	background: url('../../assets/img/anahi-5.png') left center no-repeat;
+	background: url('../../assets/img/gera.png') left center no-repeat;
 	background-size: 200%;
-	background-position: 0% 50%;
+	background-position: 0% 30%;
 }
 
 .card-team:nth-child(1):hover h3 {
@@ -234,14 +235,15 @@
 }
 
 .card-team:nth-child(2) {
-	background: url('https://i.pinimg.com/564x/1f/26/48/1f2648de181c30ab430cc317f86b2d17.jpg') center center no-repeat;
-	background-size: 100%;
+	background: url('../../assets/img/anahi.png') center center no-repeat;
+	background-size: 110%;
+	background-position: 50% 70%;
 }
 
 .card-team:nth-child(2):hover {
-	background: url('https://i.pinimg.com/564x/1f/26/48/1f2648de181c30ab430cc317f86b2d17.jpg') left center no-repeat;
+	background: url('../../assets/img/anahi.png') left center no-repeat;
 	background-size: 200%;
-	background-position: 0% 50%;
+	background-position: 0% 30%;
 }
 
 .card-team:nth-child(2):hover h3 {
@@ -253,14 +255,15 @@
 }
 
 .card-team:nth-child(3) {
-	background: url('https://i.pinimg.com/564x/a0/ef/6b/a0ef6b93daaa4faaab000263d4e54c4d.jpg') center center no-repeat;
-	background-size: 100%;
+	background: url('../../assets/img/eder.png') center center no-repeat;
+	background-size: 110%;
+	background-position: 50% 70%;
 }
 
 .card-team:nth-child(3):hover {
-	background: url('https://i.pinimg.com/564x/a0/ef/6b/a0ef6b93daaa4faaab000263d4e54c4d.jpg') left center no-repeat;
+	background: url('../../assets/img/eder.png') left center no-repeat;
 	background-size: 200%;
-	background-position: 0% 30%;
+	background-position: 15% 30%;
 }
 
 .card-team:nth-child(3):hover h3 {
@@ -272,14 +275,15 @@
 }
 
 .card-team:nth-child(4) {
-	background: url('https://i.pinimg.com/564x/b1/05/57/b105578f42ad066281769d6fc998724a.jpg') center center no-repeat;
-	background-size: 100%;
+	background: url('../../assets/img/ary.png') center center no-repeat;
+	background-size: 110%;
+	background-position: 50% 70%;
 }
 
 .card-team:nth-child(4):hover {
-	background: url('https://i.pinimg.com/564x/b1/05/57/b105578f42ad066281769d6fc998724a.jpg') left center no-repeat;
-	background-size: 150%;
-	background-position: 50% 10%;
+	background: url('../../assets/img/ary.png') left center no-repeat;
+	background-size: 200%;
+	background-position: 0% 30%;
 }
 
 .card-team:nth-child(4):hover h3 {
