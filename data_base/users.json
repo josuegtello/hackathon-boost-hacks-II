@@ -95,6 +95,33 @@
         "date": "1723833655743",
         "name": "Garage",
         "type": "CelestialSec Lock"
+      },
+      {
+        "device": 0,
+        "body": {
+          "message": "Device connected"
+        },
+        "date": "1723835601093",
+        "name": "Garage",
+        "type": "CelestialSec Lock"
+      },
+      {
+        "device": 0,
+        "body": {
+          "message": "Device disconnected"
+        },
+        "date": "1723835665919",
+        "name": "Garage",
+        "type": "CelestialSec Lock"
+      },
+      {
+        "device": 0,
+        "body": {
+          "message": "Device connected"
+        },
+        "date": "1723835675137",
+        "name": "Garage",
+        "type": "CelestialSec Lock"
       }
     ]
   },
