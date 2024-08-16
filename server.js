@@ -107,6 +107,16 @@ webSocket.on("connection", (ws, req) => {
   console.log("Nuevo cliente conectado");
   console.log(metadata);
   websocketManager.addClient(ws, metadata);
+  if(metadata.device_id){ //es un dispositivo creo la notificacion
+    const date=Date.now().toString();
+    const notificacion={
+      body:{
+        message:"Device connected"
+      },
+      date:date
+    }
+    websocketManager.addNotification(ws,notificacion)
+  }
   const callback = {
     //siempre que enviemos informacion se la mandaremos en forma de texto, este es un objeto
     issue: "Web Socket connected", //le informamos que su conexion a sido exitosa y le mandamos el ID que se le asigno
@@ -154,6 +164,14 @@ webSocket.on("connection", (ws, req) => {
           ws_id: ws_id,
           device:device
         };
+      const date=Date.now().toString();
+      const notificacion={
+        body:{
+          message:"Device disconnected"
+        },
+        date:date
+      }
+      websocketManager.addNotification(ws,notificacion);
       console.log(`IoT device disconnected`);
       websocketManager.sendToSpecificClient(
         clientMessage,

@@ -63,9 +63,18 @@
       {
         "device": 0,
         "body": {
-          "message": "Access by card denied"
+          "message": "Device connected"
         },
-        "date": "1723819491409",
+        "date": "1723820578336",
+        "name": "Puerta trasera",
+        "type": "SSEM"
+      },
+      {
+        "device": 0,
+        "body": {
+          "message": "Device disconnected"
+        },
+        "date": "1723820615195",
         "name": "Puerta trasera",
         "type": "SSEM"
       }

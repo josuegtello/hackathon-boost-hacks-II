@@ -876,7 +876,7 @@ async function handleAddDeviceSubmit(e) {
       id: id,
       name: $form.device_name.value,
       device: null,
-      type: "SSEM",
+      type: "CelestialSec Lock",
     };
     const ssemCredentials = {
       issue: "Set credentials",
@@ -920,13 +920,6 @@ async function handleAddDeviceSubmit(e) {
       if (data.issue != "Set credentials" && data.state != "OK") {
         throw new Error("A problem occurred while configuring the SSEM device");
       }
-      /*
-      console.log(ssemCredentials);
-      const wasSent=await ssem.connect("Set credentials",ssemCredentials);
-      if(!wasSent){
-        throw new Error("A problem occurred while configuring the SSEM device");
-      }
-        */
     } catch (err) {
       console.error(`Error during device configuration`, err);
       createToast(
