@@ -1,5 +1,6 @@
 // websocketManager.js
 const WebSocket = require('ws');
+const fs = require("fs");
 
 const clients = new Map();
 
@@ -17,6 +18,12 @@ function getClientIds(filter = () => true) {
   return Array.from(clients.values())
     .filter(filter)
     .map(metadata => metadata.id);
+}
+function addNotification(ws, notificacion){
+  const client=clients.get(ws);
+  const {user_id,type}=client;
+
+
 }
 function getDevices(filterCriteria) {   //funcion que nos permitira obtener dispositivos a base de un criterio
     const filter = [];

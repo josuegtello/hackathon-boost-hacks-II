@@ -60,10 +60,7 @@ httpServer.on("upgrade", (request, socket, head) => {
   console.log("Cookie recibida:", request.headers.cookie);
   sessionParser(request, {}, () => {
     //console.log("Session after parser:", request.session);
-    if (
-      !request.session ||
-      (!request.session.user && !request.session.device)
-    ) {
+    if (!request.session || (!request.session.user && !request.session.device)) {
       console.log("Unauthorized WebSocket connection attempt");
       socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
       socket.destroy();
@@ -75,10 +72,8 @@ httpServer.on("upgrade", (request, socket, head) => {
     });
   });
 });
-
 //WebSocket
 const PING_INTERVAL = 30000; // Intervalo para enviar PINGs (30 segundos)
-const PONG_TIMEOUT = 10000; // Tiempo para esperar un PONG (10 segundos)
 const webSocket = new WebSocket.Server({ noServer: true }); //El web socket funcionara en el puerto 80 tambien
 webSocket.on("connection", (ws, req) => {
   //El webSocket es una caracterestica unica para clientes registrados, por lo que unicamente clientes van a poder conectarse
@@ -238,6 +233,7 @@ webSocket.on("connection", (ws, req) => {
         };
         if (body) {
           console.log("Mandando notificacion a clientes web de dispositivo IoT");
+          websocketManager.addNottification(ws,{body:body,data:date});
           websocketManager.sendToSpecificClient(
             clientMessage,
             (metadata) => metadata.user_id == user_id && !metadata.device_id
