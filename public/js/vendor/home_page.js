@@ -60,6 +60,7 @@ export async function initializeHomepage() {
 			// $VideoContainer.style.opacity = '1';
 		});
 		if (alreadywatched == 1) $VideoSection.classList.add('pointer-events-none');
+		alreadywatched=1;
 	});
 	// $btnCelestialSmartPot.addEventListener('click', () => {
 	// 	$cardCelestialSecLock.classList.toggle('display-none');
