@@ -62,7 +62,10 @@ function submitFom(e){
         if(response.ok){  //para respuestas 200-209
             //si entramos aqui 
             //vemos si el item existe, si no hacemos la peticion
+            const {profile_img}=data.credentials
+            if(profile_img) data.credentials.profile_img=`./assets/profile_img/${profile_img}`
             sessionStorage.setItem('credentials',JSON.stringify(data.credentials)); //guardo las credenciales
+            sessionStorage.removeItem("route");
             location.reload();  //RECARGAMOS LA PAGINA
         }
         else{ //para respuesta diferentes de la 200-299

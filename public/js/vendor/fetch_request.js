@@ -29,11 +29,15 @@ export const fetchRequest=async function(set){
     const {method,url,data,credentials,contentType,success,error}=set;
     //console.log("informacion a enviar en la peticion Fetch");
     //console.log(method,url,data,credentials,contentType);
+    const headers = {};
+
+    // Solo establecer el content-type si no es FormData
+    if (!(data instanceof FormData)) {
+        headers['Content-Type'] = contentType;
+    }
     const options={
         method:method,
-        headers:{
-            'Content-Type':contentType
-        },
+        headers,
         body:data,
         credentials:credentials,
         cache:'no-cache'
@@ -41,8 +45,10 @@ export const fetchRequest=async function(set){
     try {
         const response= await fetch(url,options);
         success(response);   //manejamos el evento completo con el metodo succes
+        return true;
     } catch (err) {
         console.error('Ocurrio un problema con tu peticion fetch',err);
         error(err);
+        return false;
     }
 }

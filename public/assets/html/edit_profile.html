@@ -15,7 +15,7 @@
                     <div class="container-profile-image">
                         <img id="userProfileImage" src="./assets/img/user.jpg" data-old-value="" alt="Usuario">
                         <label for="file" class="profile-img-button opacity-0 pointer-events-none"><i class="fa-solid fa-plus fa-beat" ></i></label>
-                        <input id="file" name="input_file" class="profile-input-file" data-file="empty" type="file" accept="image/*"/>
+                        <input id="file" name="input_file" class="profile-input-file" type="file" aria-label="img user" accept="image/*"/>
                     </div>
                     <h4 id="userProfileName">Nombre del usuario</h4>
                     <div class="container-edit" data-edit-mode="desactive">
@@ -47,7 +47,27 @@
 
             <!-- Notificaciones -->
             <section id="notifications-user" class="settings-tab">
+                <h2>Notifications</h2>
 
+                <!-- Boton de prueba para las notificaciones -->
+                <!-- <button id="addNotificationProfileBtn">Add Test Notification</button> -->
+
+                <div id="notifications-container-edit-profile">
+                    <!-- Las notificaciones se agregarán aquí -->
+
+                    <!-- BOTON DE PRUEBA DE NOTIS -->
+                    <button id="addNotificationProfileBtn">Add Test Notification</button>
+                    <!-- BOTON DE PRUEBA DE NOTIS -->
+                     
+                     <!-- <div class="notification-item-edit-profile">
+                        <img src="./assets/img/ssem-icon.png" alt="Notification Image" class="notification-img-edit-profile">
+                        <div class="notification-content-edit-profile">
+                            <p class="notification-text-edit-profile">Notificación</p>
+                            <span class="notification-time-edit-profile">Hora de la notificación</span>
+                        </div>
+                        <i class="fa-solid fa-times notification-delete-edit-profile"></i>
+                     </div> -->
+                </div>
             </section>
 
             <!-- Eliminar usuario -->
@@ -61,7 +81,7 @@
                             name="delete-password">
                     </div>
                     <div class="btn-edit-profile">
-                        <button type="submit">Delete</button>
+                        <button id="deteleBtn" type="submit">Delete</button>
                     </div>
                 </form>
             </section>
