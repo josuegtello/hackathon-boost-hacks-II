@@ -68,6 +68,15 @@
         "date": "1723780746286",
         "name": "Garage",
         "type": "SSEM"
+      },
+      {
+        "device": 0,
+        "body": {
+          "message": "Someone tried to enter by local password"
+        },
+        "date": "1723784056322",
+        "name": "Puerta trasera",
+        "type": "SSEM"
       }
     ]
   },
