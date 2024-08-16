@@ -226,7 +226,19 @@ void setup(){
     system_mode=CONNECTED_MODE;
     digitalWrite(led_pin, LOW);
     //obtenemos las credenciales de la EEPROM
-    //deleteCredentials();
+    delay(5000);
+    if(digitalRead(config_btn)==0){
+      Serial.println("Restableciendo dispositivo con boton");
+      deleteCredentials();
+      for (int i = 0; i <= 5; i++){
+        delay(500);
+        digitalWrite(led_pin, HIGH);
+        delay(500);
+        digitalWrite(led_pin, LOW);
+      }
+      ESP.restart();
+    }
+    //
     
     Serial.println("Iniciando en el modo conexion");
     Serial.println("Mi direccion MAC es:");
@@ -301,7 +313,8 @@ COMANDOS DE SIMULACION
   INCORRECT_LOCAL_PASSWORD  //simula una contrasenia incorrecta
   CARD_ACEPTED  //Simula una entrada por tarjeta
   CARD_DENIED   //Simula una deteccion de tarjeta no registrada
-
+  wifi.ssid="INFINITUM969C_2.4_EXT";
+   wifi.password="VNJ2kbPnPT";
   
 */
 

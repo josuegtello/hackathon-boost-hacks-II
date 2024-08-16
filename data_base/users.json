@@ -6,10 +6,10 @@
     "password": "lalopop123456",
     "devices": [
       {
-        "id": "22c06348-e977-42b9-9236-ab76697499b4",
+        "id": "c49c4855-1906-4440-9c16-a0126833adf8",
         "device": 0,
-        "type": "SSEM",
-        "name": "Puerta trasera"
+        "type": "CelestialSec Lock",
+        "name": "Garage"
       }
     ],
     "phone": "5565092151",
@@ -18,65 +18,83 @@
       {
         "device": 0,
         "body": {
-          "message": "Someone tried to enter by local password"
+          "message": "Device connected"
         },
-        "date": "1723785901642",
-        "name": "Puerta trasera",
-        "type": "SSEM"
-      },
-      {
-        "device": 0,
-        "body": {
-          "message": "Someone tried to enter by local password"
-        },
-        "date": "1723817936290",
-        "name": "Puerta trasera",
-        "type": "SSEM"
-      },
-      {
-        "device": 0,
-        "body": {
-          "message": "Access by card denied"
-        },
-        "date": "1723819423324",
-        "name": "Puerta trasera",
-        "type": "SSEM"
-      },
-      {
-        "device": 0,
-        "body": {
-          "message": "Access allowed by local password"
-        },
-        "date": "1723819443853",
-        "name": "Puerta trasera",
-        "type": "SSEM"
-      },
-      {
-        "device": 0,
-        "body": {
-          "message": "Access allowed by button"
-        },
-        "date": "1723819459723",
-        "name": "Puerta trasera",
-        "type": "SSEM"
+        "date": "1723824126305",
+        "name": "Garage",
+        "type": "CelestialSec Lock"
       },
       {
         "device": 0,
         "body": {
           "message": "Device connected"
         },
-        "date": "1723820578336",
-        "name": "Puerta trasera",
-        "type": "SSEM"
+        "date": "1723832666135",
+        "name": "Garage",
+        "type": "CelestialSec Lock"
+      },
+      {
+        "device": 0,
+        "body": {
+          "message": "Someone tried to enter by local password"
+        },
+        "date": "1723832724157",
+        "name": "Garage",
+        "type": "CelestialSec Lock"
+      },
+      {
+        "device": 0,
+        "body": {
+          "message": "Someone tried to enter by local password"
+        },
+        "date": "1723832791744",
+        "name": "Garage",
+        "type": "CelestialSec Lock"
       },
       {
         "device": 0,
         "body": {
           "message": "Device disconnected"
         },
-        "date": "1723820615195",
-        "name": "Puerta trasera",
-        "type": "SSEM"
+        "date": "1723833386354",
+        "name": "Garage",
+        "type": "CelestialSec Lock"
+      },
+      {
+        "device": 0,
+        "body": {
+          "message": "Device connected"
+        },
+        "date": "1723833396464",
+        "name": "Garage",
+        "type": "CelestialSec Lock"
+      },
+      {
+        "device": 0,
+        "body": {
+          "message": "Someone tried to enter by local password"
+        },
+        "date": "1723833412397",
+        "name": "Garage",
+        "type": "CelestialSec Lock"
+      },
+      {
+        "device": 0,
+        "body": {
+          "message": "Someone tried to enter by local password"
+        },
+        "date": "1723833617774",
+        "name": "Garage",
+        "type": "CelestialSec Lock"
+      },
+      {
+        "device": 0,
+        "body": {
+          "message": "Device disconnected"
+        },
+        "date": "1723833655743",
+        "name": "Garage",
+        "type": "CelestialSec Lock"
       }
     ]
   },

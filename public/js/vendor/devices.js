@@ -167,9 +167,9 @@ export function updateDashboard(deviceData) {
 
     // Actualizar el estado del botón de cerradura
     const lockButton = $dashboardSection.querySelector('.btn-dashboard:nth-child(2)');
-    lockButton.classList.toggle('active', deviceData.lock === 'locked');
-    lockButton.querySelector('i').classList.toggle('fa-lock', deviceData.lock === 'locked');
-    lockButton.querySelector('i').classList.toggle('fa-lock-open', deviceData.lock === 'unlocked');
+    //lockButton.classList.toggle('active', deviceData.lock === 'locked');
+    //lockButton.querySelector('i').classList.toggle('fa-lock', deviceData.lock === 'locked');
+    //lockButton.querySelector('i').classList.toggle('fa-lock-open', deviceData.lock === 'unlocked');
 
     // Actualizar la contraseña mostrada
     const passwordButton = $dashboardSection.querySelector('.btn-dashboard:nth-child(3)');
@@ -975,4 +975,7 @@ async function handleAddDeviceSubmit(e) {
     removeLoadingScreen();
     createToast("success", "Device: ", "Device added successfully");
     console.log("Device added");
+    d.body.classList.add("pointer-events-none");
+    await sleep(2000);
+    location.reload();
   }

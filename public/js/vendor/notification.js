@@ -58,7 +58,7 @@ export const createToast = (id, title = '', text = '') => {
     }
 }
 export const imgDevice=function(type){
-    if(type=="SSEM") return "./assets/img/ssem-icon.png";
+    if(type=="CelestialSec Lock") return "./assets/img/ssem-icon.png";
     else return null;
 
 }
