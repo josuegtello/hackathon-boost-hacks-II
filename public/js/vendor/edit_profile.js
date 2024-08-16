@@ -1,5 +1,5 @@
 import { fetchRequest } from "./fetch_request.js";
-import { createToast } from "./notification.js";
+import { createToast ,imgDevice} from "./notification.js";
 import { sleep } from "./sleep.js";
 const d = document,
   body = d.body;
@@ -419,26 +419,32 @@ const newProfileImage = function (e) {
 /*    Notificaciones    */
 
 //Funcion para agregar la notificación /*FUNCIÓN IMPORTANTE DE LAS NOTIS*/
-function addNotification(notification) {
+export function addNotification(notification) {
+  const {name,type,body,date,device}=notification;
+  const imgURL=imgDevice(type);
+  const message=body.message 
+  const dateOb=new Date(Number(date));
+  const dateNotification=dateOb.toLocaleDateString();
+  const timeNotification=dateOb.toLocaleTimeString();
   const notificationsContainer = document.getElementById('notifications-container-edit-profile');
-  
   const notificationItem = document.createElement('div');
   notificationItem.className = 'notification-item-edit-profile';
-  
+  notificationItem.setAttribute("data-device",device);
+  //FALTA en la notificacion poner el nombre del dispositivo 
   notificationItem.innerHTML = `
-      <img src="${notification.image}" alt="Notification Image" class="notification-img-edit-profile">
+      <img src="${imgURL}" alt="Notification Image" class="notification-img-edit-profile">
       <div class="notification-content-edit-profile">
-          <p class="notification-text-edit-profile">${notification.text}</p>
-          <span class="notification-time-edit-profile">${notification.date} ${notification.time}</span>
+          <p class="notification-text-edit-profile">${message}</p>
+          <span class="notification-time-edit-profile">${dateNotification} ${timeNotification}</span>
       </div>
       <i class="fa-solid fa-times notification-delete-edit-profile"></i>
   `;
   
   notificationsContainer.appendChild(notificationItem);
-  
   // Agregar evento para eliminar la notificación
   const deleteButton = notificationItem.querySelector('.notification-delete-edit-profile');
   deleteButton.addEventListener('click', function() {
+      //FALTA hacer la peticion fetch para que elimine la notificacion en la base de datos
       notificationItem.remove();
   });
 }
@@ -446,12 +452,11 @@ function addNotification(notification) {
 //PRUEBA DE NOTIS
 //Función de prueba para crear una notificación
 function addTestNotification() {
-  const now = new Date();
   const testNotification = {
-      image: './assets/img/ssem-icon.png',
-      text: 'This is a test notification',
-      date: now.toLocaleDateString(),
-      time: now.toLocaleTimeString()
+      body: {message:"This is a text notification"},
+      type:"SSEM",
+      name:"Device N",
+      date: Date.now().toString(),
   };
   addNotification(testNotification);
 }

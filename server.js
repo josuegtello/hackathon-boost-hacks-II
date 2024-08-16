@@ -15,6 +15,7 @@ const signInDevice = require("./routes/sign_in_devices");
 const devices = require("./routes/devices");
 const profile = require("./routes/profile");
 const password=require("./routes/password");
+const notifications=require("./routes/notifications");
 
 //obtenemos la direccion IP de nuestro servidor para acceder a el desde cualquier dispositivo
 function getLocalIpAddress() {
@@ -162,7 +163,7 @@ webSocket.on("connection", (ws, req) => {
     websocketManager.removeClient(ws); //removemos el elemento
   });
   //En caso de que el cliente mande un mensaje por WebSocket
-  ws.on("message", (message) => {
+  ws.on("message",(message) => {
     //cuando el cliente manda algun mensaje al servidor
     try {
       const data = JSON.parse(message);
@@ -231,9 +232,14 @@ webSocket.on("connection", (ws, req) => {
           date:date,
           type:type
         };
+        console.log("Fecha:",date);
+        const notificationData={
+          body:body,
+          date:date
+        }
         if (body) {
           console.log("Mandando notificacion a clientes web de dispositivo IoT");
-          websocketManager.addNottification(ws,{body:body,data:date});
+          websocketManager.addNotification(ws,notificationData);
           websocketManager.sendToSpecificClient(
             clientMessage,
             (metadata) => metadata.user_id == user_id && !metadata.device_id
@@ -290,6 +296,7 @@ app.use("/sign-in-device", signInDevice);
 app.use("/devices", devices);
 app.use("/profile", profile);
 app.use("/password", password);
+app.use("/notifications",notifications);
 
 //cuando la ruta no pertenezca a una definida lanzaremos un estado de respuesta 404
 app.use((req, res) => {
@@ -309,6 +316,7 @@ httpServer.listen(80, () => {
   console.log("/profile Ruta que me permite leer, actualizar y eliminar perfil");
   console.log("/profile/password Ruta que me permite cambiar la contraseña");
   console.log("/password Ruta que me permite verificar mi contraseña"); 
+  console.log("/notifications Ruta que me permite obtener las notificaciones");
 });
 function uuidv4() {
   //genero un ID unico para cada cliente wenSocket que tenga para poder identificarlos

@@ -56,23 +56,26 @@ export const createToast = (id, title = '', text = '') => {
         title,
         text,
     }
-    if(data){
-        // Añadir la notificacion al menu
-        //addNotificationToMenu(id, title, text);
-    }
 }
+export const imgDevice=function(type){
+    if(type=="SSEM") return "./assets/img/ssem-icon.png";
+    else return null;
 
+}
 // Notificasiones del menu, FALTA cambiar esta funcion para que agarre la notificion de la clase user que tenemos
-export const addNotificationToMenu = (title, text, imageUrl) => { 
+export const addNotificationToMenu = function(notification){
+    const {name,type,body}=notification;
+    const imgURL=imgDevice(type);
+    const message=body.message
     const notifyItem = d.createElement("div"),
-          $notifyMenu = d.querySelector(".notify-items"); // Contenedor del menu de notificaciones
+          $notifyMenu = d.querySelector(".drop-down"); // Contenedor del menu de notificaciones
     notifyItem.className = "notify-item";
     notifyItem.innerHTML = `
         <figure class="notify-img">
-            <img src="${imageUrl || './assets/img/piloto2.png'}" alt="notify">
+            <img src="${imgURL || './assets/img/piloto2.png'}" alt="notify">
         </figure>
         <div class="notify-info">
-            <p>${title} - ${text}</p>
+            <p>${name} - ${message}</p>
         </div>
     `;
     $notifyMenu.appendChild(notifyItem);

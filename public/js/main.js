@@ -13,9 +13,8 @@ import {
   initializeChangePassword,
   initializeEditProfile,
 } from "./vendor/edit_profile.js";
-import { initializeDevices, addNewDevice } from "./vendor/devices.js";
+import { initializeDevices} from "./vendor/devices.js";
 import { initializateContactUs } from "./vendor/contact_us.js";
-import { uuidv4 } from "./vendor/uuidv4.js";
 
 const d = document,
   w = window,
@@ -66,6 +65,7 @@ class User {
     this._wsId = null;
     this.profile_img = profile_img;
     this.devices = [];
+    this.notifications=[];
   }
   async getHeader(url) {
     //hacemos la peticion normal
@@ -189,6 +189,33 @@ class User {
     });
     return true; //returnamos true como referencia de que ya acabo la operacion
   }
+  async getNotifications(){
+    await fetchRequest({
+      method:"GET",
+      url:`http://${location.hostname}:80/notifications`,
+      credentials:"include",
+      contentType:"application/json",
+      data:null,
+      async success(response){
+        if(response.ok){
+          const result=await response.json();
+          console.log("Peticion de notificaciones exitosa, data obtenida:",result);
+          const {notifications}=result;
+          notifications.forEach(notification => {
+            user.notifications.push(notification);
+          });
+          console.log(user);
+        }
+        else{
+          console.error(`Error en la peticion: http://${location.hostname}:80/notifications`);
+        }
+      },
+      async error(err){
+        console.error(`Error en la peticion: http://${location.hostname}:80/notifications`,err);
+      }
+
+    });
+  }
   modifyPersonalData(name) {
     this.name = name;
   }
@@ -214,6 +241,7 @@ const startClient = async function () {
     //aqui tambien haremos el llamado de el buzon de notificacion y demas datos que necesite de primera instancia
     await user.getHeader(url);
     await user.getDevices(); //esperamos a obtener los dispositivos conectados
+    user.getNotifications();
     connectWebSocket(); //iniciamos la comunicacion web Socket, solo los usuario tiene acceso a este tipo de notificaciones
   } else {
     //haremos llamado al navba normal

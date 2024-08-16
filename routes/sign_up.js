@@ -81,6 +81,7 @@ router.route("/").post((req, res) => {
             phone:null,
             profile_img:null,
             devices: [],
+            notifications:[]
           });
           //crear una sesion
           req.session.user = {

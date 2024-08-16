@@ -19,11 +19,57 @@ function getClientIds(filter = () => true) {
     .filter(filter)
     .map(metadata => metadata.id);
 }
-function addNotification(ws, notificacion){
+function addNotification(ws, data){
+  console.log("Agregando notificacion a usuario");
   const client=clients.get(ws);
-  const {user_id,type}=client;
+  const {user_id,device,device_id,type}=client;
+  const {body,date}=data;
+  const notification={
+            device:device,
+            body:body,
+            date:date,
+            name:"",
+            type:type
+        }
+      //leemos el archivo de nuestra base de datos
+      fs.readFile("./data_base/users.json", "utf-8", (err, jsonString) => {
+        //funcion no bloqueante para leer
+        if (err) {
+          //lanzar estado de error
+          console.log(err);
+          console.log("Error actualizando buzon de notificaciones");
+        } else {
+          //aqui ponemos todo lo que queramos
+          try {
+            const data = JSON.parse(jsonString); //convertimos el archivo en formato JSON para manipularlo
+            data.forEach((user) => {
+              if(user.id==user_id){ //es el usuario agregamos la notificacion
+                user.devices.forEach(dvc => {
+                  if(dvc.id==device_id){
+                    notification.name=dvc.name;
+                  }
+                });
+                if(!user.notifications)user.notifications=[];
+                console.log("Notificacion que se va a guardar",notification);
+                user.notifications.push(notification);
+              }
+            });
+            fs.writeFile("./data_base/users.json",JSON.stringify(data, null, 2),(err) => {
+                if (err) {
+                  console.log(err);
+                  console.log("Error agregando notificacion en el buzon");
+                } else {
+                  console.log("Usuario encontrado y actualizado buzon de notificaciones");
+                }
+              }
+            );
 
-
+          } catch (err) {
+            console.log("Error parsing JSON", err);
+            console.log("Error agregando notificacion en el buzon");
+          }
+        }
+      });
 }
 function getDevices(filterCriteria) {   //funcion que nos permitira obtener dispositivos a base de un criterio
     const filter = [];
@@ -59,5 +105,6 @@ module.exports = {
   getClientIds,
   getDevices,
   sendToSpecificClient,
+  addNotification,
   WebSocketServer: WebSocket.Server
 };

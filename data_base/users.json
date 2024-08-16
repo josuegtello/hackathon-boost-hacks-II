@@ -13,7 +13,63 @@
       }
     ],
     "phone": "5565092151",
-    "profile_img": "user0.jpg"
+    "profile_img": "user0.jpg",
+    "notifications": [
+      {
+        "device": 0,
+        "body": {
+          "message": "Access allowed by local password"
+        },
+        "date": "1723774113516",
+        "name": "Garage",
+        "type": "SSEM"
+      },
+      {
+        "device": 0,
+        "body": {
+          "message": "Access allowed by local password"
+        },
+        "date": "1723778661723",
+        "name": "Garage",
+        "type": "SSEM"
+      },
+      {
+        "device": 0,
+        "body": {
+          "message": "Access allowed by local password"
+        },
+        "date": "1723778694585",
+        "name": "Garage",
+        "type": "SSEM"
+      },
+      {
+        "device": 0,
+        "body": {
+          "message": "Access allowed by local password"
+        },
+        "date": "1723778775559",
+        "name": "Garage",
+        "type": "SSEM"
+      },
+      {
+        "device": 0,
+        "body": {
+          "message": "Someone tried to enter by local password"
+        },
+        "date": "1723780578783",
+        "name": "Garage",
+        "type": "SSEM"
+      },
+      {
+        "device": 0,
+        "body": {
+          "message": "Someone tried to enter by local password"
+        },
+        "date": "1723780746286",
+        "name": "Garage",
+        "type": "SSEM"
+      }
+    ]
   },
   {
     "id": "58a3899a-1568-47c3-ba87-86888d7fe817",

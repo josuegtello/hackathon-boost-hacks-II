@@ -287,7 +287,7 @@ void setup(){
 }
 
 void loop() {
-	  systemFunction();
+	systemFunction();
     serialFunction();
 }
 
@@ -303,7 +303,6 @@ COMANDOS DE SIMULACION
 
   
 */
-
 //funcion provisional para simular acciones
 void serialFunction(){
   if (Serial.available()){ //si entra a este if quiere decir que hay datos bluetooth en espera

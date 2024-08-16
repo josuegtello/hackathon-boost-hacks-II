@@ -1,8 +1,10 @@
 
-import {createToast} from "./notification.js";
+import {createToast,addNotificationToMenu} from "./notification.js";
 import {sleep} from "./sleep.js";
 import {getUser,setUser,isAuthenticated} from "../main.js";
 import {setDevice,updateDashboard} from "./devices.js";
+import {addNotification} from "./edit_profile.js";
+
 const d=document;
 let connection = {
     readyState: WebSocket.CLOSED
@@ -29,16 +31,31 @@ class EventEmitter {
 const wsEventEmitter = new EventEmitter();
 // Para escuchar notificaciones o mensajes no solicitados
 wsEventEmitter.on('notification', (data) => {
-    console.log("Notificación IoT recibida:", data);
-    // Manejar la notificación aquí
-    /* Estructura de las notificaciones
-        body:{
-            message:""
+    const {body,device,type,date}=data;
+    const notification={
+        device,
+        body,
+        date,
+        name:"",
+        type
+    }
+    const user=getUser();
+    user.devices.forEach(dvc => {
+        if(dvc.device==device){
+            notification.name=dvc.name;
         }
-        date:"Fecha actual en string",
-        type:"tipo de dispositivo"
-
-    */
+    });
+    console.log("Notificacion Nueva:",notification);
+    user.notifications.push(notification);
+    setUser(user)
+    // Verificacion del contenido en el que estamos
+    if(d.querySelector(".notify-menu")){    //si ya esta el submenu en el document
+        addNotificationToMenu(notification);
+    }
+    if(d.querySelector("main.edit-profile")){   //si estamos en editar perfil
+        addNotification(notification);
+    }
+    
 
 
 });
