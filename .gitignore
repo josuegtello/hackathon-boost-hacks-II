@@ -146,3 +146,13 @@ dist
 
 # Ignorar carpetas .vscode
 .vscode/
+<<<<<<< HEAD
+
+# Ignorar carpetas .vscode en todo el proyecto
+.vscode/
+
+# Ignorar carpetas .vscode en todo el proyecto
+.vscode/
+
+=======
+>>>>>>> 7567eee93d8b61b6852aa9bd06e001c4e18b2897
